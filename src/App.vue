@@ -1,10 +1,14 @@
 <template>
   <Layout>
-    <div class="text-5xl">hi</div>
+    <router-view/>
   </Layout>
 </template>
 
-<script setup lang="ts">
-
+<script lang="ts">
 import Layout from "./Layouts/Layout.vue";
+
+export default {
+  name: "App",
+  components: {Layout}
+}
 </script>
