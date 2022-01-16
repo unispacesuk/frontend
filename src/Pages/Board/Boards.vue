@@ -1,11 +1,9 @@
 <template>
-  <div class="w-full bg-white p-3 rounded-md shadow-sm">
-    <button @click="addBoard">Add Board</button>
-    <div v-if="categories.length === 0">You haven't added any categories yet.</div>
+  <button @click="addBoard">Add Board</button>
+  <div v-if="categories.length === 0">You haven't added any categories yet.</div>
 
-    <div v-if="categories.length > 0" v-for="category in categories">
-      <Category :category="category" />
-    </div>
+  <div v-if="categories.length > 0" v-for="category in categories">
+    <Category :category="category" />
   </div>
 </template>
 
@@ -30,7 +28,7 @@ export default defineComponent({
   methods: {
     async addBoard() {
       const newBoard = await addBoard();
-      this.categories.map(c => {
+      this.categories.map((c) => {
         if (c.id === newBoard.body.board.categoryId) {
           c.boards.push(newBoard.body.board);
         }

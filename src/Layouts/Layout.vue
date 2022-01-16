@@ -1,10 +1,12 @@
 <template>
-  <div class="w-full flex relative">
+  <div class="w-full flex">
     <div class="min-w-[220px] h-screen bg-slate-800 text-white fixed">
       <LeftNav />
     </div>
     <div class="w-full ml-[220px] p-10">
-      <slot></slot>
+      <div class="w-full bg-white p-3 rounded-md shadow-sm">
+        <slot></slot>
+      </div>
     </div>
   </div>
 </template>

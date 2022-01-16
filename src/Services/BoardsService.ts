@@ -18,7 +18,21 @@ async function addBoard() {
   return Promise.resolve(data);
 }
 
+async function getBoard(id: string | string[]) {
+  const data = await Get(`board/${id}`);
+
+  return Promise.resolve(data);
+}
+
+async function addThread(body: object) {
+  const data = await Post(`thread/add`, body);
+
+  return Promise.resolve(data);
+}
+
 export {
   getAllCategories,
-  addBoard
+  addBoard,
+  getBoard,
+  addThread,
 }
