@@ -4,6 +4,7 @@
     <div v-for="thread of threads">
       {{ thread.title }}
       <br />
+      {{ thread.username }}
       <!--      <div v-html="thread.description"></div>-->
     </div>
   </div>
@@ -14,7 +15,7 @@
   <!--  </div>-->
   <div v-if="toasts.length > 0" class="fixed bottom-10 left-10">
     <div v-for="toast of toasts" class="w-auto">
-      <Toast :text="toast.text" @toast-close="removeToast(toast.date)" class="w-[220px] mt-2" />
+      <Toast :text="toast.text" @toast-close="removeToast(toast.date)" />
     </div>
   </div>
 </template>
@@ -48,7 +49,7 @@ export default defineComponent({
       this.threads.push(data.body.thread);
       this.toasts.unshift({
         date: Date.now(),
-        text: data.body.thread.title,
+        text: 'New thread added.',
       });
     },
     removeToast(date: Date) {
