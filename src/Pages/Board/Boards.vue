@@ -21,11 +21,14 @@ export default defineComponent({
     };
   },
   beforeMount() {
-    getAllCategories().then((data) => {
-      this.categories = data.body.categories;
-    });
+    this.fetchCategories();
   },
   methods: {
+    fetchCategories() {
+      getAllCategories().then((data) => {
+        this.categories = data.body.categories;
+      });
+    },
     async addBoard() {
       const newBoard = await addBoard();
       this.categories.map((c) => {

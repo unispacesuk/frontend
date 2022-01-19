@@ -18,11 +18,12 @@ export default defineComponent({
     };
   },
   beforeMount() {
-    this.$bus.subscribe('event', this.hey);
+    this.$bus.subscribe('heythere', this.hey);
   },
   methods: {
-    hey(t: any) {
-      console.log(t);
+    hey(name: any, age: any) {
+      console.log(name);
+      console.log(age);
     },
   },
 });

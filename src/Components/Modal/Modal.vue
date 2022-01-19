@@ -19,11 +19,12 @@ export default defineComponent({
   data() {
     return {
       name: 'Ricardo',
+      age: 28,
     };
   },
   methods: {
     click() {
-      this.$bus.publish('event', this.name);
+      this.$bus.publish('heythere', this.name, this.age);
     },
   },
 });

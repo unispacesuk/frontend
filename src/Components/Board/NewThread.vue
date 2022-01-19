@@ -53,7 +53,7 @@ export default defineComponent({
         content: '',
         board: this.$route.params.id,
       };
-      this.$event.emit('reset');
+      this.$bus.publish('input-reset');
     },
     submit() {
       this.$emit('submit-form', this.newThread);

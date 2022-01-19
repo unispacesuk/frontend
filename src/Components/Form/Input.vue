@@ -25,13 +25,11 @@ export default defineComponent({
     },
   },
   emits: ['input-change'],
-  created() {
-    this.$event.on('reset', () => {
-      this.reset();
-    })
+  beforeMount() {
+    this.$bus.subscribe('input-reset', this.reset);
   },
   beforeUnmount() {
-    this.$event.off('reset');
+    this.$bus.unsubscribe('input-reset', this.reset);
   },
   methods: {
     emitValue() {
