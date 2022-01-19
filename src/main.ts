@@ -2,10 +2,12 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import './Assets/tailwind.css';
 import { router } from './Router';
-import mitt from 'mitt';
+
+import { BusService } from './Services/BusService';
+// const bus = new BusService();
 
 const app = createApp(App);
-app.config.globalProperties.$event = mitt();
+app.config.globalProperties.$bus = new BusService();
 app.use(router);
 app.mount('#app');
 
