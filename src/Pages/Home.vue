@@ -1,29 +1,38 @@
 <template>
   hey there from home <br />
-  <button @click="modal = !modal">open modal</button>
-  <Modal v-if="modal"> hi </Modal>
+  <button @click="toast = !toast">show toast</button><br />
+  <button @click="addToast">add toast</button>
+  <transition name="modal">
+    <Modal v-if="modal" @close-modal="modal = false"> this is some modal content </Modal>
+  </transition>
+
+  <Toasts />
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 import Layout from '../Layouts/Layout.vue';
 import Modal from '../Components/Modal/Modal.vue';
+import Toast from '../Components/Toast/Toast.vue';
+import Toasts from '../Components/Toast/Toasts.vue';
 
 export default defineComponent({
   name: 'Home',
-  components: { Modal, Layout },
+  components: { Toasts, Toast, Modal, Layout },
   data() {
     return {
       modal: <boolean>false,
     };
   },
   beforeMount() {
-    this.$bus.subscribe('heythere', this.hey);
+    this.$bus.listen('close-modal', this.handleCloseModal);
   },
   methods: {
-    hey(name: any, age: any) {
-      console.log(name);
-      console.log(age);
+    handleCloseModal() {
+      this.modal = false;
+    },
+    addToast() {
+      this.$bus.emit('add-toast', 'adri loves ric', Date.now());
     },
   },
 });

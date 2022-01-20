@@ -26,10 +26,10 @@ export default defineComponent({
   },
   emits: ['input-change'],
   beforeMount() {
-    this.$bus.subscribe('input-reset', this.reset);
+    this.$bus.listen('input-reset', this.reset);
   },
   beforeUnmount() {
-    this.$bus.unsubscribe('input-reset', this.reset);
+    this.$bus.listen('input-reset', this.reset);
   },
   methods: {
     emitValue() {

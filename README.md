@@ -1,11 +1,42 @@
-# Vue 3 + Typescript + Vite
+### Bus Event Emitter
+We have a BusService that stores listeners to be called when we want to listen to events.<br>
+We can define a listener on a Component and then emit events to that listener from Parent or Child Components.
+This BusService uses rxjs Subject() to define listeners and subjects.
+```typescript
+// subscribe / listen to an event
+this.$bus.listen('event-to-listen', this.fun);
+function fun(data1: any, data2: any, data3: any) {
+  console.log(data1);
+  console.log(data2);
+  console.log(data3);
+}
 
-This template should help get you started developing with Vue 3 and Typescript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+// emit events
+this.$bus.emit('event-to-listen', 'data1', 'data2', 'data3');
 
-## Recommended IDE Setup
+// when we unmount a component we want to clean the events array
+// unsubscribe / remove an event
+this.$bus.forget('event-to-listen');
+```
 
-- [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.volar)
+### Toasts
+The toasts component is an array that stores up to 5 toasts.<br>
+When a toast is displayed a new one will be added below that if the user has any action that needs to show another toast.
+```html
+<template>
+  <Toasts />
+</template>
 
-## Type Support For `.vue` Imports in TS
-
-Since TypeScript cannot handle type information for `.vue` imports, they are shimmed to be a generic Vue component type by default. In most cases this is fine if you don't really care about component prop types outside of templates. However, if you wish to get actual prop types in `.vue` imports (for example to get props validation when using manual `h(...)` calls), you can enable Volar's `.vue` type support plugin by running `Volar: Switch TS Plugin on/off` from VSCode command palette.
+<script lang="ts">
+import { defineComponent } from 'vue';
+import Toasts from './Toasts.vue';
+export default defineComponent({
+  components: { Toasts },
+  methods: {
+    actionToAddToast() {
+      this.$bus.emit('add-toast', 'Toast text...', Date.now());
+    },
+  },
+});
+</script>
+```

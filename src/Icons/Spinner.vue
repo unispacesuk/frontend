@@ -26,11 +26,5 @@ import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'Spinner',
-  props: {
-    classes: {
-      type: String,
-      default: '',
-    },
-  },
 });
 </script>
