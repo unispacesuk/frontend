@@ -22,9 +22,9 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { getBoard, addThread } from '../../Services/BoardsService';
+import { getBoard, addThread } from '../../Services/Board/BoardsService';
 import NewThread from '../../Components/Board/NewThread.vue';
-import { IThread } from '../../Interfaces/IThread';
+import { IThread } from '../../Interfaces/Board/IThread';
 import Toast from '../../Components/Toast/Toast.vue';
 
 export default defineComponent({

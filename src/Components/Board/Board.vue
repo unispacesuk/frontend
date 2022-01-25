@@ -22,14 +22,17 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { IBoard } from '../../Interfaces/Board/IBoard';
 
 export default defineComponent({
   name: 'Board',
-  props: {
-    boards: {
-      type: Array,
-      default: [],
-    },
+  props: ['boards'],
+  setup(props: any) {
+    const boards: IBoard[] = props.boards;
+
+    return {
+      boards,
+    };
   },
 });
 </script>

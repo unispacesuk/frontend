@@ -11,11 +11,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import Toast from './Toast.vue';
-
-interface IToast {
-  text: string;
-  id: number;
-}
+import { IToast } from '../../Interfaces/Toast/IToast';
 
 export default defineComponent({
   name: 'Toasts',
@@ -34,7 +30,7 @@ export default defineComponent({
   },
   methods: {
     addToast(text: string, id: number) {
-      (this.toasts.length === 5) ? this.toasts.shift() : '';
+      this.toasts.length === 5 ? this.toasts.shift() : '';
       this.toasts.push({
         text: text,
         id: id,

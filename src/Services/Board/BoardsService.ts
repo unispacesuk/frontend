@@ -1,4 +1,4 @@
-import { Get, Post } from '../Util/Request';
+import { Get, Post } from '../../Util/Request';
 
 async function getAllCategories(): Promise<any> {
   const data = await Get('category/all');
@@ -6,12 +6,12 @@ async function getAllCategories(): Promise<any> {
   return Promise.resolve(data);
 }
 
-async function addBoard() {
-  const body = {
-    title: 'Movies',
-    description: 'Want to get recommendations for movies or series to watch?',
-    category: 3,
-  }
+async function addBoard(body: any) {
+  // const body = {
+  //   title: 'Movies',
+  //   description: 'Want to get recommendations for movies or series to watch?',
+  //   category: 3,
+  // }
 
   const data = await Post('board/add', body);
 

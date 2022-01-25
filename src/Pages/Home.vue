@@ -1,6 +1,5 @@
 <template>
   hey there from home <br />
-  <button @click="toast = !toast">show toast</button><br />
   <button @click="addToast">add toast</button>
   <transition name="modal">
     <Modal v-if="modal" @close-modal="modal = false"> this is some modal content </Modal>
@@ -22,6 +21,7 @@ export default defineComponent({
   data() {
     return {
       modal: <boolean>false,
+      showToast: <boolean>false,
     };
   },
   beforeMount() {
@@ -32,7 +32,7 @@ export default defineComponent({
       this.modal = false;
     },
     addToast() {
-      this.$bus.emit('add-toast', 'adri loves ric', Date.now());
+      this.$bus.emit('add-toast', 'random string', Date.now());
     },
   },
 });

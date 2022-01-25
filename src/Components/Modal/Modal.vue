@@ -1,6 +1,6 @@
 <template>
-  <div
-    class="absolute top-0 left-0 w-full h-screen bg-black bg-opacity-70 flex flex-col justify-evenly items-center"
+  <div id="back"
+    class="fixed top-0 left-0 w-full h-screen bg-black bg-opacity-70 flex flex-col justify-evenly items-center"
   >
     <div class="relative w-2/4 h-auto bg-white p-5 rounded-md shadow-sm">
       <button @click="closeModal" class="absolute top-2 right-2 button-accent p-1">
@@ -26,16 +26,27 @@ export default defineComponent({
     };
   },
   beforeMount() {
-    addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        this.closeModal();
-      }
-    });
+    addEventListener('keydown', this.handleKeyDown);
+    addEventListener('click', this.handleClick);
+  },
+  beforeUnmount() {
+    removeEventListener('keydown', this.handleKeyDown);
+    removeEventListener('click', this.handleClick);
   },
   methods: {
     closeModal() {
       this.$emit('close-modal');
     },
+    handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        this.closeModal();
+      }
+    },
+    handleClick(e: MouseEvent) {
+      if ((e.target as HTMLElement).id === 'back') {
+        this.closeModal();
+      }
+    }
   },
 });
 </script>

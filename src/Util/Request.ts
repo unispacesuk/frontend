@@ -3,8 +3,7 @@ import axios, { AxiosPromise } from 'axios';
 const API = 'http://api.unispaces.test';
 
 export const Headers = {
-  authorization:
-    'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJyaWNhcmRvIiwiZW1haWwiOiJtZUBycm9jaGEudWsiLCJpYXQiOjE2NDIyODkwNDEsImV4cCI6MTY0MjcyMTA0MX0.X-swct-TXBTtV8hSx_bTsvSintQGdBTm-MT1qUoFneQ',
+  authorization: `Bearer ${import.meta.env.VITE_TOKEN}`,
 };
 
 export async function Get(path: string, params?: object): Promise<any> {

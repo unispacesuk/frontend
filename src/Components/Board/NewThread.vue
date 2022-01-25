@@ -24,7 +24,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { IThread } from '../../Interfaces/IThread';
+import { IThread } from '../../Interfaces/Board/IThread';
 import ButtonPlain from '../Buttons/ButtonPlain.vue';
 import ButtonPrimary from '../Buttons/ButtonPrimary.vue';
 import Input from '../Form/Input.vue';

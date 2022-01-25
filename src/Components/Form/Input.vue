@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 
 export default defineComponent({
   name: 'Input',
@@ -18,11 +18,13 @@ export default defineComponent({
       value: '',
     };
   },
-  props: {
-    placeholder: {
-      type: String,
-      default: '',
-    },
+  props: ['placeholder'],
+  setup(props: any) {
+    const placeholder: string = ref(props.placeholder);
+
+    return {
+      placeholder,
+    };
   },
   emits: ['input-change'],
   beforeMount() {

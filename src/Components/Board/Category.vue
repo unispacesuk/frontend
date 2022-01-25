@@ -14,21 +14,30 @@
       </div>
     </div>
     <Board :boards="category.boards" />
+    <div class="px-10 py-2">
+<!--      <ButtonPlain @click="$emit('add-board', category)">Add Board</ButtonPlain>-->
+      <ButtonPlain label="Add Board" @button-click="$emit('add-board', category)" />
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 import Board from './Board.vue';
+import { ICategory } from '../../Interfaces/Board/ICategory';
+import ButtonPlain from '../Buttons/ButtonPlain.vue';
 
 export default defineComponent({
   name: 'Category',
-  components: { Board },
-  props: {
-    category: {
-      type: Object,
-      default: {},
-    },
+  components: { ButtonPlain, Board },
+  props: ['category'],
+  emits: ['add-board'],
+  setup(props) {
+    const category: ICategory = props.category;
+
+    return {
+      category,
+    };
   },
 });
 </script>

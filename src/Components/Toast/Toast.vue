@@ -11,18 +11,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
+import { IToast } from '../../Interfaces/Toast/IToast';
 
 export default defineComponent({
   name: 'Toast',
-  props: {
-    toast: {
-      type: Object,
-      default: {
-        text: '',
-        id: 0,
-      },
-    },
+  props: ['toast'],
+  setup(props: any) {
+    const toast: IToast = props.toast;
+    return {
+      toast,
+    };
   },
   data() {
     return {

@@ -1,6 +1,6 @@
 <template>
   <button
-    class="px-4 py-2 bg-blue-400 hover:bg-blue-500 active:bg-blue-300 text-white font-bold rounded-md shadow-sm"
+    class="px-4 py-2 bg-blue-400 hover:bg-blue-500 active:bg-blue-300 text-white font-bold rounded-md shadow-sm outline-none"
     @click.prevent="$emit(`button-click`)"
   >
     {{ label }}
