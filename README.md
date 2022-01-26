@@ -40,3 +40,9 @@ export default defineComponent({
 });
 </script>
 ```
+
+### Interfaces
+On the Interfaces folder we will keep all interfaces related to any object
+is used in the frontend.
+In order to keep a well-organised codebase we need to try and use Types wherever possible
+and we see fit!!

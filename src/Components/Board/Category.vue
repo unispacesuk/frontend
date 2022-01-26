@@ -14,10 +14,6 @@
       </div>
     </div>
     <Board :boards="category.boards" />
-    <div class="px-10 py-2">
-<!--      <ButtonPlain @click="$emit('add-board', category)">Add Board</ButtonPlain>-->
-      <ButtonPlain label="Add Board" @button-click="$emit('add-board', category)" />
-    </div>
   </div>
 </template>
 

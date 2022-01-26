@@ -1,5 +1,5 @@
 <template>
-  <div class="px-5 py-2" v-if="boards.length === 0">You haven't added any boards here yet.</div>
+  <div class="px-5 py-2" v-if="boards.length === 0">There are no boards here.</div>
   <ul>
     <li v-for="board in boards">
       <div
