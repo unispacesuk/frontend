@@ -1,41 +1,33 @@
 <template>
   <div class="mb-20">
     <div v-if="threads.length === 0">There are no threads on this board.</div>
-    <div v-for="thread of threads">
-      {{ thread.title }}
-      <br />
-      {{ thread.username }}
-      <!--      <div v-html="thread.description"></div>-->
+    <div v-for="thread of threads" :key="thread.id">
+      <Thread :thread="thread" />
     </div>
+
+    <Pagination :pages="5" />
   </div>
 
   <NewThread @submit-form="addNewThread" />
-  <!--  <div v-if="showToast">-->
-  <!--    <Toast text="New Thread Added!" @toast-close="showToast = false" />-->
-  <!--  </div>-->
-  <div v-if="toasts.length > 0" class="fixed bottom-10 left-10">
-    <div v-for="toast of toasts" class="w-auto">
-      <Toast :text="toast.text" @toast-close="removeToast(toast.date)" />
-    </div>
-  </div>
+  <Toasts />
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { getBoard, addThread } from '../../Services/Board/BoardsService';
-import NewThread from '../../Components/Board/NewThread.vue';
+import NewThread from '../../Components/Board/Forms/NewThread.vue';
 import { IThread } from '../../Interfaces/Board/IThread';
-import Toast from '../../Components/Toast/Toast.vue';
+import Toasts from '../../Components/Toast/Toasts.vue';
+import Thread from '../../Components/Board/Thread.vue';
+import Pagination from '../../Components/Pagination/Pagination.vue';
 
 export default defineComponent({
   name: 'Board',
-  components: { Toast, NewThread },
+  components: { Pagination, Thread, Toasts, NewThread },
   emits: ['reset-form'],
   data() {
     return {
       threads: <IThread[]>[],
-      showToast: <boolean>false,
-      toasts: <any[]>[],
     };
   },
   beforeMount() {
@@ -46,14 +38,8 @@ export default defineComponent({
   methods: {
     async addNewThread(newThread: IThread) {
       const data = await addThread(newThread);
-      this.threads.push(data.body.thread);
-      this.toasts.unshift({
-        date: Date.now(),
-        text: 'New thread added.',
-      });
-    },
-    removeToast(date: Date) {
-      this.toasts = this.toasts.filter((t) => t.date !== date);
+      this.threads.unshift(data.body.thread);
+      this.$bus.emit('add-toast', 'New thread added.');
     },
   },
 });

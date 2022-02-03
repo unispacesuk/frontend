@@ -1,6 +1,7 @@
 import axios, { AxiosPromise } from 'axios';
-// const API = import.meta.env.VITE_API;
-const API = 'http://api.unispaces.test';
+const API = import.meta.env.VITE_API;
+// const API = 'http://api.unispaces.test';
+// const API = 'http://localhost:3000';
 
 export const Headers = {
   authorization: `Bearer ${import.meta.env.VITE_TOKEN}`,

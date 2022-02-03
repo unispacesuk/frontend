@@ -3,7 +3,7 @@
   <ul>
     <li v-for="board in boards">
       <div
-        class="flex pl-10 pr-5 py-2 border-b border-slate-200 rounded-md hover:bg-slate-50 transition ease-in-out duration-200"
+        class="flex pl-10 pr-5 py-2 border-b border-slate-200 rounded-md table-hover"
       >
         <div class="w-4/5">
           <router-link :to="{ name: 'board', params: { id: board.id } }">

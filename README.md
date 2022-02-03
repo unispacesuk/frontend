@@ -34,7 +34,7 @@ export default defineComponent({
   components: { Toasts },
   methods: {
     actionToAddToast() {
-      this.$bus.emit('add-toast', 'Toast text...', Date.now());
+      this.$bus.emit('add-toast', 'Toast text...');
     },
   },
 });

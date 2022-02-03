@@ -1,5 +1,5 @@
 <template>
-  <div class="absolute bottom-10 left-10">
+  <div class="fixed bottom-10 left-10">
     <transition-group name="toast" appear>
       <div v-for="toast in toasts" v-bind:key="toast.id">
         <Toast v-if="toast.id" @close-toast="removeToast(toast.id)" :toast="toast" />
@@ -29,11 +29,11 @@ export default defineComponent({
     this.$bus.forget('add-toast');
   },
   methods: {
-    addToast(text: string, id: number) {
+    addToast(text: string) {
       this.toasts.length === 5 ? this.toasts.shift() : '';
       this.toasts.push({
         text: text,
-        id: id,
+        id: Date.now(),
       });
     },
     removeToast(id: number) {

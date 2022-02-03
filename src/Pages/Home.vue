@@ -32,7 +32,7 @@ export default defineComponent({
       this.modal = false;
     },
     addToast() {
-      this.$bus.emit('add-toast', 'random string', Date.now());
+      this.$bus.emit('add-toast', 'random string');
     },
   },
 });

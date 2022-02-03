@@ -1,5 +1,5 @@
 <template>
-  <form class="border-t border-slate-300 px-3 text-center">
+  <form class="px-3 text-center">
     <div class="text-xl py-3">Add a New Thread</div>
     <div class="flex flex-col space-y-2">
       <Input
@@ -16,7 +16,7 @@
       ></textarea>
       <div class="flex justify-end space-x-2">
         <ButtonPrimary label="Submit" @button-click="submit" />
-        <ButtonPlain label="Clear Form" @button-click="clearForm" />
+        <ButtonPlain label="Clear Form" @button-click="clearForm(true)" />
       </div>
     </div>
   </form>
@@ -24,10 +24,10 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { IThread } from '../../Interfaces/Board/IThread';
-import ButtonPlain from '../Buttons/ButtonPlain.vue';
-import ButtonPrimary from '../Buttons/ButtonPrimary.vue';
-import Input from '../Form/Input.vue';
+import { IThread } from '../../../Interfaces/Board/IThread';
+import ButtonPlain from '../../Buttons/ButtonPlain.vue';
+import ButtonPrimary from '../../Buttons/ButtonPrimary.vue';
+import Input from '../../Form/Input.vue';
 
 export default defineComponent({
   name: 'NewThread',
@@ -47,13 +47,18 @@ export default defineComponent({
     };
   },
   methods: {
-    clearForm() {
+    clearForm(click?: boolean) {
       this.newThread = {
+        id: 0,
         title: '',
         content: '',
         board: this.$route.params.id,
       };
-      this.$bus.publish('input-reset');
+      this.$bus.emit('input-reset');
+
+      if (click) {
+        this.$bus.emit('add-toast', 'Form cleared.')
+      }
     },
     submit() {
       this.$emit('submit-form', this.newThread);
