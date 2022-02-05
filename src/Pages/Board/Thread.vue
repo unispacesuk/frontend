@@ -11,9 +11,11 @@
     </div>
 
     <!-- Thread content -->
-    <div class="p-3 flex">
+    <div class="flex">
       <!-- User info -->
-      <div class="w-1/4 h-auto text-center">hi</div>
+      <div class="w-1/4 h-auto p-3">
+        <UserInfo username="ricdotnet" />
+      </div>
       <!-- OP content -->
       <div class="w-3/4 border-l border-slate-200 px-3">
         <div class="p-3 border-b border-slate-200 flex items-center justify-between">
@@ -47,10 +49,11 @@ import Layout from '../../Layouts/Layout.vue';
 import { IThread } from '../../Interfaces/Board/IThread';
 import Left from '../../Icons/Arrows/Left.vue';
 import Modal from '../../Components/Modal/Modal.vue';
+import UserInfo from '../../Components/Board/UserInfo.vue';
 
 export default defineComponent({
   name: 'Thread',
-  components: { Modal, Left, Layout },
+  components: { UserInfo, Modal, Left, Layout },
   data() {
     return {
       deleteConfirmModal: false,
