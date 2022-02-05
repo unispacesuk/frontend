@@ -2,14 +2,15 @@
   <div class="mb-20">
     <div v-if="threads.length === 0">There are no threads on this board.</div>
     <div v-for="thread of threads" :key="thread.id">
-      <Thread :thread="thread" />
+      <router-link :to="{ name: 'thread', params: { id: thread.id } }">
+        <Thread :thread="thread" />
+      </router-link>
     </div>
 
-    <Pagination :pages="5" />
+<!--    <Pagination :pages="5" />-->
   </div>
 
   <NewThread @submit-form="addNewThread" />
-  <Toasts />
 </template>
 
 <script lang="ts">

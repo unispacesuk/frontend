@@ -5,7 +5,6 @@
     <Modal v-if="modal" @close-modal="modal = false"> this is some modal content </Modal>
   </transition>
 
-  <Toasts />
 </template>
 
 <script lang="ts">

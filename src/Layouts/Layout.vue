@@ -8,13 +8,15 @@
         <slot></slot>
       </div>
     </div>
+    <Toasts />
   </div>
 </template>
 
 <script lang="ts">
 import LeftNav from '../Components/LeftNav.vue';
+import Toasts from '../Components/Toast/Toasts.vue';
 export default {
   name: 'Layout',
-  components: { LeftNav },
+  components: { Toasts, LeftNav },
 };
 </script>

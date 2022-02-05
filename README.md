@@ -22,6 +22,11 @@ this.$bus.forget('event-to-listen');
 ### Toasts
 The toasts component is an array that stores up to 5 toasts.<br>
 When a toast is displayed a new one will be added below that if the user has any action that needs to show another toast.
+
+The Toasts component is initialized on the `toppest` level component (Layout). This then allows us 
+to keep adding toasts even after redirecting to another page (ex: when deleting something).
+It also allows users to navigate through the app and still have older toasts showing before the timer
+runs out.
 ```html
 <template>
   <Toasts />

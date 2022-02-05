@@ -1,4 +1,5 @@
-import { Get, Post } from '../../Util/Request';
+import { Delete, Get, Post } from '../../Util/Request';
+import { Observable } from 'rxjs';
 
 async function getAllCategories(): Promise<any> {
   const categories = await Get('category/all');
@@ -10,8 +11,8 @@ async function getAllCategories(): Promise<any> {
 async function addCategory() {
   const body = {
     title: 'New Cat',
-    description: 'New cat desc'
-  }
+    description: 'New cat desc',
+  };
   const data = await Post('category/add', body);
   return Promise.resolve(data);
 }
@@ -44,6 +45,18 @@ async function addThread(body: object) {
   return Promise.resolve(newThread);
 }
 
+async function getThread(id: string) {
+  const { body } = await Get(`thread/${id}`);
+
+  return Promise.resolve(body.thread);
+}
+
+async function deleteThread(id: number) {
+  const { body } = await Delete(`thread/${id}`);
+
+  return Promise.resolve(body.message);
+}
+
 export {
   addCategory,
   getAllCategories,
@@ -51,4 +64,6 @@ export {
   addBoard,
   getBoard,
   addThread,
-}
+  getThread,
+  deleteThread,
+};

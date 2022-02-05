@@ -21,8 +21,6 @@ export default defineComponent({
   emits: ['close-modal'],
   data() {
     return {
-      name: 'Ricardo',
-      age: 28,
     };
   },
   beforeMount() {
