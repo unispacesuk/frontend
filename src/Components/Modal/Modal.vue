@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import Cross from '../../Icons/Cross.vue';
+import Cross from '../../Icons/Util/Cross.vue';
 
 export default defineComponent({
   name: 'Modal',
