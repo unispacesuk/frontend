@@ -8,30 +8,30 @@
     </div>
     <div class="text-right flex flex-col space-y-3 w-[60%]">
       <router-link to="/">
-        <NavLink name="Home">
+        <NavLink name="Home" route="home">
           <HomeSolid class="w-5" />
         </NavLink>
       </router-link>
       <router-link to="/boards">
-        <NavLink name="Boards">
+        <NavLink name="Boards" route="board">
           <BoardSolid class="w-5" />
         </NavLink>
       </router-link>
       <router-link to="/questions">
-        <NavLink name="Questions">
+        <NavLink name="Questions" route="question">
           <QuestionSolid class="w-5" />
         </NavLink>
       </router-link>
 
       <!-- user dashboard // can change in the future -->
       <router-link to="/dashboard">
-        <NavLink name="Dashboard">
+        <NavLink name="Dashboard" route="dashboard">
           <UserSolid class="w-5" />
         </NavLink>
       </router-link>
       <!-- if user is admin -->
       <router-link to="/admin">
-        <NavLink name="Admin Panel">
+        <NavLink name="Admin Panel" route="admin">
           <CogSolid class="w-5" />
         </NavLink>
       </router-link>

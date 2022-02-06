@@ -7,7 +7,10 @@ import { BusService } from './Services/BusService';
 // const bus = new BusService();
 
 const app = createApp(App);
+
+// global properties
 app.config.globalProperties.$bus = new BusService();
+
 app.use(router);
 app.mount('#app');
 

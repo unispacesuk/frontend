@@ -1,5 +1,4 @@
 import { Delete, Get, Post } from '../../Util/Request';
-import { Observable } from 'rxjs';
 
 async function getAllCategories(): Promise<any> {
   const categories = await Get('category/all');

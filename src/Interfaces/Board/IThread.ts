@@ -4,5 +4,5 @@ export interface IThread {
   content: string;
   board?: string | string[]; // dodgy code here
   username?: string;
-  createdAt: Date;
+  createdAt?: Date;
 }

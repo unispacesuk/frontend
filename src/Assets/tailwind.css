@@ -14,6 +14,14 @@ body {
     @apply hover:bg-slate-50 transition ease-in-out duration-200 cursor-pointer
 }
 
+.card-hover {
+    @apply transition ease-in-out duration-150 hover:-translate-y-[2px] hover:shadow-md
+}
+
+.smooth {
+    @apply ease-in-out duration-150
+}
+
 .modal-enter-active,
 .modal-leave-active {
     @apply transition-all ease-in-out duration-150
