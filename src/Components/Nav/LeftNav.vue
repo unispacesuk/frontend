@@ -29,6 +29,7 @@
           <UserSolid class="w-5" />
         </NavLink>
       </router-link>
+
       <!-- if user is admin -->
       <router-link to="/admin">
         <NavLink name="Admin Panel" route="admin">

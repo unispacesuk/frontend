@@ -26,7 +26,10 @@
     </div>
 
     <div class="flex justify-end space-x-2">
-      <ButtonPrimary label="Submit" @button-click="submit" />
+      <ButtonPrimary label="" @button-click="submit" class="flex space-x-2" :disabled="loading">
+        <div>{{ (label = 'Submit') }}</div>
+        <Spinner v-if="loading" class="w-6" />
+      </ButtonPrimary>
       <ButtonPlain label="Clear Form" @button-click="clearForm(true)" />
     </div>
   </form>
@@ -40,10 +43,11 @@ import ButtonPrimary from '../Buttons/ButtonPrimary.vue';
 import ButtonPlain from '../Buttons/ButtonPlain.vue';
 import Label from '../Form/Label.vue';
 import { submitQuestion } from '../../Services/Question/QuestionService';
+import { Spinner } from '../../Icons';
 
 export default defineComponent({
   name: 'AskQuestionForm',
-  components: { Label, Textarea, Input, ButtonPrimary, ButtonPlain },
+  components: { Label, Textarea, Input, ButtonPrimary, ButtonPlain, Spinner },
   emits: ['reset-inputs'],
   data() {
     return {
@@ -55,6 +59,7 @@ export default defineComponent({
       tags: {
         value: '',
       },
+      loading: false,
     };
   },
   methods: {
@@ -73,18 +78,29 @@ export default defineComponent({
       }
     },
     async submit() {
+      this.loading = true;
+
+      // TODO: This has to be refactored to be separate and show custom error messages
+      for (const el in this.newQuestion) {
+        // @ts-ignore -> this will come out on refactor
+        if (this.newQuestion[el] === '' || this.tags.value === '') {
+          this.loading = false;
+          return alert('fill all details');
+        }
+      }
+
       let tagsArray = this.tags.value.split(',');
       tagsArray = tagsArray.map(t => t.trim()).filter(t => t !== '');
       this.newQuestion.tags = tagsArray;
 
       await submitQuestion(this.newQuestion).then((r) => {
-        console.log(r);
         this.clearForm();
         this.$bus.emit('add-toast', 'Question posted.');
         this.$emit('reset-inputs');
 
         // TODO: redirect to question after adding
         this.$router.push('/questions')
+        this.loading = false;
       });
     },
   },

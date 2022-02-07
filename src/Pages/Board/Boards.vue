@@ -5,9 +5,9 @@
     <BoardsSkeleton />
   </div>
   <div v-if="!loading">
-    <div v-if="data.categories.length === 0">You haven't added any categories yet.</div>
+    <div v-if="categories.length === 0">You haven't added any categories yet.</div>
 
-    <div v-if="data.categories.length > 0" v-for="category in data.categories">
+    <div v-if="categories.length > 0" v-for="category in categories">
       <Category :category="category" @add-board="newBoard" />
     </div>
 
@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, reactive } from 'vue';
+import { defineComponent, ref, onBeforeMount } from 'vue';
 import { getAllCategories, addBoard } from '../../Services/Board/BoardsService';
 import Category from '../../Components/Board/Category.vue';
 import Modal from '../../Components/Modal/Modal.vue';
@@ -32,36 +32,37 @@ export default defineComponent({
   name: 'Boards',
   components: { BoardsSkeleton, AddBoard, Category, Modal },
   setup() {
-    // const categories = ref<ICategory[]>([]);
-    const data = reactive({
-      categories: [],
-    });
+    const categories = ref<any[]>([]);
     const addingBoard = ref<boolean>(false);
     const selectedCategory = ref<ICategory>();
     const loading = ref<boolean>(true);
 
+    onBeforeMount(async () => {
+      getAllCategories().then((data) => {
+        categories.value = data.body.categories;
+        loading.value = false;
+      });
+    });
+
     return {
-      data,
+      categories,
       addingBoard,
       selectedCategory,
       loading,
     };
   },
-  beforeMount() {
-    this.fetchCategories();
-  },
   methods: {
-    fetchCategories() {
-      getAllCategories().then((data) => {
-        this.data.categories = data.body.categories;
-        this.loading = false;
-      });
-    },
+    // fetchCategories() {
+    //   getAllCategories().then((data) => {
+    //     this.data.categories = data.body.categories;
+    //     this.loading = false;
+    //   });
+    // },
     async addBoard(body: any) {
       // const newBoard = await addBoard();
       const newBoard = await addBoard(body);
       this.closeModal();
-      this.data.categories.map((c: any) => {
+      this.categories.map((c: any) => {
         if (c.id === newBoard.body.board.categoryId) {
           c.boards.push(newBoard.body.board);
         }

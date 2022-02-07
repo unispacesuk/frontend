@@ -21,11 +21,9 @@ export default defineComponent({
   props: ['name', 'route'],
   setup(props: LinkProps) {
     const name = props.name;
-    const key = props.route;
 
     return {
       name,
-      key,
     };
   },
 });

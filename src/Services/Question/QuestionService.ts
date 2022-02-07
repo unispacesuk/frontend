@@ -5,8 +5,13 @@ import { IQuestion } from '../../Interfaces/Question/IQuestion';
  * Get all questions
  * this function can also be used with search
  */
-async function getAllQuestions() {
-  const { body } = await Get('question/all');
+async function getAllQuestions(query?: any) {
+  let reqUrl = `question/all`;
+  if (query !== undefined) {
+    reqUrl = reqUrl + `?${query}`;
+  }
+
+  const { body } = await Get(reqUrl);
 
   return Promise.resolve(body);
 }

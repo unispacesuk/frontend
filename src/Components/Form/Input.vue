@@ -5,6 +5,8 @@
     :placeholder="placeholder"
     v-model="value"
     @keyup="emitValue"
+    @focusin="$emit('input-focused')"
+    @focusout="$emit('input-focused')"
   />
 </template>
 
@@ -26,7 +28,7 @@ export default defineComponent({
       placeholder,
     };
   },
-  emits: ['input-change'],
+  emits: ['input-change', 'input-focused'],
   beforeMount() {
     this.$bus.listen('input-reset', this.reset);
   },

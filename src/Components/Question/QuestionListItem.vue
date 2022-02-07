@@ -1,3 +1,4 @@
+<!-- TODO: Mobile ready this -->
 <template>
   <div class="w-full border border-slate-200 rounded-md p-3 flex space-x-4 shadow-sm card-hover">
     <!-- User info -->
@@ -13,17 +14,21 @@
           {{ question.title }}
         </router-link>
       </div>
-      <div class="text-sm text-slate-400">Asked on: {{ new Date(question.createdAt).toLocaleString() }}</div>
+      <div class="text-sm text-slate-400">
+        Asked on: {{ new Date(question.createdAt).toLocaleString() }}
+      </div>
       <!--        {{ question.description }}<br /><br />-->
-      <div class="flex space-x-2 absolute bottom-0">
+      <div class="flex space-x-2 absolute bottom-0 w-full overflow-x-auto">
         <div v-for="tag of question.tags">
-          <Tag :tag="tag" />
+          <router-link :to="{ name: 'questions', query: { tag } }">
+            <Tag :tag="tag" />
+          </router-link>
         </div>
       </div>
     </div>
 
     <!-- More info -->
-    <!--      <div class="w-1/5">hey</div>-->
+    <div class="w-1/5">Replies: 10</div>
   </div>
 </template>
 
