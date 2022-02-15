@@ -1,6 +1,6 @@
 <template>
   <div class="flex justify-between hover:transform hover:translate-x-2 ease-in-out duration-150"
-    :class="(this.$route.name === route) ? 'text-gray-400' : ''">
+    :class="(this.$route.fullPath.toLowerCase().includes(name.toLowerCase())) ? 'text-gray-400' : ''">
     <div class="py-2 font-bold">
       {{ name }}
     </div>

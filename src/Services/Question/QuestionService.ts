@@ -5,7 +5,7 @@ import { IQuestion } from '../../Interfaces/Question/IQuestion';
  * Get all questions
  * this function can also be used with search
  */
-async function getAllQuestions(query?: any) {
+async function getAllQuestions(query?: string) {
   let reqUrl = `question/all`;
   if (query !== undefined) {
     reqUrl = reqUrl + `?${query}`;

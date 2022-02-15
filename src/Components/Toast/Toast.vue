@@ -5,7 +5,7 @@
   >
     <div class="flex items-center space-x-2">
       <!--      <CheckIcon />-->
-      <div>{{ toast.text }}</div>
+      <div class="text-sm">{{ toast.text }}</div>
     </div>
   </div>
 </template>

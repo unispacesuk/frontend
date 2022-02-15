@@ -7,11 +7,14 @@
           class="w-6 absolute top-1/2 -translate-y-1/2 left-2 text-gray-300"
           :class="isSearchFocused ? 'text-slate-500' : ''"
         />
-        <Input
-          placeholder="search questions"
-          class="pl-9"
-          @input-focused="isSearchFocused = !isSearchFocused"
-        />
+        <form @submit.prevent="searchQuestions">
+          <Input
+            placeholder="search questions"
+            class="pl-9"
+            @input-focused="isSearchFocused = !isSearchFocused"
+            @input-change="(v) => searchQuery = v"
+          />
+        </form>
         <!-- Dropdown / filters / tags sorted by most used -->
       </div>
       <div>
@@ -35,7 +38,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onBeforeMount, watch, inject, onMounted } from 'vue';
+import { defineComponent, inject, onBeforeMount, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import ButtonPrimary from '../../Components/Buttons/ButtonPrimary.vue';
 import { getAllQuestions } from '../../Services/Question/QuestionService';
@@ -44,6 +47,7 @@ import QuestionListItem from '../../Components/Question/QuestionListItem.vue';
 import Input from '../../Components/Form/Input.vue';
 import { SearchCircleIcon } from '@heroicons/vue/solid';
 import QuestionListSkeleton from '../../Components/Skeletons/QuestionListSkeleton.vue';
+import { router } from '../../Router';
 
 export default defineComponent({
   name: 'Questions',
@@ -57,6 +61,7 @@ export default defineComponent({
     const questions = ref<IQuestion[]>([]);
     const loading = ref<boolean>(true);
     const $bus: any = inject('$bus');
+    const searchQuery = ref<string>('');
 
     // get the routes full path and watch for changes...
     const route = useRoute();
@@ -71,11 +76,15 @@ export default defineComponent({
             loading.value = false;
           });
         }
-      }
+      },
     );
 
     onBeforeMount(() => {
-      getAllQuestions().then((d) => {
+      let query = '';
+      if (route.params.keyword) {
+        query += `keyword=${route.params.keyword}`
+      }
+      getAllQuestions(query).then((d) => {
         questions.value = d.questions;
         loading.value = false;
       });
@@ -90,9 +99,20 @@ export default defineComponent({
       });
     };
 
+    const searchQuestions = () => {
+      loading.value = true;
+      router.push(`/questions/s/${searchQuery.value}`);
+      getAllQuestions(`keyword=${searchQuery.value}`).then((d) => {
+        questions.value = d.questions;
+        loading.value = false;
+      });
+    };
+
     return {
       questions,
       loading,
+      searchQuestions,
+      searchQuery,
     };
   },
 });

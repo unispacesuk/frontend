@@ -31,6 +31,7 @@ const routes = [
 
   // question routes
   { path: '/questions', name: 'questions', component: Questions },
+  { path: '/questions/s/:keyword', name: 'searchQuestions', component: Questions },
   { path: '/questions/ask', name: 'askQuestion', component: AskQuestion },
   { path: '/questions/:id', name: 'question', component: Question },
 
