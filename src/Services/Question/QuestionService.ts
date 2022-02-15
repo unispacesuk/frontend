@@ -1,4 +1,4 @@
-import { Get, Post } from '../../Util/Request';
+import { Delete, Get, Post } from '../../Util/Request';
 import { IQuestion } from '../../Interfaces/Question/IQuestion';
 
 /**
@@ -34,4 +34,14 @@ async function getQuestion(id: string) {
   // get single question from id
 }
 
-export { getAllQuestions, submitQuestion, getQuestion };
+/**
+ *
+ * @param id
+ */
+async function deleteQuestion(id: number) {
+  const response = await Delete(`question/${id}`);
+
+  return Promise.resolve(response);
+}
+
+export { getAllQuestions, submitQuestion, getQuestion, deleteQuestion };

@@ -52,12 +52,6 @@ export default defineComponent({
     };
   },
   methods: {
-    // fetchCategories() {
-    //   getAllCategories().then((data) => {
-    //     this.data.categories = data.body.categories;
-    //     this.loading = false;
-    //   });
-    // },
     async addBoard(body: any) {
       // const newBoard = await addBoard();
       const newBoard = await addBoard(body);

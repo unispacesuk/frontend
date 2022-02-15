@@ -4,11 +4,10 @@
   <transition name="modal">
     <Modal v-if="modal" @close-modal="modal = false"> this is some modal content </Modal>
   </transition>
-
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, inject, onBeforeMount } from 'vue';
 import Layout from '../Layouts/Layout.vue';
 import Modal from '../Components/Modal/Modal.vue';
 import Toast from '../Components/Toast/Toast.vue';
@@ -23,9 +22,16 @@ export default defineComponent({
       showToast: <boolean>false,
     };
   },
-  beforeMount() {
-    this.$bus.listen('close-modal', this.handleCloseModal);
+  setup() {
+    const $bus: any = inject('$bus');
+    onBeforeMount(() => {
+      $bus.listen('close-modal');
+      $bus.listen('add-toast');
+    });
   },
+  // beforeMount() {
+  //   this.$bus.listen('close-modal', this.handleCloseModal);
+  // },
   methods: {
     handleCloseModal() {
       this.modal = false;

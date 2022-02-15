@@ -1,42 +1,41 @@
 <template>
-  <div v-if="loading" class="space-y-2">
-    <QuestionListSkeleton />
-    <QuestionListSkeleton />
-    <QuestionListSkeleton />
-  </div>
-
-  <div v-if="!loading">
-    <div v-if="questions.length === 0">No questions here.</div>
-    <div>
-      <!-- Top row (buttons) -->
-      <div class="flex justify-between border-b border-slate-200 p-3">
-        <div class="flex relative">
-          <SearchCircleIcon
-            class="w-6 absolute top-1/2 -translate-y-1/2 left-2 text-gray-300"
-            :class="isSearchFocused ? 'text-slate-500' : ''"
-          />
-          <Input
-            placeholder="search questions"
-            class="pl-9"
-            @input-focused="isSearchFocused = !isSearchFocused"
-          />
-          <!-- Dropdown / filters / tags sorted by most used -->
-        </div>
-        <div>
-          <ButtonPrimary label="Ask" @click="$router.push('/questions/ask')" />
-        </div>
+  <div>
+    <!-- Top row (buttons) -->
+    <div class="flex justify-between border-b border-slate-200 p-3">
+      <div class="flex relative">
+        <SearchCircleIcon
+          class="w-6 absolute top-1/2 -translate-y-1/2 left-2 text-gray-300"
+          :class="isSearchFocused ? 'text-slate-500' : ''"
+        />
+        <Input
+          placeholder="search questions"
+          class="pl-9"
+          @input-focused="isSearchFocused = !isSearchFocused"
+        />
+        <!-- Dropdown / filters / tags sorted by most used -->
       </div>
-      <div class="p-3 space-y-4">
-        <div v-for="question of questions" :key="question.id">
-          <QuestionListItem :question="question" />
-        </div>
+      <div>
+        <ButtonPrimary label="Ask" @click="$router.push('/questions/ask')" />
+      </div>
+    </div>
+
+    <div v-if="loading" class="space-y-2 mt-4">
+      <QuestionListSkeleton />
+      <QuestionListSkeleton />
+      <QuestionListSkeleton />
+    </div>
+
+    <div class="p-3 space-y-4" v-if="!loading">
+      <div v-if="questions.length === 0">No questions here.</div>
+      <div v-for="question of questions" :key="question.id">
+        <QuestionListItem :question="question" />
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onBeforeMount, watch } from 'vue';
+import { defineComponent, ref, onBeforeMount, watch, inject, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import ButtonPrimary from '../../Components/Buttons/ButtonPrimary.vue';
 import { getAllQuestions } from '../../Services/Question/QuestionService';
@@ -57,6 +56,7 @@ export default defineComponent({
   setup() {
     const questions = ref<IQuestion[]>([]);
     const loading = ref<boolean>(true);
+    const $bus: any = inject('$bus');
 
     // get the routes full path and watch for changes...
     const route = useRoute();
@@ -79,7 +79,16 @@ export default defineComponent({
         questions.value = d.questions;
         loading.value = false;
       });
+      $bus.listen('question-delete-success', updateQuestions);
+      $bus.listen('question-delete-request', () => (loading.value = true));
     });
+
+    const updateQuestions = () => {
+      getAllQuestions().then((d) => {
+        questions.value = d.questions;
+        loading.value = false;
+      });
+    };
 
     return {
       questions,

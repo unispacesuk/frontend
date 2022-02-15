@@ -26,6 +26,19 @@ body {
     @apply bg-gray-300 rounded-full animate-pulse
 }
 
+.more-menu {
+    @apply absolute z-10 bg-white right-5 text-center border border-gray-200 rounded-md
+}
+.more-menu > button {
+    @apply px-5 py-2 text-slate-700 hover:bg-slate-100 hover:text-slate-900 outline-none
+}
+
+
+
+/* ##########
+    ANIMATION RELATED CSS
+ ########## */
+
 .modal-enter-active,
 .modal-leave-active {
     @apply transition-all ease-in-out duration-150
