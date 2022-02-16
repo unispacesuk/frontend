@@ -5,7 +5,7 @@ const API = import.meta.env.VITE_API;
 // const API = 'http://localhost:3000';
 
 export const Headers = {
-  authorization: `Bearer ${import.meta.env.VITE_TOKEN}`,
+  authorization: `Bearer ${localStorage.getItem('access-token')}`,
 };
 
 // On this page I need to refactor the request functions to make use of the params object
