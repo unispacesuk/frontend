@@ -30,7 +30,7 @@
         <div>{{ (label = 'Submit') }}</div>
         <Spinner v-if="loading" class="w-6" />
       </ButtonPrimary>
-      <ButtonPlain label="Clear Form" @button-click="clearForm(true)" />
+      <ButtonPlain @button-click="clearForm(true)">Clear Form</ButtonPlain>
     </div>
   </form>
 </template>
@@ -85,7 +85,7 @@ export default defineComponent({
         // @ts-ignore -> this will come out on refactor
         if (this.newQuestion[el] === '' || this.tags.value === '') {
           this.loading = false;
-          return alert('fill all details');
+          return this.$bus.emit('add-toast', 'Enter all details.');
         }
       }
 

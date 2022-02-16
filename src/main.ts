@@ -3,6 +3,8 @@ import App from './App.vue';
 import './Assets/index.css';
 import { router } from './Router';
 
+import { createPinia } from 'pinia';
+
 import { BusService } from './Services/BusService';
 const bus = new BusService();
 
@@ -13,6 +15,7 @@ app.config.globalProperties.$bus = bus;
 app.provide('$bus', bus);
 
 app.use(router);
+app.use(createPinia());
 app.mount('#app');
 
 // createApp(App).use(router).mount('#app');

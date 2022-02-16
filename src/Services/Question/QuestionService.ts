@@ -7,9 +7,9 @@ import { IQuestion } from '../../Interfaces/Question/IQuestion';
  */
 async function getAllQuestions(query?: string) {
   let reqUrl = `question/all`;
-  if (query !== undefined) {
-    reqUrl = reqUrl + `?${query}`;
-  }
+  if (query === undefined) return Promise.resolve();
+  // if (typeof query !== 'undefined') {
+  reqUrl = reqUrl + `?${query}`;
 
   const { body } = await Get(reqUrl);
 
@@ -31,7 +31,9 @@ async function submitQuestion(question: IQuestion) {
  * @param id
  */
 async function getQuestion(id: string) {
-  // get single question from id
+  const { body } = await Get(`question/${id}`);
+
+  return Promise.resolve(body);
 }
 
 /**

@@ -12,7 +12,7 @@
             placeholder="search questions"
             class="pl-9"
             @input-focused="isSearchFocused = !isSearchFocused"
-            @input-change="(v) => searchQuery = v"
+            @input-change="(v) => (searchQuery = v)"
           />
         </form>
         <!-- Dropdown / filters / tags sorted by most used -->
@@ -38,7 +38,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject, onBeforeMount, ref, watch } from 'vue';
+import { defineComponent, inject, onBeforeMount, ref, watch, onActivated } from 'vue';
 import { useRoute } from 'vue-router';
 import ButtonPrimary from '../../Components/Buttons/ButtonPrimary.vue';
 import { getAllQuestions } from '../../Services/Question/QuestionService';
@@ -62,27 +62,15 @@ export default defineComponent({
     const loading = ref<boolean>(true);
     const $bus: any = inject('$bus');
     const searchQuery = ref<string>('');
-
-    // get the routes full path and watch for changes...
     const route = useRoute();
-    watch(
-      () => route.query.tag,
-      () => {
-        loading.value = true;
-        // this may cause problems... keep an eye open here!
-        if (route.query.tag !== 'undefined') {
-          getAllQuestions(`tag=${route.query.tag}`).then((d) => {
-            questions.value = d.questions;
-            loading.value = false;
-          });
-        }
-      },
-    );
 
     onBeforeMount(() => {
       let query = '';
-      if (route.params.keyword) {
-        query += `keyword=${route.params.keyword}`
+      if (route.query.keyword) {
+        query = `keyword=${route.query.keyword}`;
+      }
+      if (route.query.tag) {
+        query = `tag=${route.query.tag}`;
       }
       getAllQuestions(query).then((d) => {
         questions.value = d.questions;
@@ -101,10 +89,11 @@ export default defineComponent({
 
     const searchQuestions = () => {
       loading.value = true;
-      router.push(`/questions/s/${searchQuery.value}`);
-      getAllQuestions(`keyword=${searchQuery.value}`).then((d) => {
-        questions.value = d.questions;
-        loading.value = false;
+      router.push(`/questions/search?keyword=${searchQuery.value}`).then(() => {
+        getAllQuestions(`keyword=${searchQuery.value}`).then((d) => {
+          questions.value = d.questions;
+          loading.value = false;
+        });
       });
     };
 

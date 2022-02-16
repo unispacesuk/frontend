@@ -22,7 +22,7 @@
       <!--        {{ question.description }}<br /><br />-->
       <div class="flex space-x-2 absolute bottom-0 w-full overflow-x-auto">
         <div v-for="tag of question.tags">
-          <router-link :to="{ name: 'questions', query: { tag } }">
+          <router-link :to="`/questions/search?tag=${tag}`">
             <Tag :tag="tag" />
           </router-link>
         </div>

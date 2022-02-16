@@ -26,9 +26,14 @@ export class BusService {
          * Sometimes (when having a form with many inputs) we will have multiple listeners on the same name
          *  (eg: input-reset)... we loop through each event and then call each single function tied to that event.
          */
-        event.forEach(l => {
-          l.listeners.map(fn => fn.call(name, ...data))
-        })
+        event.forEach((l) => {
+          l.listeners.forEach((fn) => {
+            if (fn !== undefined) {
+              fn.call(name, ...data);
+            }
+          });
+          // l.listeners.map(fn => fn.call(name, ...data))
+        });
       }
 
       // if for any reason we get too many events with the same name lets just crash!
@@ -58,12 +63,11 @@ export class BusService {
         l.listeners.push(listener);
       }
     });
-
   }
 
   // unsubscribe or stop listening to events
   forget(name: string) {
-    this.eventListeners = this.eventListeners.filter(l => l.name !== name);
+    this.eventListeners = this.eventListeners.filter((l) => l.name !== name);
   }
 
   // emit or send an event

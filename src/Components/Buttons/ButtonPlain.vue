@@ -2,8 +2,9 @@
   <button
     class="px-4 py-2 bg-gray-400 hover:bg-gray-500 active:bg-gray-300 text-white font-bold rounded-md shadow-sm outline-none"
     @click.prevent="$emit(`button-click`)"
+    :type="type"
   >
-    {{ label }}
+    <slot></slot>
   </button>
 </template>
 
@@ -17,6 +18,10 @@ export default defineComponent({
       type: String,
       default: 'ButtonPlain',
     },
+    type: {
+      type: String,
+      default: '',
+    }
   },
   emits: ['button-click'],
 });
