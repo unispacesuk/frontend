@@ -42,6 +42,9 @@
           >Register <Spinner class="w-5 ml-2" v-if="registerLoading"
         /></ButtonPrimary>
       </form>
+      <div>
+        ... show error messages here ...
+      </div>
     </div>
   </div>
 </template>
@@ -52,6 +55,7 @@ import ButtonPrimary from '../../Components/Buttons/ButtonPrimary.vue';
 import Spinner from '../../Icons/Util/Spinner.vue';
 import Input from '../../Components/Form/Input.vue';
 import { IBus } from '../../Interfaces/IBus';
+import { doRegister } from '../../Services/User/AuthService';
 
 const $bus: IBus | undefined = inject('$bus');
 const email = ref<string>('');
@@ -80,6 +84,26 @@ function handleDoRegister() {
     registerLoading.value = false;
     return $bus?.emit('add-toast', 'Enter all details');
   }
+
+  const data = {
+    email: email.value,
+    username: username.value,
+    not_username: password.value,
+    first_name: firstName.value,
+    last_name: lastName.value,
+  };
+
+  doRegister(data)
+    .then((d) => {
+      registerLoading.value = false;
+      $bus?.emit('add-toast', d.message);
+    })
+    .catch((e) => {
+      if (e.response) {
+        // handle error with response
+        console.log(e.response);
+      }
+    });
 }
 
 function handlePasswordVerifyInput(value: string) {
@@ -89,7 +113,7 @@ function handlePasswordVerifyInput(value: string) {
 
 function comparePasswords() {
   if (password.value !== passwordVerify.value) {
-    return passwordsMatch.value = false;
+    return (passwordsMatch.value = false);
   }
 
   passwordsMatch.value = true;
