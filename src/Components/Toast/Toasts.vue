@@ -34,6 +34,7 @@ export default defineComponent({
       this.toasts.push({
         text: text,
         id: Date.now(),
+        type: '',
       });
     },
     removeToast(id: number) {

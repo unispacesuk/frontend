@@ -5,28 +5,36 @@
   <Layout v-if="!loading">
     <router-view :key="$route.fullPath" />
   </Layout>
+  <Toasts />
 </template>
 
 <script lang="ts">
-import { ref } from 'vue';
+import { ref, inject } from 'vue';
 import Layout from './Layouts/Layout.vue';
 import { useUser } from './Stores/UserStore';
 import Spinner from './Icons/Util/Spinner.vue';
 import { router } from './Router';
+import { IBus } from './Interfaces/IBus';
+import Toasts from './Components/Toast/Toasts.vue';
 
 export default {
   name: 'App',
-  components: { Spinner, Layout },
+  components: { Toasts, Spinner, Layout },
   setup() {
     const userStore = useUser();
-    const loading = ref<boolean>(true);
+    const loading = ref<boolean>(false);
+    const $bus: IBus | any = inject('$bus');
 
     async function checkAuthed() {
+      loading.value = true;
       const authed = await userStore.authenticate();
       if (authed) {
-        return loading.value = false;
+        return (loading.value = false);
       }
 
+      loading.value = false;
+      $bus?.emit('add-toast', 'Something went wrong.\nPlease login again.');
+      localStorage.removeItem('access-token');
       return router.push('/login');
     }
 
@@ -37,7 +45,9 @@ export default {
     };
   },
   async beforeCreate() {
-    await this.checkAuthed();
+    if (localStorage.getItem('access-token')) {
+      await this.checkAuthed();
+    }
   },
 };
 </script>

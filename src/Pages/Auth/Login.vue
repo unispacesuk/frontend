@@ -1,7 +1,7 @@
 <template>
   <div class="flex justify-center">
-    <div class="w-1/4">
-      <form @submit.prevent class="space-y-3 py-20">
+    <div class="w-full lg:w-2/3 xl:w-2/4 p-10">
+      <form @submit.prevent class="space-y-3">
         <div class="text-2xl">Login to Unispaces</div>
         <Input
           class="w-full"

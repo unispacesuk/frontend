@@ -101,6 +101,10 @@ export default defineComponent({
         // TODO: redirect to question after adding
         this.$router.push('/questions')
         this.loading = false;
+      }).catch((e) => {
+        if (e.response) {
+          console.log(e.response);
+        }
       });
     },
   },

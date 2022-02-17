@@ -17,7 +17,7 @@
         </form>
         <!-- Dropdown / filters / tags sorted by most used -->
       </div>
-      <div>
+      <div v-if="user.username">
         <ButtonPrimary label="Ask" @click="$router.push('/questions/ask')" />
       </div>
     </div>
@@ -48,6 +48,8 @@ import Input from '../../Components/Form/Input.vue';
 import { SearchCircleIcon } from '@heroicons/vue/solid';
 import QuestionListSkeleton from '../../Components/Skeletons/QuestionListSkeleton.vue';
 import { router } from '../../Router';
+import { useUser } from '../../Stores/UserStore';
+import { storeToRefs } from 'pinia';
 
 export default defineComponent({
   name: 'Questions',
@@ -63,6 +65,8 @@ export default defineComponent({
     const $bus: any = inject('$bus');
     const searchQuery = ref<string>('');
     const route = useRoute();
+    const userStore = useUser();
+    const { user } = storeToRefs(userStore);
 
     onBeforeMount(() => {
       let query = '';
@@ -102,6 +106,7 @@ export default defineComponent({
       loading,
       searchQuestions,
       searchQuery,
+      user,
     };
   },
 });

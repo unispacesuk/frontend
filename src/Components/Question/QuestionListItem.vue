@@ -4,9 +4,8 @@
     class="w-full border border-slate-200 rounded-md p-3 flex space-x-4 shadow-sm card-hover relative"
   >
     <!-- User info -->
-    <div class="px-10 space-y-2">
-      <div class="w-[70px] h-[70px] bg-red-200 rounded-full"></div>
-      <div>ricdotnet</div>
+    <div class="w-1/4 text-center">
+      <QuestionUserInfo :user-id="question.userId" />
     </div>
 
     <!-- Middle side -->
@@ -56,6 +55,7 @@ import { IQuestion } from '../../Interfaces/Question/IQuestion';
 import Tag from '../Tag/Tag.vue';
 import { DotsVerticalIcon, XCircleIcon } from '@heroicons/vue/solid';
 import { deleteQuestion } from '../../Services/Question/QuestionService';
+import QuestionUserInfo from './QuestionUserInfo.vue';
 
 interface QuestionProp {
   question: IQuestion;
@@ -64,7 +64,7 @@ interface QuestionProp {
 
 export default defineComponent({
   name: 'QuestionListItem',
-  components: { Tag, DotsVerticalIcon, XCircleIcon },
+  components: { QuestionUserInfo, Tag, DotsVerticalIcon, XCircleIcon },
   props: {
     question: {
       type: Object as PropType<IQuestion>,

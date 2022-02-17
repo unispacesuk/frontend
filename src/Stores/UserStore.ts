@@ -16,10 +16,17 @@ async function doAuthenticate() {
 }
 
 export const useUser = defineStore('userStore', {
-  state: () => {
-    return {
-      user: <IUser>{},
-    };
+  state: () => ({
+    user: <IUser>{},
+    // loggedIn: <boolean>false,
+  }),
+  getters: {
+    currentUser: (state) => {
+      return state.user;
+    },
+    // isLogged: (state) => {
+    //   return state.loggedIn;
+    // },
   },
   actions: {
     async authenticate(): Promise<boolean> {

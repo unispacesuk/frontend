@@ -3,7 +3,9 @@
     <!-- Avatar placeholder -->
     <div v-if="user.username">
       <div class="flex flex-col items-center space-y-2 mb-10">
-        <div class="w-28 h-28 bg-red-300 rounded-full relative">
+        <div class="w-28 h-28 rounded-full relative flex justify-center">
+          <!--          <Spinner class="w-5" />-->
+          <AvatarSkeleton class="w-28 h-28" />
           <img src="https://i.pravatar.cc/300" alt="avatar" class="rounded-full" />
           <div
             class="absolute right-0 bottom-0 rounded-full cursor-pointer focus:outline-none bg-gray-800 p-1 text-gray-500 hover:text-white smooth"
@@ -100,10 +102,13 @@ import {
 import axios from 'axios';
 import Spinner from '../../Icons/Util/Spinner.vue';
 import { IUser } from '../../Interfaces/User/IUser';
+import { useUser } from '../../Stores/UserStore';
+import AvatarSkeleton from '../Skeletons/AvatarSkeleton.vue';
 
 export default defineComponent({
   name: 'LeftNav',
   components: {
+    AvatarSkeleton,
     Spinner,
     HomeIcon,
     ClipboardIcon,
@@ -118,13 +123,29 @@ export default defineComponent({
   },
   props: {
     user: {
-      type: Object as PropType<IUser>
-    }
+      type: Object as PropType<IUser>,
+    },
   },
   data() {
     return {
       file: '',
       loading: false,
+    };
+  },
+  setup() {
+    const userStore = useUser();
+    // const isLogged = userStore.isLogged;
+
+    // userStore.$subscribe((mutation, state) => {
+    //   if (mutation.type === 'direct') {
+    //     userStore.$patch({
+    //       isLogged: d.user,
+    //     });
+    //   }
+    // });
+
+    return {
+      // isLogged,
     };
   },
   methods: {

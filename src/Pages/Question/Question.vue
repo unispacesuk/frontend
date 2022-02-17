@@ -17,7 +17,7 @@
           </div>
         </div>
       </div>
-      <div class="w-full flex justify-end">
+      <div v-if="user.username" class="w-full flex justify-end">
         <ButtonPrimary class="cursor-pointer w-auto" @click="showReplyForm = true"
           >reply
         </ButtonPrimary>
@@ -67,6 +67,8 @@ import ButtonPrimary from '../../Components/Buttons/ButtonPrimary.vue';
 import Textarea from '../../Components/Form/Textarea.vue';
 import Spinner from '../../Icons/Util/Spinner.vue';
 import ButtonPlain from '../../Components/Buttons/ButtonPlain.vue';
+import { useUser } from '../../Stores/UserStore';
+import { storeToRefs } from 'pinia';
 
 // const $bus: any = inject('$bus');
 const route = useRoute();
@@ -80,6 +82,9 @@ const replyContent = ref<string>('');
 const loadingQuestion = ref<boolean>(true);
 const loadingAnswers = ref<boolean>(true);
 const submittingAnswer = ref<boolean>(false);
+
+const userStore = useUser();
+const { user } = storeToRefs(userStore);
 
 onBeforeMount(async () => {
   getQuestion(<string>route.params.id).then((d) => {

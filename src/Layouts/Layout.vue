@@ -8,7 +8,6 @@
         <slot></slot>
       </div>
     </div>
-    <Toasts />
   </div>
 </template>
 
@@ -25,8 +24,11 @@ export default {
     const userStore = useUser();
     const { user } = storeToRefs(userStore);
 
+    const currentUser = userStore.currentUser;
+
     return {
       user,
+      currentUser,
     };
   },
 };

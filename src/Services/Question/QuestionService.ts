@@ -1,6 +1,8 @@
 import { Delete, Get, Post } from '../../Util/Request';
 import { IQuestion } from '../../Interfaces/Question/IQuestion';
 
+const token = localStorage.getItem('access-token') || '';
+
 /**
  * Get all questions
  * this function can also be used with search
@@ -21,7 +23,10 @@ async function getAllQuestions(query?: string) {
  * @param question
  */
 async function submitQuestion(question: IQuestion) {
-  const response = await Post('question', question);
+  const headers = {
+    'authorization': `Bearer ${token}`
+  }
+  const response = await Post('question', question, headers);
 
   return Promise.resolve(response);
 }
