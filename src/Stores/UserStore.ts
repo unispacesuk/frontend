@@ -1,8 +1,18 @@
 import { defineStore } from 'pinia';
 import { IUser } from '../Interfaces/User/IUser';
+import { Post } from '../Util/Request';
 
-function doAuthenticate() {
-  console.log('hey there');
+// TODO: Error Handle this.......
+async function doAuthenticate() {
+  const { body } = await Post(
+    'auth/authenticate',
+    {},
+    {
+      authorization: `Bearer ${localStorage.getItem('access-token')}` || '',
+    }
+  );
+
+  return Promise.resolve(body);
 }
 
 export const useUser = defineStore('userStore', {
@@ -12,8 +22,41 @@ export const useUser = defineStore('userStore', {
     };
   },
   actions: {
-    authenticate() {
-      doAuthenticate();
-    }
+    async authenticate(): Promise<boolean> {
+      let user;
+      try {
+        const data = await doAuthenticate();
+        if (data) {
+          user = data.user;
+          this.user = user;
+        }
+      } catch (e) {
+        // @ts-ignore
+        if (e.reponse) {
+          // @ts-ignore
+          console.log(e.reponse);
+        }
+      }
+
+      if (user) {
+        return Promise.resolve(true);
+      }
+      return Promise.resolve(false);
+
+      // doAuthenticate()
+      //   .then((d) => {
+      //     if (d.user) {
+      //       this.user = d.user;
+      //       return Promise.resolve(true);
+      //     }
+      //   })
+      //   .catch((e) => {
+      //     if (e.response) {
+      //       console.log(e.response);
+      //     }
+      //
+      //     return Promise.resolve(false);
+      //   });
+    },
   },
 });

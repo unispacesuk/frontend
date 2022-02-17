@@ -1,5 +1,7 @@
 import { Delete, Get, Post } from '../../Util/Request';
 
+const token = localStorage.getItem('access-token') || '';
+
 async function getAllCategories(): Promise<any> {
   const categories = await Get('category/all');
 
@@ -12,7 +14,12 @@ async function addCategory() {
     title: 'New Cat',
     description: 'New cat desc',
   };
-  const data = await Post('category/add', body);
+
+  const headers = {
+    'authorization': `Bearer ${token}`
+  }
+
+  const data = await Post('category/add', body, headers);
   return Promise.resolve(data);
 }
 
@@ -27,7 +34,11 @@ async function getAllBoards(categoryId: number) {
 }
 
 async function addBoard(body: any) {
-  const newBoard = await Post('board/add', body);
+  const headers = {
+    'authorization': `Bearer ${token}`
+  }
+
+  const newBoard = await Post('board/add', body, headers);
 
   return Promise.resolve(newBoard);
 }
@@ -39,7 +50,11 @@ async function getBoard(id: string | string[]) {
 }
 
 async function addThread(body: object) {
-  const newThread = await Post(`thread/add`, body);
+  const headers = {
+    'authorization': `Bearer ${token}`
+  }
+
+  const newThread = await Post(`thread/add`, body, headers);
 
   return Promise.resolve(newThread);
 }
@@ -51,7 +66,11 @@ async function getThread(id: string) {
 }
 
 async function deleteThread(id: number) {
-  const { body } = await Delete(`thread/${id}`);
+  const headers = {
+    'authorization': `Bearer ${token}`
+  }
+
+  const { body } = await Delete(`thread/${id}`, headers);
 
   return Promise.resolve(body.message);
 }
