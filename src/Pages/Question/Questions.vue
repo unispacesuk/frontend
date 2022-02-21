@@ -43,7 +43,7 @@ import { useRoute } from 'vue-router';
 import ButtonPrimary from '../../Components/Buttons/ButtonPrimary.vue';
 import { getAllQuestions } from '../../Services/Question/QuestionService';
 import { IQuestion } from '../../Interfaces/Question/IQuestion';
-import QuestionListItem from '../../Components/Question/QuestionListItem.vue';
+import QuestionListItem from '../../Components/Question/QuestionListCard.vue';
 import Input from '../../Components/Form/Input.vue';
 import { SearchCircleIcon } from '@heroicons/vue/solid';
 import QuestionListSkeleton from '../../Components/Skeletons/QuestionListSkeleton.vue';

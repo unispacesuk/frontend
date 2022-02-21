@@ -4,7 +4,7 @@
       class="w-full h-full bg-gray-200 smooth rounded-md absolute group-hover:rotate-[0.4deg] z-0"
     ></div>
     <div
-      :class="{ 'bg-green-100': best }"
+      :class="{ 'bg-green-100': answer.best }"
       class="p-3 w-full bg-white border border-slate-200 rounded-md z-10"
     >
       <div class="flex items-center border-b border-gray-200 pb-3 justify-between px-3">
@@ -21,8 +21,8 @@
             {{ answer.username }}
           </div>
         </div>
-        <div v-if="user.id === owner && !best">
-          <ButtonPrimary class="flex space-x-2 items-center" @click="markAsBest">
+        <div v-if="user.id === owner && !answer.best">
+          <ButtonPrimary class="flex space-x-2 items-center" @click="doMarkAsBest">
             <div>Mark as Best</div>
             <Spinner class="w-5" v-if="markingAsBest" />
           </ButtonPrimary>
@@ -31,17 +31,18 @@
       <div class="py-3 pl-3">
         {{ answer.content }}
       </div>
-      <div class="text-xs text-gray-500">{{ answer.createdAt }}</div>
+      <div class="text-xs text-gray-500">{{ new Date(answer.createdAt).toDateString() }}</div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps, inject, onBeforeMount, ref } from 'vue';
+import { defineProps, inject, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useUser } from '../../Stores/UserStore';
 import ButtonPrimary from '../Buttons/ButtonPrimary.vue';
 import Spinner from '../../Icons/Util/Spinner.vue';
+import { markAsBest } from '../../Services/Question/AnswerService';
 
 const avatarBase = inject('avatarBase');
 const userStore = useUser();
@@ -58,10 +59,12 @@ const props: any = defineProps({
   },
 });
 
-function markAsBest() {
+function doMarkAsBest() {
   markingAsBest.value = true;
-  setTimeout(() => {
+
+  return markAsBest(props.answer.id).then((d) => {
+    console.log(d);
     markingAsBest.value = false;
-  }, 3000);
+  });
 }
 </script>

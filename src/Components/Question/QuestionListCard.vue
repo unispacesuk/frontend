@@ -58,7 +58,7 @@ import { IQuestion } from '../../Interfaces/Question/IQuestion';
 import Tag from '../Tag/Tag.vue';
 import { DotsVerticalIcon, XCircleIcon } from '@heroicons/vue/solid';
 import { deleteQuestion } from '../../Services/Question/QuestionService';
-import QuestionUserInfo from './QuestionUserInfo.vue';
+import QuestionUserInfo from './QuestionListCardUserInfo.vue';
 
 interface QuestionProp {
   question: IQuestion;

@@ -72,4 +72,10 @@ async function getMyVote(id: string) {
   return Promise.resolve(vote);
 }
 
-export { getAllQuestions, submitQuestion, getQuestion, deleteQuestion, submitVote, getMyVote };
+async function getOPData(id: string) {
+  const response = await Get(`user/data/${id}`)
+
+  return Promise.resolve(response);
+}
+
+export { getAllQuestions, submitQuestion, getQuestion, deleteQuestion, submitVote, getMyVote, getOPData };

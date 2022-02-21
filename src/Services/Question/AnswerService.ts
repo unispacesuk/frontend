@@ -18,4 +18,14 @@ async function submitAnswer(id: string, content: any) {
   return Promise.resolve(response);
 }
 
-export { getAnswers, submitAnswer };
+async function markAsBest(id: string) {
+  const headers = {
+    'authorization': `Bearer ${token}`
+  }
+
+  const response = await Post(`answer/${id}/markbest`, {}, headers);
+
+  return Promise.resolve(response);
+}
+
+export { getAnswers, submitAnswer, markAsBest };

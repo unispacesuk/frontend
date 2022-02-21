@@ -5,19 +5,19 @@ export const useQuestion = defineStore('questionStore', {
   state: () => ({
     question: <IQuestion>{},
     votes: <number>0,
-    voted: <boolean>false,
-    type: <string>'',
+    vote: {},
+    op: {},
   }),
   actions: {
-    vote(type: string) {
+    doVote(type: string) {
       if (type === 'up') this.votes++;
       if (type === 'down') this.votes--;
     },
-    setVoted(v: boolean) {
-      this.voted = v;
+    setVote(v: object) {
+      this.vote = v;
     },
-    setType(v: string) {
-      this.type = v;
+    setOp(v: object) {
+      this.op = v;
     }
   },
 });
