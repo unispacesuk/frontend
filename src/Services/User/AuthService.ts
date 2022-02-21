@@ -15,15 +15,15 @@ interface IRegisterData {
 }
 
 async function doLogin(data: ILoginData) {
-  const { body } = await Post('auth/login', data);
+  const response = await Post('auth/login', data);
 
-  return Promise.resolve(body);
+  return Promise.resolve(response);
 }
 
 async function doRegister(data: IRegisterData) {
-  const { body } = await Post('auth/register', data);
+  const response = await Post('auth/register', data);
 
-  return Promise.resolve(body);
+  return Promise.resolve(response);
 }
 
 export { doLogin, doRegister };

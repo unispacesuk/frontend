@@ -39,7 +39,7 @@ export default defineComponent({
 
     onBeforeMount(async () => {
       getAllCategories().then((data) => {
-        categories.value = data.body.categories;
+        categories.value = data.categories;
         loading.value = false;
       });
     });

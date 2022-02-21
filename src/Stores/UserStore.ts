@@ -4,7 +4,7 @@ import { Post } from '../Util/Request';
 
 // TODO: Error Handle this.......
 async function doAuthenticate() {
-  const { body } = await Post(
+  const response = await Post(
     'auth/authenticate',
     {},
     {
@@ -12,7 +12,7 @@ async function doAuthenticate() {
     }
   );
 
-  return Promise.resolve(body);
+  return Promise.resolve(response);
 }
 
 export const useUser = defineStore('userStore', {

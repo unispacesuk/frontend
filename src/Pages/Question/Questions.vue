@@ -97,6 +97,8 @@ export default defineComponent({
         getAllQuestions(`keyword=${searchQuery.value}`).then((d) => {
           questions.value = d.questions;
           loading.value = false;
+        }).catch((e) => {
+          console.log(e);
         });
       });
     };

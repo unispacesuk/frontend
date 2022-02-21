@@ -3,23 +3,7 @@
     <!-- Avatar placeholder -->
     <div v-if="user.username">
       <div class="flex flex-col items-center space-y-2 mb-10">
-        <div class="w-28 h-28 rounded-full relative flex justify-center">
-          <!--          <Spinner class="w-5" />-->
-          <AvatarSkeleton class="w-28 h-28" />
-          <img src="https://i.pravatar.cc/300" alt="avatar" class="rounded-full" />
-          <div
-            class="absolute right-0 bottom-0 rounded-full cursor-pointer focus:outline-none bg-gray-800 p-1 text-gray-500 hover:text-white smooth"
-          >
-            <form>
-              <label for="avatar" class="cursor-pointer">
-                <CameraIcon class="w-5" />
-              </label>
-
-              <input type="file" class="hidden" id="avatar" />
-              <!--                   @change="avatarService.assignAvatar($event)">-->
-            </form>
-          </div>
-        </div>
+        <Avatar />
         <div>{{ user.firstName }} {{ user.lastName }}</div>
         <!--        <div>{{ course }}</div>-->
       </div>
@@ -54,6 +38,11 @@
       <router-link to="/questions">
         <NavLink name="Questions" route="question">
           <QuestionMarkCircleIcon class="w-5" />
+        </NavLink>
+      </router-link>
+      <router-link to="/">
+        <NavLink name="Blog" route="blog">
+          <RssIcon class="w-5" />
         </NavLink>
       </router-link>
 
@@ -98,16 +87,19 @@ import {
   CameraIcon,
   LockClosedIcon,
   LockOpenIcon,
+  RssIcon,
 } from '@heroicons/vue/solid';
 import axios from 'axios';
 import Spinner from '../../Icons/Util/Spinner.vue';
 import { IUser } from '../../Interfaces/User/IUser';
 import { useUser } from '../../Stores/UserStore';
 import AvatarSkeleton from '../Skeletons/AvatarSkeleton.vue';
+import Avatar from '../User/Avatar.vue';
 
 export default defineComponent({
   name: 'LeftNav',
   components: {
+    Avatar,
     AvatarSkeleton,
     Spinner,
     HomeIcon,
@@ -120,6 +112,7 @@ export default defineComponent({
     LockClosedIcon,
     LockOpenIcon,
     NavLink,
+    RssIcon,
   },
   props: {
     user: {
@@ -134,40 +127,9 @@ export default defineComponent({
   },
   setup() {
     const userStore = useUser();
-    // const isLogged = userStore.isLogged;
 
-    // userStore.$subscribe((mutation, state) => {
-    //   if (mutation.type === 'direct') {
-    //     userStore.$patch({
-    //       isLogged: d.user,
-    //     });
-    //   }
-    // });
-
-    return {
-      // isLogged,
-    };
+    return {};
   },
-  methods: {
-    upload() {
-      this.loading = true;
-      const formData = new FormData();
-      formData.append('avatar', this.file);
-
-      axios
-        .post('http://localhost:3000/test/upload', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        })
-        .then((r) => {
-          console.log(r.data);
-          this.loading = false;
-        });
-    },
-    fileSelect(name: any, file: any) {
-      this.file = file[0];
-    },
-  },
+  methods: {},
 });
 </script>

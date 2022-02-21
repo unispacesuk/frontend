@@ -13,9 +13,9 @@ async function getAllQuestions(query?: string) {
   // if (typeof query !== 'undefined') {
   reqUrl = reqUrl + `?${query}`;
 
-  const { body } = await Get(reqUrl);
+  const response = await Get(reqUrl);
 
-  return Promise.resolve(body);
+  return Promise.resolve(response);
 }
 
 /**
@@ -36,9 +36,9 @@ async function submitQuestion(question: IQuestion) {
  * @param id
  */
 async function getQuestion(id: string) {
-  const { body } = await Get(`question/${id}`);
+  const response = await Get(`question/${id}`);
 
-  return Promise.resolve(body);
+  return Promise.resolve(response);
 }
 
 /**
@@ -51,4 +51,25 @@ async function deleteQuestion(id: number) {
   return Promise.resolve(response);
 }
 
-export { getAllQuestions, submitQuestion, getQuestion, deleteQuestion };
+
+async function submitVote(id: string, type: string) {
+  const headers = {
+    'authorization': `Bearer ${token}`
+  }
+
+  const response = await Post(`question/${id}/vote/${type}`, {}, headers);
+
+  return Promise.resolve(response);
+}
+
+async function getMyVote(id: string) {
+  const headers = {
+    'authorization': `Bearer ${token}`
+  }
+
+  const { vote } = await Get(`question/myvote/${id}`, headers);
+
+  return Promise.resolve(vote);
+}
+
+export { getAllQuestions, submitQuestion, getQuestion, deleteQuestion, submitVote, getMyVote };

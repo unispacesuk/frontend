@@ -3,9 +3,9 @@ import { Delete, Get, Post } from '../../Util/Request';
 const token = localStorage.getItem('access-token') || '';
 
 async function getAllCategories(): Promise<any> {
-  const categories = await Get('category/all');
+  const response = await Get('category/all');
 
-  return Promise.resolve(categories);
+  return Promise.resolve(response);
 }
 
 // TODO: Refactor this to use form modal
@@ -19,8 +19,8 @@ async function addCategory() {
     'authorization': `Bearer ${token}`
   }
 
-  const data = await Post('category/add', body, headers);
-  return Promise.resolve(data);
+  const response = await Post('category/add', body, headers);
+  return Promise.resolve(response);
 }
 
 /**
@@ -28,9 +28,9 @@ async function addCategory() {
  * It will fetch cat by cat until all is done and we will not have a join when fetching all cats
  */
 async function getAllBoards(categoryId: number) {
-  const boards = await Get(`board/get/all/${categoryId}`);
+  const response = await Get(`board/get/all/${categoryId}`);
 
-  return Promise.resolve(boards);
+  return Promise.resolve(response);
 }
 
 async function addBoard(body: any) {
@@ -38,9 +38,9 @@ async function addBoard(body: any) {
     'authorization': `Bearer ${token}`
   }
 
-  const newBoard = await Post('board/add', body, headers);
+  const response = await Post('board/add', body, headers);
 
-  return Promise.resolve(newBoard);
+  return Promise.resolve(response);
 }
 
 async function getBoard(id: string | string[]) {
@@ -54,9 +54,9 @@ async function addThread(body: object) {
     'authorization': `Bearer ${token}`
   }
 
-  const newThread = await Post(`thread/add`, body, headers);
+  const response = await Post(`thread/add`, body, headers);
 
-  return Promise.resolve(newThread);
+  return Promise.resolve(response);
 }
 
 async function getThread(id: string) {
@@ -70,9 +70,9 @@ async function deleteThread(id: number) {
     'authorization': `Bearer ${token}`
   }
 
-  const { body } = await Delete(`thread/${id}`, headers);
+  const response = await Delete(`thread/${id}`, headers);
 
-  return Promise.resolve(body.message);
+  return Promise.resolve(response);
 }
 
 export {

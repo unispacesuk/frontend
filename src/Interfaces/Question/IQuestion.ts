@@ -4,6 +4,8 @@ export interface IQuestion {
   description?: string;
   createdAt?: string;
   tags?: {};
+  votes?: number;
+  answers?: number;
   // [key: string]: any;
 }
 

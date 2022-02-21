@@ -1,8 +1,8 @@
 <template>
   <div id="back"
-    class="fixed top-0 left-0 w-full h-screen bg-black bg-opacity-70 flex flex-col justify-evenly items-center"
+    class="fixed top-0 left-0 w-full h-screen bg-black bg-opacity-70 flex flex-col justify-evenly items-center z-[90]"
   >
-    <div class="relative w-2/4 h-auto bg-white p-5 rounded-md shadow-sm">
+    <div class="relative w-2/4 h-auto bg-white p-5 rounded-md shadow-sm z-[100]">
       <button @click="closeModal" class="absolute top-2 right-2 button-accent p-1">
         <Cross class="w-5" />
       </button>

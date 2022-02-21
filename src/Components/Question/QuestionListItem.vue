@@ -4,7 +4,7 @@
     class="w-full border border-slate-200 rounded-md p-3 flex space-x-4 shadow-sm card-hover relative"
   >
     <!-- User info -->
-    <div class="w-1/4 text-center">
+    <div class="hidden md:block w-[150px] flex-none text-center flex">
       <QuestionUserInfo :user-id="question.userId" />
     </div>
 
@@ -29,7 +29,10 @@
     </div>
 
     <!-- More info -->
-    <div class="w-1/5 relative">Replies: 10</div>
+    <div class="w-1/5 relative">
+      <div>Answers: {{question.answers}}</div>
+      <div>Votes: {{ question.votes }}</div>
+    </div>
 
     <!-- More Icon -->
     <div>
