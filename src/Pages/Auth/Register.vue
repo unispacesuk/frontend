@@ -42,9 +42,6 @@
           >Register <Spinner class="w-5 ml-2" v-if="registerLoading"
         /></ButtonPrimary>
       </form>
-      <div>
-        ... show error messages here ...
-      </div>
     </div>
   </div>
 </template>
@@ -71,7 +68,7 @@ function handleDoRegister() {
   registerLoading.value = true;
   if (password.value !== passwordVerify.value) {
     registerLoading.value = false;
-    return $bus?.emit('add-toast', 'The passwords do not match.');
+    return $bus?.emit('add-toast', 'The passwords do not match.', 'error');
   }
   if (
     !email.value ||
@@ -82,7 +79,7 @@ function handleDoRegister() {
     !lastName.value
   ) {
     registerLoading.value = false;
-    return $bus?.emit('add-toast', 'Enter all details');
+    return $bus?.emit('add-toast', 'Enter all details.', 'error');
   }
 
   const data = {
@@ -96,12 +93,13 @@ function handleDoRegister() {
   doRegister(data)
     .then((d) => {
       registerLoading.value = false;
-      $bus?.emit('add-toast', d.message);
+      $bus?.emit('add-toast', d.message, 'success');
     })
     .catch((e) => {
       if (e.response) {
         // handle error with response
         console.log(e.response);
+        $bus?.emit('add-toast', 'Some error occurred.', 'error');
       }
     });
 }

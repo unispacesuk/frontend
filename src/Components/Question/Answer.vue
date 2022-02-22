@@ -21,7 +21,8 @@
             {{ answer.username }}
           </div>
         </div>
-        <div v-if="user.id === owner && !answer.best">
+        <div v-if="user.id === owner && !bestAnswer">
+          {{ bestAnswer }}
           <ButtonPrimary class="flex space-x-2 items-center" @click="doMarkAsBest">
             <div>Mark as Best</div>
             <Spinner class="w-5" v-if="markingAsBest" />
@@ -37,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, inject, ref } from 'vue';
+import { inject, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useUser } from '../../Stores/UserStore';
 import ButtonPrimary from '../Buttons/ButtonPrimary.vue';
@@ -57,13 +58,14 @@ const props: any = defineProps({
     type: Boolean,
     default: false,
   },
+  bestAnswer: Object as any,
 });
 
 function doMarkAsBest() {
   markingAsBest.value = true;
 
   return markAsBest(props.answer.id).then((d) => {
-    console.log(d);
+    // console.log(d);
     markingAsBest.value = false;
   });
 }

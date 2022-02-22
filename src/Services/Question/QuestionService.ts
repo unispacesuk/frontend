@@ -24,8 +24,8 @@ async function getAllQuestions(query?: string) {
  */
 async function submitQuestion(question: IQuestion) {
   const headers = {
-    'authorization': `Bearer ${token}`
-  }
+    authorization: `Bearer ${token}`,
+  };
   const response = await Post('question', question, headers);
 
   return Promise.resolve(response);
@@ -46,16 +46,18 @@ async function getQuestion(id: string) {
  * @param id
  */
 async function deleteQuestion(id: number) {
-  const response = await Delete(`question/${id}`);
+  const headers = {
+    authorization: `Bearer ${token}`,
+  };
+  const response = await Delete(`question/${id}`, headers);
 
   return Promise.resolve(response);
 }
 
-
 async function submitVote(id: string, type: string) {
   const headers = {
-    'authorization': `Bearer ${token}`
-  }
+    authorization: `Bearer ${token}`,
+  };
 
   const response = await Post(`question/${id}/vote/${type}`, {}, headers);
 
@@ -64,8 +66,8 @@ async function submitVote(id: string, type: string) {
 
 async function getMyVote(id: string) {
   const headers = {
-    'authorization': `Bearer ${token}`
-  }
+    authorization: `Bearer ${token}`,
+  };
 
   const { vote } = await Get(`question/myvote/${id}`, headers);
 
@@ -73,9 +75,17 @@ async function getMyVote(id: string) {
 }
 
 async function getOPData(id: string) {
-  const response = await Get(`user/data/${id}`)
+  const response = await Get(`user/data/${id}`);
 
   return Promise.resolve(response);
 }
 
-export { getAllQuestions, submitQuestion, getQuestion, deleteQuestion, submitVote, getMyVote, getOPData };
+export {
+  getAllQuestions,
+  submitQuestion,
+  getQuestion,
+  deleteQuestion,
+  submitVote,
+  getMyVote,
+  getOPData,
+};

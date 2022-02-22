@@ -16,6 +16,7 @@ import { AdminGuard } from './Guards/AdminGuard';
 import AskQuestion from './Pages/Question/AskQuestion.vue';
 import Question from './Pages/Question/Question.vue';
 import { useUser } from './Stores/UserStore';
+import { usePage } from './Stores/PageStore';
 
 // other routes
 const routes = [
@@ -95,18 +96,24 @@ const router = createRouter({
 // Navigation Guards!!!
 router.beforeEach(async (to, from) => {
   const userStore = useUser();
+  // const pageStore = usePage();
 
+  // if the user refreshes... we need to auth from here.
+  if (!userStore.user.username && localStorage.getItem('access-token')) {
+    await userStore.authenticate();
+  }
+
+  // only for admins
   if (to.meta.requiresAuth && to.meta.isAdmin) {
-    // @ts-ignore
-    if (userStore.user.username && userStore.user.role === 'admin') {
+    if (userStore.user.username && userStore.user.roleId === 1) {
       return true;
     }
 
     return router.back();
   }
 
+  // only for logged in people
   if (to.meta.requiresAuth) {
-    // @ts-ignore
     if (userStore.user.username) {
       return true;
     }
@@ -114,6 +121,7 @@ router.beforeEach(async (to, from) => {
     return '/login';
   }
 
+  // only for not logged in people
   if (to.meta.nonLoggedIn) {
     if (userStore.user.username) {
       return '/';

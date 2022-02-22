@@ -80,12 +80,15 @@ export default defineComponent({
         questions.value = d.questions;
         loading.value = false;
       });
+      // $bus.listen('question-delete-success', updateQuestions);
       $bus.listen('question-delete-success', updateQuestions);
-      $bus.listen('question-delete-request', () => (loading.value = true));
+      $bus.listen('question-delete-request', () => {
+        loading.value = true;
+      });
     });
 
     const updateQuestions = () => {
-      getAllQuestions().then((d) => {
+      getAllQuestions(' ').then((d) => {
         questions.value = d.questions;
         loading.value = false;
       });
@@ -94,12 +97,14 @@ export default defineComponent({
     const searchQuestions = () => {
       loading.value = true;
       router.push(`/questions/search?keyword=${searchQuery.value}`).then(() => {
-        getAllQuestions(`keyword=${searchQuery.value}`).then((d) => {
-          questions.value = d.questions;
-          loading.value = false;
-        }).catch((e) => {
-          console.log(e);
-        });
+        getAllQuestions(`keyword=${searchQuery.value}`)
+          .then((d) => {
+            questions.value = d.questions;
+            loading.value = false;
+          })
+          .catch((e) => {
+            console.log(e);
+          });
       });
     };
 

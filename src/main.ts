@@ -13,6 +13,7 @@ const app = createApp(App);
 // global properties
 app.config.globalProperties.$bus = bus;
 app.provide('$bus', bus);
+// app.provide('avatarBase', 'https://api.unispaces.uk/avatar/');
 app.provide('avatarBase', 'https://api.unispaces.test/avatar/')
 // app.provide('avatarBase', 'http://localhost:3000/avatar/')
 

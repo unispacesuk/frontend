@@ -55,13 +55,13 @@
         </router-link>
 
         <!-- if user is admin -->
-        <!--        <div v-if="role === 'admin'">-->
-        <!--                  <router-link to="/admin">-->
-        <!--                    <NavLink name="Admin Panel" route="admin">-->
-        <!--                      <CogIcon class="w-5" />-->
-        <!--                    </NavLink>-->
-        <!--                  </router-link>-->
-        <!--        </div>-->
+        <div v-if="user.roleId === 1">
+          <router-link to="/admin">
+            <NavLink name="Admin Panel" route="admin">
+              <CogIcon class="w-5" />
+            </NavLink>
+          </router-link>
+        </div>
 
         <!-- if user logged in -->
         <router-link to="/logout">
@@ -75,21 +75,20 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref } from 'vue';
+import { defineComponent, PropType } from 'vue';
 import NavLink from './NavLink.vue';
 import {
-  HomeIcon,
-  ClipboardIcon,
-  QuestionMarkCircleIcon,
-  CogIcon,
-  UserCircleIcon,
-  LogoutIcon,
   CameraIcon,
+  ClipboardIcon,
+  CogIcon,
+  HomeIcon,
   LockClosedIcon,
   LockOpenIcon,
+  LogoutIcon,
+  QuestionMarkCircleIcon,
   RssIcon,
+  UserCircleIcon,
 } from '@heroicons/vue/solid';
-import axios from 'axios';
 import Spinner from '../../Icons/Util/Spinner.vue';
 import { IUser } from '../../Interfaces/User/IUser';
 import { useUser } from '../../Stores/UserStore';

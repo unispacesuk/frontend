@@ -11,7 +11,7 @@
                   ? avatarBase + op.avatar
                   : `https://avatars.dicebear.com/api/male/${op.username}.svg`
               "
-              class="w-28 h-28 rounded-full"
+              class="w-28 h-28 rounded-full object-cover object-center"
               alt="avatar"
             />
           </div>
@@ -60,11 +60,11 @@
   <div v-if="loadingAnswers">... loading answers ...</div>
   <div v-if="!loadingAnswers">
     <div class="py-3 pl-5">Answers: {{ question.answers }}</div>
-    <div v-if="bestAnswer">
-      <Answer :answer="bestAnswer" :owner="question.userId" />
-    </div>
+<!--    <div v-if="bestAnswer">-->
+<!--      <Answer :answer="bestAnswer" :owner="question.userId" />-->
+<!--    </div>-->
     <div class="py-2 flex flex-col" v-for="answer of answers">
-      <Answer :answer="answer" :owner="question.userId" />
+      <Answer :answer="answer" :owner="question.userId" :bestAnswer="bestAnswer" />
     </div>
   </div>
 
@@ -146,7 +146,7 @@ onBeforeMount(async () => {
 });
 
 watch(answers, () => {
-  bestAnswer.value = answers.value.filter(a => a.best === true)[0];
+  bestAnswer.value = answers.value.filter((a) => a.best === true)[0];
 });
 
 function doGetMyVote() {

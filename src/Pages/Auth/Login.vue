@@ -48,7 +48,7 @@ function handleDoLogin() {
   loginLoading.value = true;
   if (!username.value || !password.value) {
     loginLoading.value = false;
-    return $bus?.emit('add-toast', 'Enter all details.');
+    return $bus?.emit('add-toast', 'Enter all details.', 'error');
   }
 
   const data = {
@@ -59,7 +59,7 @@ function handleDoLogin() {
   doLogin(data)
     .then((d) => {
       loginLoading.value = false;
-      $bus?.emit('add-toast', 'Successfully logged in.');
+      $bus?.emit('add-toast', 'Successfully logged in.', 'success');
       userStore.$patch({
         user: d.user,
       });
@@ -69,10 +69,10 @@ function handleDoLogin() {
     .catch((e) => {
       loginLoading.value = false;
       if (e.response) {
-        $bus?.emit('add-toast', e.response.data.body.error);
+        $bus?.emit('add-toast', e.response.data.error, 'error');
         return;
       }
-      $bus?.emit('add-toast', 'Something went wrong.\nPlease try again.');
+      $bus?.emit('add-toast', 'Something went wrong.\nPlease try again.', 'error');
     });
 }
 </script>

@@ -30,7 +30,7 @@
 
     <!-- More info -->
     <div class="w-1/5 relative">
-      <div>Answers: {{question.answers}}</div>
+      <div>Answers: {{ question.answers }}</div>
       <div>Votes: {{ question.votes }}</div>
     </div>
 
@@ -46,7 +46,7 @@
       <div id="moreMenu" v-if="moreMenu" class="more-menu smooth flex flex-col">
         <!--        <div>Edit</div>-->
         <button @click="copyToClipboard(question.id)">Share</button>
-        <button @click="doDelete(question.id)">Delete</button>
+        <button v-if="user.id === question.userId || user.roleId === 1" @click="doDelete(question.id)">Delete</button>
       </div>
     </div>
   </div>
@@ -59,6 +59,9 @@ import Tag from '../Tag/Tag.vue';
 import { DotsVerticalIcon, XCircleIcon } from '@heroicons/vue/solid';
 import { deleteQuestion } from '../../Services/Question/QuestionService';
 import QuestionUserInfo from './QuestionListCardUserInfo.vue';
+import { storeToRefs } from 'pinia';
+import { useUser } from '../../Stores/UserStore';
+import { $ } from 'vue/macros';
 
 interface QuestionProp {
   question: IQuestion;
@@ -82,6 +85,9 @@ export default defineComponent({
     const question = ref<IQuestion>(props.question);
     const moreMenu = ref(props.moreMenu);
     const $bus: any = inject('$bus');
+    const Bus = $bus;
+    const userStore = useUser();
+    const { user } = storeToRefs(userStore);
 
     addEventListener('keyup', (e) => {
       if (e.key === 'Escape') {
@@ -107,6 +113,8 @@ export default defineComponent({
       emitDeleteRequest,
       emitDeleteSuccess,
       copyToClipboardToast,
+      user,
+      Bus,
     };
   },
   methods: {
@@ -114,12 +122,13 @@ export default defineComponent({
       this.emitDeleteRequest();
       deleteQuestion(questionId)
         .then((r) => {
-          if (r.body.m) {
+          if (r.response) {
             this.emitDeleteSuccess();
           }
         })
         .catch((e) => {
           console.log(e);
+          this.Bus.emit('add-toast', 'Something went wrong. Could not delete question.')
         });
     },
     copyToClipboard(questionId: number) {
