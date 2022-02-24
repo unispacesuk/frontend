@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full flex flex-col text-center items-center py-12">
+  <div class="w-full flex flex-col text-center items-center pt-12 pb-20">
     <!-- Avatar placeholder -->
     <div v-if="user.username">
       <div class="flex flex-col items-center space-y-2 mb-10">
@@ -91,7 +91,6 @@ import {
 } from '@heroicons/vue/solid';
 import Spinner from '../../Icons/Util/Spinner.vue';
 import { IUser } from '../../Interfaces/User/IUser';
-import { useUser } from '../../Stores/UserStore';
 import AvatarSkeleton from '../Skeletons/AvatarSkeleton.vue';
 import Avatar from '../User/Avatar.vue';
 
@@ -125,8 +124,6 @@ export default defineComponent({
     };
   },
   setup() {
-    const userStore = useUser();
-
     return {};
   },
   methods: {},

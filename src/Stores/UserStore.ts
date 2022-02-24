@@ -4,13 +4,20 @@ import { Post } from '../Util/Request';
 
 // TODO: Error Handle this.......
 async function doAuthenticate() {
-  const response = await Post(
-    'auth/authenticate',
-    {},
-    {
-      authorization: `Bearer ${localStorage.getItem('access-token')}` || '',
-    }
-  );
+  let response;
+
+  try {
+    response = await Post(
+      'auth/authenticate',
+      {},
+      {
+        authorization: `Bearer ${localStorage.getItem('access-token')}` || '',
+      }
+    );
+  } catch (e) {
+    console.log(e);
+    return Promise.reject(e);
+  }
 
   return Promise.resolve(response);
 }
@@ -18,15 +25,11 @@ async function doAuthenticate() {
 export const useUser = defineStore('userStore', {
   state: () => ({
     user: <IUser>{},
-    // loggedIn: <boolean>false,
   }),
   getters: {
     currentUser: (state) => {
       return state.user;
     },
-    // isLogged: (state) => {
-    //   return state.loggedIn;
-    // },
   },
   actions: {
     async authenticate(): Promise<boolean> {
@@ -49,21 +52,6 @@ export const useUser = defineStore('userStore', {
         return Promise.resolve(true);
       }
       return Promise.resolve(false);
-
-      // doAuthenticate()
-      //   .then((d) => {
-      //     if (d.user) {
-      //       this.user = d.user;
-      //       return Promise.resolve(true);
-      //     }
-      //   })
-      //   .catch((e) => {
-      //     if (e.response) {
-      //       console.log(e.response);
-      //     }
-      //
-      //     return Promise.resolve(false);
-      //   });
     },
   },
 });

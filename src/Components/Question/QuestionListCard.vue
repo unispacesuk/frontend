@@ -35,7 +35,7 @@
     </div>
 
     <!-- More Icon -->
-    <div>
+    <div class="relative">
       <button
         class="text-gray-300 hover:text-gray-700 smooth outline-none"
         @click="moreMenu = !moreMenu"
@@ -46,7 +46,12 @@
       <div id="moreMenu" v-if="moreMenu" class="more-menu smooth flex flex-col">
         <!--        <div>Edit</div>-->
         <button @click="copyToClipboard(question.id)">Share</button>
-        <button v-if="user.id === question.userId || user.roleId === 1" @click="doDelete(question.id)">Delete</button>
+        <button
+          v-if="user.id === question.userId || user.roleId === 1"
+          @click="doDelete(question.id)"
+        >
+          Delete
+        </button>
       </div>
     </div>
   </div>
@@ -62,6 +67,7 @@ import QuestionUserInfo from './QuestionListCardUserInfo.vue';
 import { storeToRefs } from 'pinia';
 import { useUser } from '../../Stores/UserStore';
 import { $ } from 'vue/macros';
+import { IBus } from '../../Interfaces/IBus';
 
 interface QuestionProp {
   question: IQuestion;
@@ -85,7 +91,7 @@ export default defineComponent({
     const question = ref<IQuestion>(props.question);
     const moreMenu = ref(props.moreMenu);
     const $bus: any = inject('$bus');
-    const Bus = $bus;
+    const Bus: IBus = $bus;
     const userStore = useUser();
     const { user } = storeToRefs(userStore);
 
@@ -123,12 +129,14 @@ export default defineComponent({
       deleteQuestion(questionId)
         .then((r) => {
           if (r.response) {
+            this.Bus.emit('add-toast', 'Question deleted.', 'success');
             this.emitDeleteSuccess();
           }
         })
         .catch((e) => {
-          console.log(e);
-          this.Bus.emit('add-toast', 'Something went wrong. Could not delete question.')
+          // console.log(e);
+          this.Bus.emit('add-toast', e.response.data.error, 'error');
+          this.emitDeleteSuccess();
         });
     },
     copyToClipboard(questionId: number) {

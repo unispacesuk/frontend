@@ -17,15 +17,17 @@ export default defineComponent({
   name: 'Input',
   data() {
     return {
-      value: '',
+      value: this.inputValue ?? '',
     };
   },
-  props: ['placeholder'],
+  props: ['placeholder', 'inputValue'],
   setup(props: any) {
     const placeholder: string = ref(props.placeholder);
+    const inputValue: string = ref(props.inputValue);
 
     return {
       placeholder,
+      inputValue,
     };
   },
   emits: ['input-change', 'input-focused'],
@@ -43,7 +45,7 @@ export default defineComponent({
     },
     reset() {
       this.value = '';
-    }
+    },
   },
 });
 </script>

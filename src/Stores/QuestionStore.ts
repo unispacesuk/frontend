@@ -9,6 +9,9 @@ export const useQuestion = defineStore('questionStore', {
     op: {},
   }),
   actions: {
+    setQuestion(q: IQuestion) {
+      this.question = q;
+    },
     doVote(type: string) {
       if (type === 'up') this.votes++;
       if (type === 'down') this.votes--;

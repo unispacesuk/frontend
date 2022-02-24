@@ -49,7 +49,10 @@
               <MinusIcon class="w-2" />
             </button>
           </div>
-          <ButtonPrimary class="cursor-pointer w-auto" @click="showReplyForm = true"
+          <ButtonPrimary
+            class="cursor-pointer w-auto"
+            @click="showReplyForm = true"
+            v-if="question.active"
             >reply
           </ButtonPrimary>
         </div>
@@ -60,9 +63,9 @@
   <div v-if="loadingAnswers">... loading answers ...</div>
   <div v-if="!loadingAnswers">
     <div class="py-3 pl-5">Answers: {{ question.answers }}</div>
-<!--    <div v-if="bestAnswer">-->
-<!--      <Answer :answer="bestAnswer" :owner="question.userId" />-->
-<!--    </div>-->
+    <!--    <div v-if="bestAnswer">-->
+    <!--      <Answer :answer="bestAnswer" :owner="question.userId" />-->
+    <!--    </div>-->
     <div class="py-2 flex flex-col" v-for="answer of answers">
       <Answer :answer="answer" :owner="question.userId" :bestAnswer="bestAnswer" />
     </div>
@@ -106,8 +109,9 @@ import { storeToRefs } from 'pinia';
 import { PlusIcon, MinusIcon } from '@heroicons/vue/solid';
 import Answer from '../../Components/Question/Answer.vue';
 import QuestionContent from '../../Components/Question/QuestionContent.vue';
+import { IBus } from '../../Interfaces/IBus';
 
-// const $bus: any = inject('$bus');
+const $bus: IBus | undefined = inject('$bus');
 const route = useRoute();
 const answers = ref<IAnswer[]>([]);
 const selectedAnswer = ref<IAnswer>({});
@@ -130,6 +134,14 @@ const avatarBase = inject('avatarBase');
 const opAvatar = ref<string>('');
 
 onBeforeMount(async () => {
+  getQuestionData();
+});
+
+watch(answers, () => {
+  bestAnswer.value = answers.value.filter((a) => a.best === true)[0];
+});
+
+function getQuestionData() {
   getQuestion(<string>route.params.id).then(async (d) => {
     question.value = d.question;
     votes.value = d.question.votes;
@@ -143,11 +155,7 @@ onBeforeMount(async () => {
       loadingAnswers.value = false;
     });
   });
-});
-
-watch(answers, () => {
-  bestAnswer.value = answers.value.filter((a) => a.best === true)[0];
-});
+}
 
 function doGetMyVote() {
   return getMyVote(question.value.id!.toString()).then((d) => {

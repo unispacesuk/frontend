@@ -9,11 +9,15 @@
   "dependencies": {
     "@heroicons/vue": "^1.0.5",
     "axios": "^0.24.0",
+    "class-stores-plugin": "^0.0.4",
     "dotenv": "^12.0.3",
     "gsap": "^3.9.1",
     "pinia": "^2.0.11",
     "rxjs": "^7.5.2",
+    "vite-plugin-vue-class-stores": "^0.0.70",
     "vue": "^3.2.31",
+    "vue-class-stores": "^0.0.61",
+    "vue-class-stores-generators": "^0.0.76",
     "vue-router": "^4.0.12"
   },
   "devDependencies": {
@@ -27,5 +31,11 @@
     "typescript": "^4.5.5",
     "vite": "^2.8.3",
     "vue-tsc": "^0.29.8"
+  },
+  "vue-class-stores": {
+    "usingTypescript": true,
+    "shortVueDeclaration": true,
+    "pluginDirectory": "src/Stores/Plugin",
+    "storesDirectory": "src/Stores"
   }
 }

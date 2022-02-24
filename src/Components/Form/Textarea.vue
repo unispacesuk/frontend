@@ -5,6 +5,7 @@
     :rows="rows"
     @keyup="emitValue"
     ref="content"
+    :value="textContent"
   ></textarea>
 </template>
 
@@ -14,6 +15,7 @@ import { defineComponent, ref } from 'vue';
 interface TextareaProps {
   placeholder: string;
   rows: number;
+  textContent: any;
 }
 
 export default defineComponent({
@@ -29,7 +31,7 @@ export default defineComponent({
       content,
     };
   },
-  props: ['placeholder', 'rows'],
+  props: ['placeholder', 'rows', 'textContent'],
   emits: ['textarea-change'],
   beforeMount() {
     this.$bus.listen('textarea-reset', this.reset);

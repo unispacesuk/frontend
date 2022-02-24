@@ -1,4 +1,4 @@
-import { Delete, Get, Post } from '../../Util/Request';
+import { Delete, Get, Post, Patch } from '../../Util/Request';
 import { IQuestion } from '../../Interfaces/Question/IQuestion';
 
 const token = localStorage.getItem('access-token') || '';
@@ -80,6 +80,20 @@ async function getOPData(id: string) {
   return Promise.resolve(response);
 }
 
+interface QuestionUpdateData {
+  title: string;
+  description: string;
+}
+async function saveQuestion(id: string, data: QuestionUpdateData) {
+  const headers = {
+    authorization: `Bearer ${token}`,
+  };
+
+  const response = await Patch(`question/${id}`, data, headers);
+
+  return Promise.resolve(response);
+}
+
 export {
   getAllQuestions,
   submitQuestion,
@@ -88,4 +102,5 @@ export {
   submitVote,
   getMyVote,
   getOPData,
+  saveQuestion,
 };

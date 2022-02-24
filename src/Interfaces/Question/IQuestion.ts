@@ -7,6 +7,7 @@ export interface IQuestion {
   tags?: {};
   votes?: number;
   answers?: number;
+  active: boolean;
 }
 
 export interface IAnswer {
