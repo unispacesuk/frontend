@@ -15,10 +15,8 @@ setupDevtools(app, 3);
 // global properties
 app.config.globalProperties.$bus = bus;
 app.provide('$bus', bus);
-app.provide('urlBase', 'https://app.unispaces.test');
-// app.provide('avatarBase', 'https://api.unispaces.uk/avatar/');
-app.provide('avatarBase', 'https://api.unispaces.test/avatar/');
-// app.provide('avatarBase', 'http://localhost:3000/avatar/')
+app.provide('urlBase', import.meta.env.VITE_APP);
+app.provide('avatarBase', import.meta.env.VITE_API + '/avatar/');
 
 app.use(router);
 app.use(createPinia());
