@@ -1,50 +1,46 @@
 <template>
-  <div id="back"
-    class="fixed top-0 left-0 w-full h-screen bg-black bg-opacity-70 flex flex-col justify-evenly items-center z-[90]"
-  >
-    <div class="relative w-2/4 h-auto bg-white p-5 rounded-md shadow-sm z-[100]">
-      <button @click="closeModal" class="absolute top-2 right-2 button-accent p-1">
-        <Cross class="w-5" />
-      </button>
-      <slot></slot>
+    <div
+      id="back"
+      class="fixed top-0 left-0 w-full h-screen bg-black bg-opacity-70 flex flex-col justify-evenly items-center z-[90]"
+    >
+      <div class="relative w-2/4 h-auto bg-white p-5 rounded-md shadow-sm z-[100]">
+        <button @click="closeModal" class="absolute top-2 right-2 button-accent p-1">
+          <Cross class="w-5" />
+        </button>
+        <slot></slot>
+      </div>
     </div>
-  </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { onBeforeMount, onBeforeUnmount } from 'vue';
 import Cross from '../../Icons/Util/Cross.vue';
 
-export default defineComponent({
-  name: 'Modal',
-  components: { Cross },
-  emits: ['close-modal'],
-  data() {
-    return {
-    };
-  },
-  beforeMount() {
-    addEventListener('keydown', this.handleKeyDown);
-    addEventListener('click', this.handleClick);
-  },
-  beforeUnmount() {
-    removeEventListener('keydown', this.handleKeyDown);
-    removeEventListener('click', this.handleClick);
-  },
-  methods: {
-    closeModal() {
-      this.$emit('close-modal');
-    },
-    handleKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape') {
-        this.closeModal();
-      }
-    },
-    handleClick(e: MouseEvent) {
-      if ((e.target as HTMLElement).id === 'back') {
-        this.closeModal();
-      }
-    }
-  },
+const emit = defineEmits<{
+  (e: 'close-modal'): void;
+}>();
+
+onBeforeMount(() => {
+  addEventListener('keydown', handleKeyDown);
+  addEventListener('click', handleClick);
 });
+
+onBeforeUnmount(() => {
+  removeEventListener('keydown', handleKeyDown);
+  removeEventListener('click', handleClick);
+});
+
+function closeModal() {
+  emit('close-modal');
+}
+function handleKeyDown(e: KeyboardEvent) {
+  if (e.key === 'Escape') {
+    closeModal();
+  }
+}
+function handleClick(e: MouseEvent) {
+  if ((e.target as HTMLElement).id === 'back') {
+    closeModal();
+  }
+}
 </script>

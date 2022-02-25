@@ -71,16 +71,18 @@
     </div>
   </div>
 
-  <Modal v-if="showReplyForm" @close-modal="showReplyForm = false">
-    <form @submit.prevent>
-      <div class="pl-3 text-xl pb-3">Replying to: {{ question.title }}</div>
-      <Textarea class="w-full" rows="10" @textarea-change="(v) => (replyContent = v)" />
-      <ButtonPlain class="flex items-center" type="submit" @click="doSubmitAnswer"
-        >Send
-        <Spinner v-if="submittingAnswer" class="w-5 ml-2" />
-      </ButtonPlain>
-    </form>
-  </Modal>
+  <Transition name="modal">
+    <Modal v-if="showReplyForm" @close-modal="showReplyForm = false">
+      <form @submit.prevent>
+        <div class="pl-3 text-xl pb-3">Replying to: {{ question.title }}</div>
+        <Textarea class="w-full" rows="10" @textarea-change="(v) => (replyContent = v)" />
+        <ButtonPlain class="flex items-center" type="submit" @click="doSubmitAnswer"
+          >Send
+          <Spinner v-if="submittingAnswer" class="w-5 ml-2" />
+        </ButtonPlain>
+      </form>
+    </Modal>
+  </Transition>
 
   <!--  <Modal v-if="showAnswer" @close-modal="showAnswer = false">-->
   <!--    {{ selectedAnswer }}-->
