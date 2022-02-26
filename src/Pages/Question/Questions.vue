@@ -18,7 +18,7 @@
         <!-- Dropdown / filters / tags sorted by most used -->
       </div>
       <div v-if="user.username">
-        <ButtonPrimary label="Ask" @click="$router.push('/questions/ask')" />
+        <Button @click="$router.push('/questions/ask')" type="primary">Ask</Button>
       </div>
     </div>
 
@@ -40,7 +40,7 @@
 <script lang="ts">
 import { defineComponent, inject, onBeforeMount, ref, watch, onActivated } from 'vue';
 import { useRoute } from 'vue-router';
-import ButtonPrimary from '../../Components/Buttons/ButtonPrimary.vue';
+import Button from '../../Components/Buttons/Button.vue';
 import { getAllQuestions } from '../../Services/Question/QuestionService';
 import { IQuestion } from '../../Interfaces/Question/IQuestion';
 import QuestionListItem from '../../Components/Question/QuestionListCard.vue';
@@ -53,7 +53,7 @@ import { storeToRefs } from 'pinia';
 
 export default defineComponent({
   name: 'Questions',
-  components: { QuestionListSkeleton, Input, QuestionListItem, ButtonPrimary, SearchCircleIcon },
+  components: { QuestionListSkeleton, Input, QuestionListItem, Button, SearchCircleIcon },
   data() {
     return {
       isSearchFocused: false,

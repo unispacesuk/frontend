@@ -21,11 +21,10 @@
 import { defineComponent } from 'vue';
 import Board from './Board.vue';
 import { ICategory } from '../../Interfaces/Board/ICategory';
-import ButtonPlain from '../Buttons/ButtonPlain.vue';
 
 export default defineComponent({
   name: 'Category',
-  components: { ButtonPlain, Board },
+  components: { Board },
   props: ['category'],
   emits: ['add-board'],
   setup(props) {

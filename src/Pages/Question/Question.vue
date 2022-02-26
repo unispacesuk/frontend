@@ -49,12 +49,13 @@
               <MinusIcon class="w-2" />
             </button>
           </div>
-          <ButtonPrimary
+          <Button
             class="cursor-pointer w-auto"
             @click="showReplyForm = true"
             v-if="question.active"
-            >reply
-          </ButtonPrimary>
+            type="primary"
+            >Reply
+          </Button>
         </div>
       </div>
     </div>
@@ -62,12 +63,19 @@
 
   <div v-if="loadingAnswers">... loading answers ...</div>
   <div v-if="!loadingAnswers">
-    <div class="py-3 pl-5">Answers: {{ question.answers }}</div>
+    <div class="py-3 pl-5">Answers: {{ answers.length }}</div>
     <!--    <div v-if="bestAnswer">-->
     <!--      <Answer :answer="bestAnswer" :owner="question.userId" />-->
     <!--    </div>-->
-    <div class="py-2 flex flex-col" v-for="answer of answers">
-      <Answer :answer="answer" :owner="question.userId" :bestAnswer="bestAnswer" />
+    <div class="flex flex-col" v-for="(answer, index) of answers" :key="index">
+      <div v-if="index > 0" class="h-7 border-l-2 border-gray-200 w-[95%] mx-auto">
+        <!-- spacing only -->
+      </div>
+      <Answer
+        :answer="answer"
+        :owner="question.userId"
+        :has-best-answer="getBestAnswer()"
+      />
     </div>
   </div>
 
@@ -75,22 +83,21 @@
     <Modal v-if="showReplyForm" @close-modal="showReplyForm = false">
       <form @submit.prevent>
         <div class="pl-3 text-xl pb-3">Replying to: {{ question.title }}</div>
-        <Textarea class="w-full" rows="10" @textarea-change="(v) => (replyContent = v)" />
-        <ButtonPlain class="flex items-center" type="submit" @click="doSubmitAnswer"
+        <Textarea
+          placeholder="write a good helping answer"
+          @textarea-change="(value: String) => (replyContent = value)"
+        />
+        <Button class="flex items-center" type="primary" @click="doSubmitAnswer"
           >Send
           <Spinner v-if="submittingAnswer" class="w-5 ml-2" />
-        </ButtonPlain>
+        </Button>
       </form>
     </Modal>
   </Transition>
-
-  <!--  <Modal v-if="showAnswer" @close-modal="showAnswer = false">-->
-  <!--    {{ selectedAnswer }}-->
-  <!--  </Modal>-->
 </template>
 
 <script setup lang="ts">
-import { inject, onBeforeMount, onMounted, ref, watch } from 'vue';
+import { inject, onBeforeMount, ref, watch } from 'vue';
 import {
   getMyVote,
   getOPData,
@@ -101,10 +108,9 @@ import { IAnswer } from '../../Interfaces/Question/IQuestion';
 import { useRoute } from 'vue-router';
 import { getAnswers, submitAnswer } from '../../Services/Question/AnswerService';
 import Modal from '../../Components/Modal/Modal.vue';
-import ButtonPrimary from '../../Components/Buttons/ButtonPrimary.vue';
+import Button from '../../Components/Buttons/Button.vue';
 import Textarea from '../../Components/Form/Textarea.vue';
 import Spinner from '../../Icons/Util/Spinner.vue';
-import ButtonPlain from '../../Components/Buttons/ButtonPlain.vue';
 import { useUser } from '../../Stores/UserStore';
 import { useQuestion } from '../../Stores/QuestionStore';
 import { storeToRefs } from 'pinia';
@@ -116,8 +122,6 @@ import { IBus } from '../../Interfaces/IBus';
 const $bus: IBus | undefined = inject('$bus');
 const route = useRoute();
 const answers = ref<IAnswer[]>([]);
-const selectedAnswer = ref<IAnswer>({});
-const showAnswer = ref<boolean>(false);
 const showReplyForm = ref<boolean>(false);
 const replyContent = ref<string>('');
 
@@ -137,6 +141,7 @@ const opAvatar = ref<string>('');
 
 onBeforeMount(async () => {
   getQuestionData();
+  $bus?.listen('best-answer', doMarkAsBest);
 });
 
 watch(answers, () => {
@@ -154,6 +159,9 @@ function getQuestionData() {
     await doGetOPData();
     getAnswers(<string>route.params.id).then((d) => {
       answers.value = d.answers;
+      if (answers.value.filter((a) => a.best === true).length > 0) {
+        questionStore.setBestAnswer(true);
+      }
       loadingAnswers.value = false;
     });
   });
@@ -220,5 +228,18 @@ function doDownvote() {
         console.log(e);
       }
     });
+}
+
+function getBestAnswer(): boolean {
+  return questionStore.hasBestAnswer;
+}
+
+function doMarkAsBest(id: number) {
+  answers.value.map((answer) => {
+    if (answer.id === id) {
+      answer.best = true;
+      questionStore.setBestAnswer(true);
+    }
+  });
 }
 </script>

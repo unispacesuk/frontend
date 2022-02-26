@@ -7,7 +7,7 @@
       <Input placeholder="Board Title" @input-change="setTitle" />
       <Input placeholder="Board Description" @input-change="setDescription" />
       <div>
-        <ButtonPrimary label="Submit" @button-click="$emit('submit-board', formBody)" />
+        <Button @button-click="$emit('submit-board', formBody)" type="primary">Submit</Button>
       </div>
     </div>
   </form>
@@ -17,11 +17,11 @@
 import { defineComponent, ref } from 'vue';
 import Input from '../../Form/Input.vue';
 import { ICategory } from '../../../Interfaces/Board/ICategory';
-import ButtonPrimary from '../../Buttons/ButtonPrimary.vue';
+import Button from '../../Buttons/Button.vue';
 
 export default defineComponent({
   name: 'AddBoard',
-  components: { ButtonPrimary, Input },
+  components: { Button, Input },
   props: ['category'],
   emits: ['submit-board'],
   data() {

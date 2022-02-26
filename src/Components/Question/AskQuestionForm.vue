@@ -26,28 +26,27 @@
     </div>
 
     <div class="flex justify-end space-x-2">
-      <ButtonPrimary label="" @button-click="submit" class="flex space-x-2" :disabled="loading">
-        <div>{{ (label = 'Submit') }}</div>
+      <Button @button-click="submit" class="flex space-x-2" type="primary" :disabled="loading">
+        <div>Submit</div>
         <Spinner v-if="loading" class="w-6" />
-      </ButtonPrimary>
-      <ButtonPlain @button-click="clearForm(true)">Clear Form</ButtonPlain>
+      </Button>
+      <Button @button-click="clearForm(true)" type="plain">Clear Form</Button>
     </div>
   </form>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 import Input from '../Form/Input.vue';
 import Textarea from '../Form/Textarea.vue';
-import ButtonPrimary from '../Buttons/ButtonPrimary.vue';
-import ButtonPlain from '../Buttons/ButtonPlain.vue';
+import Button from '../Buttons/Button.vue';
 import Label from '../Form/Label.vue';
 import { submitQuestion } from '../../Services/Question/QuestionService';
 import { Spinner } from '../../Icons';
 
 export default defineComponent({
   name: 'AskQuestionForm',
-  components: { Label, Textarea, Input, ButtonPrimary, ButtonPlain, Spinner },
+  components: { Label, Textarea, Input, Button, Spinner },
   emits: ['reset-inputs'],
   data() {
     return {
@@ -90,22 +89,24 @@ export default defineComponent({
       }
 
       let tagsArray = this.tags.value.split(',');
-      tagsArray = tagsArray.map(t => t.trim()).filter(t => t !== '');
+      tagsArray = tagsArray.map((t) => t.trim()).filter((t) => t !== '');
       this.newQuestion.tags = tagsArray;
 
-      await submitQuestion(this.newQuestion).then((r) => {
-        this.clearForm();
-        this.$bus.emit('add-toast', 'Question posted.');
-        this.$emit('reset-inputs');
+      await submitQuestion(this.newQuestion)
+        .then((r) => {
+          this.clearForm();
+          this.$bus.emit('add-toast', 'Question posted.');
+          this.$emit('reset-inputs');
 
-        // TODO: redirect to question after adding
-        this.$router.push('/questions')
-        this.loading = false;
-      }).catch((e) => {
-        if (e.response) {
-          console.log(e.response);
-        }
-      });
+          // TODO: redirect to question after adding
+          this.$router.push('/questions');
+          this.loading = false;
+        })
+        .catch((e) => {
+          if (e.response) {
+            console.log(e.response);
+          }
+        });
     },
   },
 });

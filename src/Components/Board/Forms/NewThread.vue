@@ -15,8 +15,8 @@
         placeholder="Thread content"
       ></textarea>
       <div class="flex justify-end space-x-2">
-        <ButtonPrimary label="Submit" @button-click="submit" />
-        <ButtonPlain label="Clear Form" @button-click="clearForm(true)" />
+        <Button @button-click="submit" type="primary">Submit</Button>
+        <Button @button-click="clearForm(true)" type="plain">Clear Form</Button>
       </div>
     </div>
   </form>
@@ -25,16 +25,14 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { IThread } from '../../../Interfaces/Board/IThread';
-import ButtonPlain from '../../Buttons/ButtonPlain.vue';
-import ButtonPrimary from '../../Buttons/ButtonPrimary.vue';
+import Button from '../../Buttons/Button.vue';
 import Input from '../../Form/Input.vue';
 
 export default defineComponent({
   name: 'NewThread',
   components: {
     Input,
-    ButtonPlain,
-    ButtonPrimary,
+    Button,
   },
   emits: ['submit-form', 'reset-form'],
   data() {
@@ -57,7 +55,7 @@ export default defineComponent({
       this.$bus.emit('input-reset');
 
       if (click) {
-        this.$bus.emit('add-toast', 'Form cleared.')
+        this.$bus.emit('add-toast', 'Form cleared.');
       }
     },
     submit() {

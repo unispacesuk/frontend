@@ -11,8 +11,9 @@
         <div class="flex items-center space-x-2">
           <div>
             <img
-              v-if="answer.avatar"
-              :src="avatarBase + answer.avatar"
+              :src="
+                answer.avatar ? avatarBase + answer.avatar : avatarApi + `${answer.username}.svg`
+              "
               alt="avatar"
               class="w-8 h-8 rounded-full"
             />
@@ -21,17 +22,14 @@
             {{ answer.username }}
           </div>
         </div>
-        <div v-if="user.id === owner && !bestAnswer">
-          {{ bestAnswer }}
-          <ButtonPrimary class="flex space-x-2 items-center" @click="doMarkAsBest">
+        <div v-if="user.id === owner && !hasBestAnswer">
+          <Button class="flex space-x-2 items-center" type="primary" @click="doMarkAsBest">
             <div>Mark as Best</div>
             <Spinner class="w-5" v-if="markingAsBest" />
-          </ButtonPrimary>
+          </Button>
         </div>
       </div>
-      <div class="py-3 pl-3">
-        {{ answer.content }}
-      </div>
+      <div class="py-3 pl-3" v-html="answer.content"></div>
       <div class="text-xs text-gray-500">{{ new Date(answer.createdAt).toDateString() }}</div>
     </div>
   </div>
@@ -41,15 +39,19 @@
 import { inject, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useUser } from '../../Stores/UserStore';
-import ButtonPrimary from '../Buttons/ButtonPrimary.vue';
+import Button from '../Buttons/Button.vue';
 import Spinner from '../../Icons/Util/Spinner.vue';
 import { markAsBest } from '../../Services/Question/AnswerService';
+import { IBus } from '../../Interfaces/IBus';
 
 const avatarBase = inject('avatarBase');
+const avatarApi = inject('avatarApi');
 const userStore = useUser();
 const { user } = storeToRefs(userStore);
 
 const markingAsBest = ref<boolean>(false);
+
+const $bus: IBus | undefined = inject('$bus');
 
 const props: any = defineProps({
   answer: Object as any,
@@ -58,15 +60,15 @@ const props: any = defineProps({
     type: Boolean,
     default: false,
   },
-  bestAnswer: Object as any,
+  hasBestAnswer: Boolean,
 });
 
 function doMarkAsBest() {
   markingAsBest.value = true;
 
   return markAsBest(props.answer.id).then((d) => {
-    // console.log(d);
     markingAsBest.value = false;
+    $bus?.emit('best-answer', props.answer.id);
   });
 }
 </script>

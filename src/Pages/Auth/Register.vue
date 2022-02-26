@@ -38,9 +38,9 @@
             @input-change="(v) => (lastName = v)"
           />
         </div>
-        <ButtonPrimary @click="handleDoRegister" class="flex items-center"
+        <Button @click="handleDoRegister" class="flex items-center" type="primary"
           >Register <Spinner class="w-5 ml-2" v-if="registerLoading"
-        /></ButtonPrimary>
+        /></Button>
       </form>
     </div>
   </div>
@@ -48,7 +48,7 @@
 
 <script setup lang="ts">
 import { ref, inject } from 'vue';
-import ButtonPrimary from '../../Components/Buttons/ButtonPrimary.vue';
+import Button from '../../Components/Buttons/Button.vue';
 import Spinner from '../../Icons/Util/Spinner.vue';
 import Input from '../../Components/Form/Input.vue';
 import { IBus } from '../../Interfaces/IBus';

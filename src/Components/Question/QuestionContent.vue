@@ -49,7 +49,7 @@ import { deleteQuestion } from '../../Services/Question/QuestionService';
 import Spinner from '../../Icons/Util/Spinner.vue';
 
 const $bus: IBus | undefined = inject('$bus');
-const urlBase = inject<string>('urlBase');
+const urlBase = inject('urlBase');
 const userStore: any = storeToRefs(useUser());
 const user = userStore.user;
 const route = useRoute();
@@ -67,7 +67,7 @@ const question = ref(props.question);
 
 onBeforeMount(() => {
   $bus?.listen('question-update-success', updateQuestion);
-})
+});
 
 function updateQuestion(q: IQuestion) {
   question.value = q;
@@ -86,6 +86,7 @@ function doDeleteQuestion() {
     .catch((e) => {
       console.log(e.response);
       $bus?.emit('add-toast', 'Could not delete question.', 'error');
+      loading.value = false;
     });
 }
 

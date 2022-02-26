@@ -15,9 +15,9 @@
           placeholder="password"
           @input-change="(v) => (password = v)"
         />
-        <ButtonPrimary @click="handleDoLogin" class="flex items-center"
+        <Button @click="handleDoLogin" class="flex items-center" type="primary"
           >Login <Spinner class="w-5 ml-2" v-if="loginLoading"
-        /></ButtonPrimary>
+        /></Button>
       </form>
     </div>
   </div>
@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 import Input from '../../Components/Form/Input.vue';
-import ButtonPrimary from '../../Components/Buttons/ButtonPrimary.vue';
+import Button from '../../Components/Buttons/Button.vue';
 import { ref, inject } from 'vue';
 import { IBus } from '../../Interfaces/IBus';
 import { doLogin } from '../../Services/User/AuthService';

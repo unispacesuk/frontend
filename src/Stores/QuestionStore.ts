@@ -7,6 +7,7 @@ export const useQuestion = defineStore('questionStore', {
     votes: <number>0,
     vote: {},
     op: {},
+    bestAnswer: <boolean>false,
   }),
   actions: {
     setQuestion(q: IQuestion) {
@@ -21,6 +22,14 @@ export const useQuestion = defineStore('questionStore', {
     },
     setOp(v: object) {
       this.op = v;
-    }
+    },
+    setBestAnswer(v: boolean) {
+      this.bestAnswer = v;
+    },
+  },
+  getters: {
+    hasBestAnswer(): boolean {
+      return this.bestAnswer;
+    },
   },
 });

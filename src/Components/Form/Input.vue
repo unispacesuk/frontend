@@ -1,7 +1,7 @@
 <template>
   <input
     type="text"
-    class="border border-slate-300 rounded-md px-5 py-2 outline-none shadow-sm focus:border-slate-500"
+    class="border border-slate-300 rounded-md px-5 py-2 shadow-sm focus:outline outline-4 focus:outline-$primary/40"
     :placeholder="placeholder"
     v-model="value"
     @keyup="emitValue"

@@ -1,13 +1,5 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import { viteVueClassStoresPlugin } from 'vite-plugin-vue-class-stores';
-
-const vueClassStores = viteVueClassStoresPlugin({
-    usingTypescript     : true,
-    shortVueDeclaration : true,
-    pluginDirectory     : './src/Stores/Plugin',
-    storesDirectory     : './src/Stores',
-  });
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -18,5 +10,5 @@ export default defineConfig({
       host: 'localhost'
     },
   },
-  plugins: [vue(), vueClassStores]
+  plugins: [vue()]
 })

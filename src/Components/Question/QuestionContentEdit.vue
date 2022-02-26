@@ -17,13 +17,14 @@
       <div class="text-sm text-red-500" v-if="newTile === '' && newDescription === ''">
         {{ error }}
       </div>
-      <ButtonSuccess
+      <Button
         @button-click="doSaveQuestion"
         class="flex justify-between space-x-2 items-center"
+        type="success"
       >
         <div>Save</div>
         <Spinner v-if="saving" class="w-5" />
-      </ButtonSuccess>
+      </Button>
     </div>
   </div>
 </template>
@@ -34,7 +35,7 @@ import { IQuestion } from '../../Interfaces/Question/IQuestion';
 import Input from '../Form/Input.vue';
 import Label from '../Form/Label.vue';
 import Textarea from '../Form/Textarea.vue';
-import ButtonSuccess from '../Buttons/ButtonSuccess.vue';
+import Button from '../Buttons/Button.vue';
 import { saveQuestion } from '../../Services/Question/QuestionService';
 import Spinner from '../../Icons/Util/Spinner.vue';
 import { IBus } from '../../Interfaces/IBus';
