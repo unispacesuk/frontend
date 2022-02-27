@@ -1,6 +1,6 @@
 <template>
   <button
-    class="text-white text-sm px-3 py-1 rounded-sm shadow-sm text-shadow"
+    class="text-white text-sm px-3 py-1 rounded shadow-sm text-shadow outline-none"
     :class="{
       'bg-$error hover:bg-$error-hover active:bg-$error-active': type === 'error',
       'bg-$success hover:bg-$success-hover active:bg-$success-active': type === 'success',

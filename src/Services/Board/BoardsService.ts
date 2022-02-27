@@ -1,25 +1,46 @@
-import { Delete, Get, Post } from '../../Util/Request';
+import { Delete, Get, Patch, Post } from '../../Util/Request';
 
 const token = localStorage.getItem('access-token') || '';
 
 async function getAllCategories(): Promise<any> {
-  const response = await Get('category/all');
+  const response = await Get('category');
 
   return Promise.resolve(response);
 }
 
-// TODO: Refactor this to use form modal
-async function addCategory() {
-  const body = {
-    title: 'New Cat',
-    description: 'New cat desc',
+async function addCategory(data: any) {
+  const headers = {
+    authorization: `Bearer ${token}`,
   };
 
-  const headers = {
-    'authorization': `Bearer ${token}`
-  }
+  const response = await Post('category', data, headers);
+  return Promise.resolve(response);
+}
 
-  const response = await Post('category/add', body, headers);
+async function editCategory(data: any) {
+  const headers = {
+    authorization: `Bearer ${token}`,
+  };
+
+  const response = await Patch('category', data, headers);
+  return Promise.resolve(response);
+}
+
+async function deleteCategory(id: number) {
+  const headers = {
+    authorization: `Bearer ${token}`,
+  };
+
+  const response = await Delete(`category/${id}`, headers);
+  return Promise.resolve(response);
+}
+
+async function duplicateCategory(id: number) {
+  const headers = {
+    authorization: `Bearer ${token}`,
+  };
+
+  const response = await Get(`category/duplicate/${id}`, headers);
   return Promise.resolve(response);
 }
 
@@ -35,8 +56,8 @@ async function getAllBoards(categoryId: number) {
 
 async function addBoard(body: any) {
   const headers = {
-    'authorization': `Bearer ${token}`
-  }
+    authorization: `Bearer ${token}`,
+  };
 
   const response = await Post('board/add', body, headers);
 
@@ -51,8 +72,8 @@ async function getBoard(id: string | string[]) {
 
 async function addThread(body: object) {
   const headers = {
-    'authorization': `Bearer ${token}`
-  }
+    authorization: `Bearer ${token}`,
+  };
 
   const response = await Post(`thread/add`, body, headers);
 
@@ -67,8 +88,8 @@ async function getThread(id: string) {
 
 async function deleteThread(id: number) {
   const headers = {
-    'authorization': `Bearer ${token}`
-  }
+    authorization: `Bearer ${token}`,
+  };
 
   const response = await Delete(`thread/${id}`, headers);
 
@@ -77,6 +98,9 @@ async function deleteThread(id: number) {
 
 export {
   addCategory,
+  editCategory,
+  deleteCategory,
+  duplicateCategory,
   getAllCategories,
   getAllBoards,
   addBoard,
