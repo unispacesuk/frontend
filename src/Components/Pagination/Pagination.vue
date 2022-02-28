@@ -1,43 +1,40 @@
 <template>
-  <div class="flex justify-center mt-10">
-    <div class="p-2 bg-slate-200 rounded-l-md border-r border-slate-400">
-      <Left class="w-6 h-6" />
-    </div>
-    <div ref="pages" v-for="page of pages" :key="page">
-      <div
-        class="px-4 py-2 bg-slate-200"
-        :class="page !== pages ? 'border-r border-slate-400' : ''"
+  <div class="flex justify-center py-5">
+    <button @click="emit('prev-page')" class="outline-none">
+      <ArrowNarrowLeftIcon class="button smooth px-2" />
+    </button>
+    <div v-if="showNumbers" v-for="(page, index) of pages">
+      <button
+        class="button smooth outline-none"
+        :class="{ 'bg-gray-800 text-white hover:text-black': index + 1 === currentPage }"
+        @click="emit('go-to', index + 1)"
       >
-        {{ page }}
-      </div>
+        {{ index + 1 }}
+      </button>
     </div>
-    <div class="p-2 bg-slate-200 rounded-r-md border-l border-slate-400">
-      <Right class="w-6 h-6" />
-    </div>
+    <button @click="emit('next-page')" class="outline-none">
+      <ArrowNarrowRightIcon class="button smooth px-2" />
+    </button>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import Left from '../../Icons/Arrows/Left.vue';
-import Right from '../../Icons/Arrows/Right.vue';
+<script setup lang="ts">
+  import { ArrowNarrowLeftIcon, ArrowNarrowRightIcon } from '@heroicons/vue/solid';
 
-interface PaginationProps {
-  pages: number;
-}
-
-export default defineComponent({
-  name: 'Pagination',
-  components: { Right, Left },
-  props: ['pages'],
-  setup(props: PaginationProps) {
-    let pages: number = props.pages;
-
-    return {
-      pages,
-    };
-  },
-});
+  defineProps<{
+    showNumbers?: boolean;
+    currentPage?: number;
+    pages: number;
+  }>();
+  const emit = defineEmits<{
+    (event: 'next-page'): void;
+    (event: 'prev-page'): void;
+    (event: 'go-to', page: number): void;
+  }>();
 </script>
 
-<style scoped></style>
+<style>
+  .button {
+    @apply w-[35px] h-[35px] rounded-full flex justify-center items-center hover:bg-gray-200 cursor-pointer;
+  }
+</style>

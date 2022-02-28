@@ -9,27 +9,34 @@
 </template>
 
 <script lang="ts">
-import { ref, onBeforeMount } from 'vue';
-import Layout from './Layouts/Layout.vue';
-import Spinner from './Icons/Util/Spinner.vue';
-import Toasts from './Components/Toast/Toasts.vue';
-import { usePage } from './Stores/PageStore';
+  import { ref, onBeforeMount, watch } from 'vue';
+  import Layout from './Layouts/Layout.vue';
+  import Spinner from './Icons/Util/Spinner.vue';
+  import Toasts from './Components/Toast/Toasts.vue';
+  import { usePage } from './Stores/PageStore';
+  import { useUser } from './Stores/UserStore';
+  import { storeToRefs } from 'pinia';
 
-export default {
-  name: 'App',
-  components: { Toasts, Spinner, Layout },
-  setup() {
-    const loading = ref<boolean>(true);
-    const pageStore = usePage();
+  export default {
+    name: 'App',
+    components: { Toasts, Spinner, Layout },
+    setup() {
+      const loading = ref<boolean>(true);
+      const { user } = storeToRefs(useUser());
+      const pageStore = usePage();
 
-    onBeforeMount(() => {
-      pageStore.setPageLoading(false);
-    });
+      watch(user, () => {
+        pageStore.setPageLoading(false);
+      });
+      // onBeforeMount(() => {
+      //   pageStore.setPageLoading(false);
+      // });
 
-    return {
-      loading,
-      pageStore,
-    };
-  },
-};
+      return {
+        loading,
+        pageStore,
+        user,
+      };
+    },
+  };
 </script>
