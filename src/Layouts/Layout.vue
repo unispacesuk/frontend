@@ -6,7 +6,9 @@
     >
       <LeftNav :user="user" />
     </div>
-    <div class="w-full lg:ml-[220px] px-10 pb-10 pt-3 space-y-3 smooth flex flex-col justify-between">
+    <div
+      class="w-full lg:ml-[220px] px-10 pb-10 pt-3 space-y-3 smooth flex flex-col justify-between"
+    >
       <div>
         <div :class="{ '-ml-5': mobileNav }">
           <button
@@ -30,39 +32,39 @@
 </template>
 
 <script lang="ts">
-import LeftNav from '../Components/Nav/LeftNav.vue';
-import Toasts from '../Components/Toast/Toasts.vue';
-import { useUser } from '../Stores/UserStore';
-import { storeToRefs } from 'pinia';
-import { ref } from 'vue';
-import { MenuIcon, XIcon } from '@heroicons/vue/solid';
+  import LeftNav from '../Components/Nav/LeftNav.vue';
+  import Toasts from '../Components/Toast/Toasts.vue';
+  import { useUser } from '../Stores/UserStore';
+  import { storeToRefs } from 'pinia';
+  import { ref } from 'vue';
+  import { MenuIcon, XIcon } from '@heroicons/vue/solid';
 
-export default {
-  name: 'Layout',
-  components: { MenuIcon, XIcon, Toasts, LeftNav },
-  setup() {
-    const userStore = useUser();
-    const { user } = storeToRefs(userStore);
+  export default {
+    name: 'Layout',
+    components: { MenuIcon, XIcon, Toasts, LeftNav },
+    setup() {
+      const userStore = useUser();
+      const { user } = storeToRefs(userStore);
 
-    const currentUser = userStore.currentUser;
+      const currentUser = userStore.currentUser;
 
-    const mobileNav = ref<boolean>(false);
-    const handleMobileNav = () => {
-      mobileNav.value = !mobileNav.value;
-    };
+      const mobileNav = ref<boolean>(false);
+      const handleMobileNav = () => {
+        mobileNav.value = !mobileNav.value;
+      };
 
-    addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && mobileNav.value) {
-        mobileNav.value = false;
-      }
-    });
+      addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && mobileNav.value) {
+          mobileNav.value = false;
+        }
+      });
 
-    return {
-      user,
-      currentUser,
-      mobileNav,
-      handleMobileNav,
-    };
-  },
-};
+      return {
+        user,
+        currentUser,
+        mobileNav,
+        handleMobileNav,
+      };
+    },
+  };
 </script>

@@ -8,6 +8,8 @@
     </div>
 
     <BoardCategories />
+
+    <div class="p-5">Last 10 questions....</div>
   </div>
 </template>
 
@@ -15,7 +17,7 @@
   import { inject } from 'vue';
   import { storeToRefs } from 'pinia';
   import { useUser } from '../../Stores/UserStore';
-  import BoardCategories from '../../Components/Admin/BoardCategories.vue';
+  import BoardCategories from '../../Components/Admin/Board/Categories.vue';
 
   const avatarBase = inject('avatarBase');
   const { user } = storeToRefs(useUser());

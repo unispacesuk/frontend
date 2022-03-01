@@ -6,10 +6,11 @@
     <div v-if="showNumbers" v-for="(page, index) of pages">
       <button
         class="button smooth outline-none"
-        :class="{ 'bg-gray-800 text-white hover:text-black': index + 1 === currentPage }"
-        @click="emit('go-to', index + 1)"
+        :class="{ 'bg-gray-800 text-white hover:text-black': page === currentPage }"
+        @click="emit('go-to', page)"
+        v-if="page >= currentPage - 2 && page <= +currentPage + 2"
       >
-        {{ index + 1 }}
+        {{ page }}
       </button>
     </div>
     <button @click="emit('next-page')" class="outline-none">

@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts">
-  import { ref, onBeforeMount, watch } from 'vue';
+  import { ref, onBeforeMount, watch, onMounted } from 'vue';
   import Layout from './Layouts/Layout.vue';
   import Spinner from './Icons/Util/Spinner.vue';
   import Toasts from './Components/Toast/Toasts.vue';
@@ -25,7 +25,10 @@
       const { user } = storeToRefs(useUser());
       const pageStore = usePage();
 
-      watch(user, () => {
+      // watch(user, () => {
+      //   pageStore.setPageLoading(false);
+      // });
+      onMounted(() => {
         pageStore.setPageLoading(false);
       });
       // onBeforeMount(() => {

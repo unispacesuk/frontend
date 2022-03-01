@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { IUser } from '../Interfaces/User/IUser';
 import { Post } from '../Util/Request';
+import { router } from '../Router';
 
 // TODO: Error Handle this.......
 async function doAuthenticate() {
@@ -14,9 +15,9 @@ async function doAuthenticate() {
         authorization: `Bearer ${localStorage.getItem('access-token')}` || '',
       }
     );
-  } catch (e) {
-    console.log(e);
-    return Promise.reject(e);
+  } catch (e: any) {
+    console.log(e.response);
+    return Promise.reject();
   }
 
   return Promise.resolve(response);
@@ -41,11 +42,8 @@ export const useUser = defineStore('userStore', {
           this.user = user;
         }
       } catch (e) {
-        // @ts-ignore
-        if (e.reponse) {
-          // @ts-ignore
-          console.log(e.reponse);
-        }
+        localStorage.removeItem('access-token');
+        return false;
       }
 
       if (user) {

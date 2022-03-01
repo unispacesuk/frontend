@@ -18,6 +18,5 @@
 </template>
 
 <script setup lang="ts">
-import ButtonPlain from '../Components/Buttons/ButtonPlain.vue';
-import Button from '../Components/Buttons/Button.vue';
+  import Button from '../Components/Buttons/Button.vue';
 </script>

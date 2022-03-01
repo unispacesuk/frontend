@@ -59,7 +59,7 @@ async function addBoard(body: any) {
     authorization: `Bearer ${token}`,
   };
 
-  const response = await Post('board/add', body, headers);
+  const response = await Post('board', body, headers);
 
   return Promise.resolve(response);
 }

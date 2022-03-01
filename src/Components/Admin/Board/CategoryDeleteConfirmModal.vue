@@ -11,8 +11,8 @@
 </template>
 
 <script setup lang="ts">
-  import Modal from '../Modal/Modal.vue';
-  import Button from '../Buttons/Button.vue';
+  import Modal from '../../Modal/Modal.vue';
+  import Button from '../../Buttons/Button.vue';
 
   defineProps<{
     id: number;

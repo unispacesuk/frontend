@@ -31,13 +31,13 @@
 
 <script setup lang="ts">
   import { inject, ref } from 'vue';
-  import { addCategory, editCategory } from '../../Services/Board/BoardsService';
-  import Button from '../Buttons/Button.vue';
-  import Modal from '../Modal/Modal.vue';
-  import Input from '../Form/Input.vue';
-  import Label from '../Form/Label.vue';
-  import Spinner from '../../Icons/Util/Spinner.vue';
-  import { IBus } from '../../Interfaces/IBus';
+  import { addCategory, editCategory } from '../../../Services/Board/BoardsService';
+  import { IBus } from '../../../Interfaces/IBus';
+  import Button from '../../Buttons/Button.vue';
+  import Modal from '../../Modal/Modal.vue';
+  import Input from '../../Form/Input.vue';
+  import Label from '../../Form/Label.vue';
+  import Spinner from '../../../Icons/Util/Spinner.vue';
 
   const props = defineProps<{
     addingCategory: boolean;
