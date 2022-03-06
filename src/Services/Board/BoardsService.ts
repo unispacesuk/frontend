@@ -70,6 +70,26 @@ async function getBoard(id: string | string[]) {
   return Promise.resolve(board);
 }
 
+async function deleteBoard(id: number) {
+  const headers = {
+    authorization: `Bearer ${token}`,
+  };
+
+  const response = await Delete(`board/${id}`, headers);
+
+  return Promise.resolve(response);
+}
+
+async function editBoard(id: number, body: object) {
+  const headers = {
+    authorization: `Bearer ${token}`,
+  };
+
+  const response = await Patch(`board/${id}`, body, headers);
+
+  return Promise.resolve(response);
+}
+
 async function addThread(body: object) {
   const headers = {
     authorization: `Bearer ${token}`,
@@ -105,6 +125,8 @@ export {
   getAllBoards,
   addBoard,
   getBoard,
+  deleteBoard,
+  editBoard,
   addThread,
   getThread,
   deleteThread,
