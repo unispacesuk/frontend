@@ -2,11 +2,9 @@
   <div class="px-5 py-2" v-if="boards.length === 0">There are no boards here.</div>
   <ul>
     <li v-for="board in boards">
-      <div
-        class="flex pl-10 pr-5 py-2 border-b border-slate-200 rounded-md table-hover"
-      >
+      <div class="flex pl-10 pr-5 py-2 border-b border-slate-200 rounded-md table-hover">
         <div class="w-4/5">
-          <router-link :to="{ name: 'boards', params: { id: board.id } }">
+          <router-link :to="{ name: 'board', params: { id: board.id } }">
             <div class="text-md">{{ board.title }}</div>
             <div class="text-xs text-gray-600">{{ board.description }}</div>
           </router-link>
@@ -21,20 +19,20 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { IBoard } from '../../Interfaces/Board/IBoard';
+  import { defineComponent } from 'vue';
+  import { IBoard } from '../../Interfaces/Board/IBoard';
 
-export default defineComponent({
-  name: 'Board',
-  props: ['boards'],
-  setup(props: any) {
-    const boards: IBoard[] = props.boards;
+  export default defineComponent({
+    name: 'Board',
+    props: ['boards'],
+    setup(props: any) {
+      const boards: IBoard[] = props.boards;
 
-    return {
-      boards,
-    };
-  },
-});
+      return {
+        boards,
+      };
+    },
+  });
 </script>
 
 <style scoped></style>

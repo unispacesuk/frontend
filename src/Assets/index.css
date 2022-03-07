@@ -30,6 +30,10 @@ pre {
   @apply ease-in-out duration-150;
 }
 
+.smooth-fast {
+  @apply ease-in-out duration-[35ms];
+}
+
 .skeleton-item {
   @apply bg-gray-300 rounded-full animate-pulse;
 }

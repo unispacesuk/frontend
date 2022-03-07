@@ -19,56 +19,61 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
-import { QuillEditor } from '@vueup/vue-quill';
+  import { defineComponent, ref } from 'vue';
+  import { QuillEditor } from '@vueup/vue-quill';
 
-interface TextareaProps {
-  placeholder: string;
-  rows: number;
-  textContent: any;
-}
+  interface TextareaProps {
+    placeholder: string;
+    rows: number;
+    textContent: any;
+  }
 
-export default defineComponent({
-  name: 'Textarea',
-  components: {
-    QuillEditor,
-  },
-  setup(props: TextareaProps) {
-    const content = ref<string>(props.textContent ?? '');
+  export default defineComponent({
+    name: 'Textarea',
+    components: {
+      QuillEditor,
+    },
+    setup(props: TextareaProps) {
+      const content = ref<string>(props.textContent ?? '');
 
-    setTimeout(() => {
-      content.value = 'hey there';
-    }, 3000);
+      setTimeout(() => {
+        content.value = 'hey there';
+      }, 3000);
 
-    const options = {
-      modules: {
-        toolbar: ['bold', 'italic', 'underline', 'code'],
+      const options = {
+        modules: {
+          toolbar: ['bold', 'italic', 'underline', 'code'],
+        },
+        placeholder: props.placeholder ?? '',
+        theme: 'snow',
+      };
+
+      return {
+        content,
+        options,
+      };
+    },
+    props: ['placeholder', 'rows', 'textContent', 'height'],
+    emits: ['textarea-change'],
+    data() {
+      return {
+        quillHeight: `h-[${this.height}px]`,
+      };
+    },
+    beforeMount() {
+      this.$bus.listen('textarea-reset', this.reset);
+    },
+    beforeUnmount() {
+      this.$bus.listen('textarea-reset', this.reset);
+    },
+    methods: {
+      emitValue() {
+        this.$emit('textarea-change', this.content);
       },
-      placeholder: props.placeholder ?? '',
-      theme: 'snow',
-    };
-
-    return {
-      content,
-      options,
-    };
-  },
-  props: ['placeholder', 'rows', 'textContent'],
-  emits: ['textarea-change'],
-  beforeMount() {
-    this.$bus.listen('textarea-reset', this.reset);
-  },
-  beforeUnmount() {
-    this.$bus.listen('textarea-reset', this.reset);
-  },
-  methods: {
-    emitValue() {
-      this.$emit('textarea-change', this.content);
+      reset() {
+        // @ts-ignore
+        this.$refs.editor.setHTML('');
+      },
     },
-    reset() {
-      // @ts-ignore
-      this.$refs.editor.setHTML('');
-    },
-  },
-});
+  });
 </script>

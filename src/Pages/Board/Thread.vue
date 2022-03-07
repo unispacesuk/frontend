@@ -2,87 +2,101 @@
   <div v-if="loading">... loading thread ...</div>
   <div v-if="!loading" class="flex flex-col">
     <!-- Page header -->
-    <div class="py-2 px-10 border-b border-slate-200">
+    <div class="p-3 border-b border-slate-200">
       <!-- TEMP BUTTON -->
-      <button @click="$router.back()" class="flex bg-blue-100">
-        <Left class="w-6" />
-        Go Back
-      </button>
+      <Button @click="$router.back()" class="flex space-x-2 items-center" type="primary">
+        <ArrowLeftIcon class="w-4" />
+        <div>Go Back</div>
+      </Button>
     </div>
 
     <!-- Thread content -->
     <div class="flex">
       <!-- User info -->
       <div class="w-1/4 h-auto p-3">
-        <UserInfo username="ricdotnet" />
+        <UserInfo :username="thread.username" :avatar="thread.avatar" />
       </div>
       <!-- OP content -->
       <div class="w-3/4 border-l border-slate-200 px-3">
         <div class="p-3 border-b border-slate-200 flex items-center justify-between">
           <div class="text-2xl">{{ thread.title }}</div>
-          <div class="space-x-3">
+          <div class="space-x-3" v-if="user.roleId === 1 || user.id === thread.userId">
             <!-- Placeholder buttons -->
-            <button>Edit</button>
-            <button @click="deleteConfirmModal = true">Delete</button>
+            <Button @click="showConfirmDelete = true" type="error">Delete</Button>
+            <Button type="primary">Edit</Button>
           </div>
         </div>
-        <div class="p-3">
-          {{ thread.content }}
-        </div>
+        <div class="p-3" v-html="thread.content"></div>
       </div>
     </div>
   </div>
 
-  <Modal v-if="deleteConfirmModal" @close-modal="deleteConfirmModal = false">
+  <Modal v-if="showConfirmDelete" @close-modal="showConfirmDelete = false">
     <div>
-      You sure you want to delete?<br>
-      <button @click="doDeleteThread">YES!!!!</button>
+      Do you really want to delete this thread?<br />
+      <div class="flex space-x-2 py-3">
+        <Button type="error" v-if="!deleteLoading">Cancel</Button>
+        <Button
+          type="success"
+          @button-click="doDeleteThread"
+          class="flex space-x-2"
+          :disabled="deleteLoading"
+        >
+          <div>Confirm</div>
+          <Spinner v-if="deleteLoading" class="w-5" />
+        </Button>
+      </div>
     </div>
   </Modal>
 </template>
 
-<script lang="ts">
-import { defineComponent, onBeforeMount, ref } from 'vue';
-import { useRoute } from 'vue-router';
-import { getThread, deleteThread } from '../../Services/Board/BoardsService';
-import Layout from '../../Layouts/Layout.vue';
-import { IThread } from '../../Interfaces/Board/IThread';
-import Left from '../../Icons/Arrows/Left.vue';
-import Modal from '../../Components/Modal/Modal.vue';
-import UserInfo from '../../Components/Board/UserInfo.vue';
+<script setup lang="ts">
+  import { inject, onBeforeMount, ref } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
+  import { deleteThread, getThread } from '../../Services/Board/BoardsService';
+  import { storeToRefs } from 'pinia';
+  import { useUser } from '../../Stores/UserStore';
+  import { IThread } from '../../Interfaces/Board/IThread';
+  import { IBus } from '../../Interfaces/IBus';
+  import Modal from '../../Components/Modal/Modal.vue';
+  import UserInfo from '../../Components/Board/UserInfo.vue';
+  import Button from '../../Components/Buttons/Button.vue';
 
-export default defineComponent({
-  name: 'Thread',
-  components: { UserInfo, Modal, Left, Layout },
-  data() {
-    return {
-      deleteConfirmModal: false,
-    };
-  },
-  setup() {
-    const route = useRoute();
-    let loading = ref<boolean>(true);
-    let thread = ref<IThread>();
+  import { ArrowLeftIcon } from '@heroicons/vue/solid';
+  import Spinner from '../../Icons/Util/Spinner.vue';
 
-    const threadId = route.params.id;
-    onBeforeMount(async () => {
-      // this is string here but bellow is number. weird. params have to be always string
-      thread.value = await getThread(<string>threadId);
-      loading.value = false;
-    });
+  const $bus = inject<IBus>('$bus');
+  const route = useRoute();
+  const router = useRouter();
+  const loading = ref<boolean>(true);
+  const showConfirmDelete = ref<boolean>(false);
+  const deleteLoading = ref<boolean>(false);
+  const thread = ref<IThread>();
 
-    return {
-      loading,
-      thread,
-    };
-  },
-  methods: {
-    async doDeleteThread() {
-      deleteThread(this.thread!.id).then((r) => {
-        this.$router.back();
-        this.$bus.emit('add-toast', 'Thread deleted.');
+  const { user } = storeToRefs(useUser());
+
+  onBeforeMount(() => {
+    const id: string | string[] = route.params.id;
+    getThread(id)
+      .then((d) => {
+        thread.value = d.thread;
+        loading.value = false;
+      })
+      .catch((e) => {
+        console.log(e.response);
+        $bus?.emit('add-toast', 'Something went wrong.', 'error');
       });
-    },
-  },
-});
+  });
+
+  function doDeleteThread() {
+    deleteLoading.value = true;
+    deleteThread(thread.value!.id)
+      .then(() => {
+        router.back();
+        $bus?.emit('add-toast', 'Thread deleted.');
+      })
+      .catch((e) => {
+        console.log(e.response);
+      });
+  }
 </script>

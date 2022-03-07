@@ -19,8 +19,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import Board from './Board.vue';
 import { ICategory } from '../../Interfaces/Board/ICategory';
+import Board from './BoardListCard.vue';
 
 export default defineComponent({
   name: 'Category',

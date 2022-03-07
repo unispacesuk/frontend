@@ -100,10 +100,10 @@ async function addThread(body: object) {
   return Promise.resolve(response);
 }
 
-async function getThread(id: string) {
-  const { body } = await Get(`thread/${id}`);
+async function getThread(id: string | string[]) {
+  const response = await Get(`thread/${id}`);
 
-  return Promise.resolve(body.thread);
+  return Promise.resolve(response);
 }
 
 async function deleteThread(id: number) {

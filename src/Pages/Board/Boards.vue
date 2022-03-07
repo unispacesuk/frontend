@@ -22,7 +22,7 @@
 <script lang="ts">
 import { defineComponent, ref, onBeforeMount } from 'vue';
 import { getAllCategories, addBoard } from '../../Services/Board/BoardsService';
-import Category from '../../Components/Board/Category.vue';
+import Category from '../../Components/Board/CategoryListCard.vue';
 import Modal from '../../Components/Modal/Modal.vue';
 import AddBoard from '../../Components/Board/Forms/AddBoard.vue';
 import { ICategory } from '../../Interfaces/Board/ICategory';
