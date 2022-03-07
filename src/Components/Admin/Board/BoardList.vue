@@ -1,18 +1,16 @@
 <template>
   <Transition name="modal">
     <Modal v-if="viewBoards" @close-modal="emit('close-modal', false)">
-      <div class="max-h-[600px] overflow-auto">
-        <div class="text-2xl px-5 border-b border-gray-200 pb-3">Boards List</div>
-        <div class="p-3 flex flex-col space-y-4">
-          <div v-for="(board, index) of category.boards">
-            <BoardListItemCard
-              :board="board"
-              @delete-board="doDeleteBoard"
-              @edit-board="doEditBoard"
-            />
-          </div>
-          <div v-if="category.boards.length === 0">No Boards on this Category</div>
+      <div class="text-2xl px-5 border-b border-gray-200 pb-3">Boards List</div>
+      <div class="p-3 flex flex-col space-y-4">
+        <div v-for="(board, index) of category.boards">
+          <BoardListItemCard
+            :board="board"
+            @delete-board="doDeleteBoard"
+            @edit-board="doEditBoard"
+          />
         </div>
+        <div v-if="category.boards.length === 0">No Boards on this Category</div>
       </div>
     </Modal>
   </Transition>
