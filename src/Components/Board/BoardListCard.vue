@@ -3,10 +3,10 @@
   <ul>
     <li v-for="board in boards">
       <div class="flex pl-10 pr-5 py-2 border-b border-slate-200 rounded-md table-hover">
-        <div class="w-4/5">
+        <div class="w-4/5 pr-5">
           <router-link :to="{ name: 'board', params: { id: board.id } }">
-            <div class="text-md">{{ board.title }}</div>
-            <div class="text-xs text-gray-600">{{ board.description }}</div>
+            <div class="text-md truncate">{{ board.title }}</div>
+            <div class="text-xs text-gray-600 truncate">{{ board.description }}</div>
           </router-link>
         </div>
         <div class="w-1/5 flex text-center items-center border-l border-slate-200">

@@ -1,9 +1,9 @@
 <template>
   <div class="w-full flex flex-col p-2 rounded-md">
     <div class="flex px-5 py-2 border-b border-slate-200 bg-gray-100 rounded-md">
-      <div class="w-4/5 flex flex-col">
-        <div class="text-lg">{{ category.title }}</div>
-        <div class="text-sm text-gray-600">{{ category.description }}</div>
+      <div class="w-4/5 flex flex-col pr-5">
+        <div class="text-lg truncate">{{ category.title }}</div>
+        <div class="text-sm text-gray-600 truncate">{{ category.description }}</div>
       </div>
       <div class="w-1/5 text-center">
         <div class="text-lg">Stats</div>

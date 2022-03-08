@@ -37,7 +37,9 @@
     <div>
       Do you really want to delete this thread?<br />
       <div class="flex space-x-2 py-3">
-        <Button type="error" v-if="!deleteLoading">Cancel</Button>
+        <Button type="error" v-if="!deleteLoading" @button-click="showConfirmDelete = false">
+          Cancel
+        </Button>
         <Button
           type="success"
           @button-click="doDeleteThread"

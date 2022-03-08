@@ -5,7 +5,7 @@
     <BoardsSkeleton />
   </div>
   <div v-if="!loading">
-    <div v-if="categories.length === 0">You haven't added any categories yet.</div>
+    <div v-if="categories.length === 0">There are no categories.</div>
 
     <div v-if="categories.length > 0" v-for="category in categories">
       <Category :category="category" @add-board="newBoard" />
