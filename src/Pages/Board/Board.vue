@@ -17,13 +17,17 @@
       <!--    <Pagination :pages="5" />-->
     </div>
   </div>
-  <NewThread @submit-form="doAddNewThread" :loading="newThreadLoading" />
+  <div v-if="user.id">
+    <NewThread @submit-form="doAddNewThread" :loading="newThreadLoading" />
+  </div>
 </template>
 
 <script setup lang="ts">
   import { ref, onBeforeMount, inject } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { getBoard, addThread } from '../../Services/Board/BoardsService';
+  import { storeToRefs } from 'pinia';
+  import { useUser } from '../../Stores/UserStore';
   import { IThread } from '../../Interfaces/Board/IThread';
   import { IBus } from '../../Interfaces/IBus';
   import Thread from '../../Components/Board/Thread.vue';
@@ -38,6 +42,8 @@
   const loading = ref<boolean>(true);
   const newThreadLoading = ref<boolean>(false);
   const threads = ref<IThread[]>([]);
+
+  const { user } = storeToRefs(useUser());
 
   onBeforeMount(() => {
     const id: string | string[] = route.params['id'];
@@ -75,7 +81,6 @@
         console.log(d);
         newThreadLoading.value = false;
         router.push(`/thread/${d.thread.id}`);
-        // TODO: redirect to thread page?
         // return $bus?.emit('submit-success');
         // return $bus?.emit('add-toast', 'Something went wrong. Please try again.', 'error');
       })
@@ -84,9 +89,5 @@
         newThreadLoading.value = false;
         return $bus?.emit('add-toast', 'Something went wrong. Please try again.', 'error');
       });
-    // setTimeout(() => {
-    //   newThreadLoading.value = false;
-    //   $bus?.emit('submit-success');
-    // }, 2000);
   }
 </script>
