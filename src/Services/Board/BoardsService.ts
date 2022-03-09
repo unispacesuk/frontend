@@ -108,6 +108,16 @@ async function getThread(id: string | string[]) {
   return Promise.resolve(response);
 }
 
+async function editThread(id: number, body: {}) {
+  const headers = {
+    authorization: `Bearer ${token}`,
+  };
+
+  const response = await Patch(`thread/${id}`, body, headers);
+
+  return Promise.resolve(response);
+}
+
 async function deleteThread(id: number) {
   const headers = {
     authorization: `Bearer ${token}`,
@@ -131,5 +141,6 @@ export {
   editBoard,
   addThread,
   getThread,
+  editThread,
   deleteThread,
 };

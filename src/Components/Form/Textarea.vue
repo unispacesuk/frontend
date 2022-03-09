@@ -55,11 +55,6 @@
     },
     props: ['placeholder', 'rows', 'textContent', 'height'],
     emits: ['textarea-change'],
-    data() {
-      return {
-        quillHeight: `h-[${this.height}px]`,
-      };
-    },
     beforeMount() {
       this.$bus.listen('textarea-reset', this.reset);
     },

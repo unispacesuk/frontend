@@ -10,6 +10,13 @@ pre {
   @apply bg-slate-100 p-3 rounded-md text-sm;
 }
 
+code {
+  font-size: 12px;
+  padding: 5px;
+  border-radius: 5px;
+  background-color: #efe8df;
+}
+
 .text-shadow {
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
 }

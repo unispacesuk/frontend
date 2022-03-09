@@ -24,7 +24,7 @@
             <div class="space-x-3" v-if="user.roleId === 1 || user.id === thread.userId">
               <!-- Placeholder buttons -->
               <Button @click="showConfirmDelete = true" type="error">Delete</Button>
-              <Button type="primary">Edit</Button>
+              <Button @click="handleEditThread" type="primary">Edit</Button>
             </div>
           </div>
           <div class="p-3" v-html="thread.content"></div>
@@ -33,6 +33,7 @@
     </div>
   </div>
 
+  <!-- TODO: Send these modals to individual SFC -->
   <Modal v-if="showConfirmDelete" @close-modal="showConfirmDelete = false">
     <div>
       Do you really want to delete this thread?<br />
@@ -52,34 +53,74 @@
       </div>
     </div>
   </Modal>
+
+  <Modal v-if="isEditing" @close-modal="isEditing = false">
+    <div class="text-lg px-3 pb-3 border-b border-gray-200">Editing Thread</div>
+    <div class="flex flex-col space-y-2 pt-3">
+      <Input :input-value="thread.title" @input-change="(v) => (newThreadTitle = v)" />
+
+      <!-- TODO: extract EditorContent -->
+      <div class="flex space-x-2 pt-4">
+        <Button @button-click="editor.chain().focus().toggleBold().run()" type="plain">
+          <b>B</b>
+        </Button>
+        <Button @button-click="editor.chain().focus().toggleItalic().run()" type="plain">
+          <i>I</i>
+        </Button>
+        <!--      <Button @button-click="editor.commands.setHeading({ level: 1 })" type="plain"> H1 </Button>-->
+        <Button @button-click="editor.chain().toggleCode().run()" type="plain">
+          {{ codeButton }}
+        </Button>
+      </div>
+      <EditorContent :editor="editor" class="smooth-fast" />
+    </div>
+    <div class="flex space-x-2 justify-end pt-5">
+      <Button type="error" @button-click="isEditing = false" :disabled="editLoading">Cancel</Button>
+      <Button type="success" @button-click="doThreadEdit" class="flex space-x-2">
+        <div>Save</div>
+        <Spinner v-if="editLoading" class="w-5" />
+      </Button>
+    </div>
+  </Modal>
 </template>
 
 <script setup lang="ts">
   import { inject, onBeforeMount, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { deleteThread, getThread } from '../../Services/Board/BoardsService';
+  import { deleteThread, editThread, getThread } from '../../Services/Board/BoardsService';
   import { storeToRefs } from 'pinia';
   import { useUser } from '../../Stores/UserStore';
   import { IThread } from '../../Interfaces/Board/IThread';
   import { IBus } from '../../Interfaces/IBus';
+  import { EditorContent, useEditor } from '@tiptap/vue-3';
+  import StarterKit from '@tiptap/starter-kit';
   import Modal from '../../Components/Modal/Modal.vue';
   import UserInfo from '../../Components/Board/UserInfo.vue';
   import Button from '../../Components/Buttons/Button.vue';
 
   import { ArrowLeftIcon } from '@heroicons/vue/solid';
   import Spinner from '../../Icons/Util/Spinner.vue';
+  import Input from '../../Components/Form/Input.vue';
 
   const $bus = inject<IBus>('$bus');
   const route = useRoute();
   const router = useRouter();
   const loading = ref<boolean>(true);
+  const thread = ref<IThread>();
+
   const showConfirmDelete = ref<boolean>(false);
   const deleteLoading = ref<boolean>(false);
-  const thread = ref<IThread>();
+  const isEditing = ref<boolean>(false);
+  const editLoading = ref<boolean>(false);
+
+  const codeButton = '</>';
 
   const invalidThread = ref<boolean>(false);
 
   const { user } = storeToRefs(useUser());
+
+  const newThreadTitle = ref<string>('');
+  const newThreadContent = ref<string>('');
 
   onBeforeMount(() => {
     const id: string | string[] = route.params.id;
@@ -97,6 +138,13 @@
       });
   });
 
+  const editor = useEditor({
+    extensions: [StarterKit],
+    onUpdate: () => {
+      newThreadContent.value = editor.value!.getHTML();
+    },
+  });
+
   function doDeleteThread() {
     deleteLoading.value = true;
     deleteThread(thread.value!.id)
@@ -105,7 +153,54 @@
         $bus?.emit('add-toast', 'Thread deleted.');
       })
       .catch((e) => {
-        console.log(e.response);
+        // console.log(e.response);
+        deleteLoading.value = false;
+        $bus?.emit('add-toast', 'Something went wrong.', 'error');
+      });
+  }
+
+  function handleEditThread() {
+    isEditing.value = true;
+    editor.value?.commands.setContent(thread.value!.content);
+  }
+
+  function doThreadEdit() {
+    if (!newThreadContent.value && !newThreadTitle.value) {
+      return $bus?.emit('add-toast', 'You are trying to update nothing.', 'error');
+    }
+
+    editLoading.value = true;
+    const data = {
+      title: newThreadTitle.value,
+      content: newThreadContent.value,
+    };
+
+    editThread(thread.value!.id, data)
+      .then((d) => {
+        // console.log(d);
+        $bus?.emit('add-toast', 'Thread updated.');
+        thread.value!.title = newThreadTitle.value || thread.value!.title;
+        thread.value!.content = newThreadContent.value || thread.value!.content;
+        newThreadTitle.value = '';
+        newThreadContent.value = '';
+        isEditing.value = false;
+        editLoading.value = false;
+      })
+      .catch((e) => {
+        // console.log(e.response);
+        $bus?.emit('add-toast', 'Something went wrong.', 'error');
+        editLoading.value = false;
       });
   }
 </script>
+
+<style lang="scss">
+  .ProseMirror {
+    @apply px-5 py-2 rounded-md outline-none border border-slate-300;
+
+    &:focus {
+      @apply outline-4 outline-$primary/40 ease-in-out duration-[35ms];
+      outline-offset: 0;
+    }
+  }
+</style>
