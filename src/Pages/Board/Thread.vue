@@ -25,11 +25,16 @@
               <!-- Placeholder buttons -->
               <Button @click="showConfirmDelete = true" type="error">Delete</Button>
               <Button @click="handleEditThread" type="primary">Edit</Button>
+              <Button @click="handleReplyThread" type="primary">Reply</Button>
             </div>
           </div>
           <div class="p-3" v-html="thread.content"></div>
         </div>
       </div>
+
+      <ThreadBottom :thread="thread" />
+
+      <ThreadReplies :thread-id="thread.id" />
     </div>
   </div>
 
@@ -82,12 +87,33 @@
       </Button>
     </div>
   </Modal>
+
+  <!-- Add reply modal -->
+  <Modal v-if="isReplying" @close-modal="isReplying = false">
+    <div class="text-xl border-b border-gray-200 px-3 pb-3">Replying to: {{ thread.title }}</div>
+    <EditorContent :editor="replyBox" class="smooth-fast py-3" />
+
+    <div class="flex justify-end space-x-2">
+      <Button type="error" v-if="!replySending" @button-click="handleReplyThreadClose">
+        Cancel
+      </Button>
+      <Button type="success" @button-click="doReplySend" class="flex space-x-2">
+        <div>Submit</div>
+        <Spinner class="w-5" v-if="replySending" />
+      </Button>
+    </div>
+  </Modal>
 </template>
 
 <script setup lang="ts">
   import { inject, onBeforeMount, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { deleteThread, editThread, getThread } from '../../Services/Board/BoardsService';
+  import {
+    addThreadReply,
+    deleteThread,
+    editThread,
+    getThread,
+  } from '../../Services/Board/BoardsService';
   import { storeToRefs } from 'pinia';
   import { useUser } from '../../Stores/UserStore';
   import { IThread } from '../../Interfaces/Board/IThread';
@@ -101,6 +127,8 @@
   import { ArrowLeftIcon } from '@heroicons/vue/solid';
   import Spinner from '../../Icons/Util/Spinner.vue';
   import Input from '../../Components/Form/Input.vue';
+  import ThreadBottom from '../../Components/Board/ThreadBottom.vue';
+  import ThreadReplies from '../../Components/Board/ThreadReplies.vue';
 
   const $bus = inject<IBus>('$bus');
   const route = useRoute();
@@ -112,6 +140,10 @@
   const deleteLoading = ref<boolean>(false);
   const isEditing = ref<boolean>(false);
   const editLoading = ref<boolean>(false);
+
+  const isReplying = ref<boolean>(false);
+  const replyContent = ref<string>('');
+  const replySending = ref<boolean>(false);
 
   const codeButton = '</>';
 
@@ -142,6 +174,13 @@
     extensions: [StarterKit],
     onUpdate: () => {
       newThreadContent.value = editor.value!.getHTML();
+    },
+  });
+
+  const replyBox = useEditor({
+    extensions: [StarterKit],
+    onUpdate: () => {
+      replyContent.value = replyBox.value!.getHTML();
     },
   });
 
@@ -185,11 +224,44 @@
         newThreadContent.value = '';
         isEditing.value = false;
         editLoading.value = false;
+        editor.value!.commands.clearContent(true);
       })
       .catch((e) => {
         // console.log(e.response);
         $bus?.emit('add-toast', 'Something went wrong.', 'error');
         editLoading.value = false;
+      });
+  }
+
+  function handleReplyThread() {
+    isReplying.value = true;
+  }
+
+  function handleReplyThreadClose() {
+    isReplying.value = false;
+    replyBox.value?.commands.clearContent(true);
+  }
+
+  function doReplySend() {
+    if (!replyContent.value) {
+      return $bus?.emit('add-toast', 'No content to reply.', 'error');
+    }
+
+    replySending.value = true;
+    addThreadReply(thread.value!.id, { content: replyContent.value })
+      .then((d) => {
+        $bus?.emit('add-reply-success', d);
+        replySending.value = false;
+        isReplying.value = false;
+        replyBox.value?.commands.clearContent(true);
+      })
+      .catch((e) => {
+        if (e.response) {
+          console.log(e);
+        }
+
+        $bus?.emit('add-reply-error');
+        replySending.value = false; // if something goes wrong keep the dialog and the reply content...
       });
   }
 </script>

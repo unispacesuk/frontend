@@ -1,4 +1,4 @@
-import { Delete, Get, Patch, Post } from '../../Util/Request';
+import { Delete, Get, Patch, Post, authHeaders } from '../../Util/Request';
 
 const token = localStorage.getItem('access-token') || '';
 
@@ -9,38 +9,22 @@ async function getAllCategories(): Promise<any> {
 }
 
 async function addCategory(data: any) {
-  const headers = {
-    authorization: `Bearer ${token}`,
-  };
-
-  const response = await Post('category', data, headers);
+  const response = await Post('category', data, authHeaders());
   return Promise.resolve(response);
 }
 
 async function editCategory(data: any) {
-  const headers = {
-    authorization: `Bearer ${token}`,
-  };
-
-  const response = await Patch('category', data, headers);
+  const response = await Patch('category', data, authHeaders());
   return Promise.resolve(response);
 }
 
 async function deleteCategory(id: number) {
-  const headers = {
-    authorization: `Bearer ${token}`,
-  };
-
-  const response = await Delete(`category/${id}`, headers);
+  const response = await Delete(`category/${id}`, authHeaders());
   return Promise.resolve(response);
 }
 
 async function duplicateCategory(id: number) {
-  const headers = {
-    authorization: `Bearer ${token}`,
-  };
-
-  const response = await Get(`category/duplicate/${id}`, headers);
+  const response = await Get(`category/duplicate/${id}`, authHeaders());
   return Promise.resolve(response);
 }
 
@@ -57,11 +41,7 @@ async function getAllBoards(categoryId: number) {
 }
 
 async function addBoard(body: any) {
-  const headers = {
-    authorization: `Bearer ${token}`,
-  };
-
-  const response = await Post('board', body, headers);
+  const response = await Post('board', body, authHeaders());
 
   return Promise.resolve(response);
 }
@@ -73,31 +53,19 @@ async function getBoard(id: string | string[]) {
 }
 
 async function deleteBoard(id: number) {
-  const headers = {
-    authorization: `Bearer ${token}`,
-  };
-
-  const response = await Delete(`board/${id}`, headers);
+  const response = await Delete(`board/${id}`, authHeaders());
 
   return Promise.resolve(response);
 }
 
 async function editBoard(id: number, body: object) {
-  const headers = {
-    authorization: `Bearer ${token}`,
-  };
-
-  const response = await Patch(`board/${id}`, body, headers);
+  const response = await Patch(`board/${id}`, body, authHeaders());
 
   return Promise.resolve(response);
 }
 
 async function addThread(body: object) {
-  const headers = {
-    authorization: `Bearer ${token}`,
-  };
-
-  const response = await Post(`thread/add`, body, headers);
+  const response = await Post(`thread/add`, body, authHeaders());
 
   return Promise.resolve(response);
 }
@@ -109,21 +77,25 @@ async function getThread(id: string | string[]) {
 }
 
 async function editThread(id: number, body: {}) {
-  const headers = {
-    authorization: `Bearer ${token}`,
-  };
-
-  const response = await Patch(`thread/${id}`, body, headers);
+  const response = await Patch(`thread/${id}`, body, authHeaders());
 
   return Promise.resolve(response);
 }
 
 async function deleteThread(id: number) {
-  const headers = {
-    authorization: `Bearer ${token}`,
-  };
+  const response = await Delete(`thread/${id}`, authHeaders());
 
-  const response = await Delete(`thread/${id}`, headers);
+  return Promise.resolve(response);
+}
+
+async function addThreadReply(id: number, body: {}) {
+  const response = await Post(`thread/${id}/reply`, body, authHeaders());
+
+  return Promise.resolve(response);
+}
+
+async function getAllThreadReplies(id: string | string[]) {
+  const response = await Get(`thread/${id}/replies`);
 
   return Promise.resolve(response);
 }
@@ -143,4 +115,6 @@ export {
   getThread,
   editThread,
   deleteThread,
+  addThreadReply,
+  getAllThreadReplies,
 };

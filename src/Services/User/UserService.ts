@@ -1,16 +1,9 @@
-import { Post } from '../../Util/Request';
-
-const token = localStorage.getItem('access-token');
+import { Post, authHeaders } from '../../Util/Request';
 
 async function uploadAvatar(data: any) {
-  const headers = {
-    authorization: `Bearer ${token}`,
-  };
-  const response = await Post('user/avatar', data, headers);
+  const response = await Post('user/avatar', data, authHeaders());
 
   return Promise.resolve(response);
 }
 
-export {
-  uploadAvatar
-}
+export { uploadAvatar };

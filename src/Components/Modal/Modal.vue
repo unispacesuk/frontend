@@ -39,8 +39,8 @@
     }
   }
   function handleClick(e: MouseEvent) {
-    if ((e.target as HTMLElement).id === 'back') {
-      closeModal();
-    }
+    // if ((e.target as HTMLElement).id === 'back') {
+    //   closeModal();
+    // }
   }
 </script>

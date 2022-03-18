@@ -1,7 +1,5 @@
-import { Delete, Get, Post, Patch } from '../../Util/Request';
+import { Delete, Get, Post, Patch, authHeaders } from '../../Util/Request';
 import { IQuestion } from '../../Interfaces/Question/IQuestion';
-
-const token = localStorage.getItem('access-token') || '';
 
 /**
  * Get all questions
@@ -23,10 +21,7 @@ async function getAllQuestions(query?: string) {
  * @param question
  */
 async function submitQuestion(question: IQuestion) {
-  const headers = {
-    authorization: `Bearer ${token}`,
-  };
-  const response = await Post('question', question, headers);
+  const response = await Post('question', question, authHeaders());
 
   return Promise.resolve(response);
 }
@@ -46,30 +41,19 @@ async function getQuestion(id: string) {
  * @param id
  */
 async function deleteQuestion(id: number) {
-  const headers = {
-    authorization: `Bearer ${token}`,
-  };
-  const response = await Delete(`question/${id}`, headers);
+  const response = await Delete(`question/${id}`, authHeaders());
 
   return Promise.resolve(response);
 }
 
 async function submitVote(id: string, type: string) {
-  const headers = {
-    authorization: `Bearer ${token}`,
-  };
-
-  const response = await Post(`question/${id}/vote/${type}`, {}, headers);
+  const response = await Post(`question/${id}/vote/${type}`, {}, authHeaders());
 
   return Promise.resolve(response);
 }
 
 async function getMyVote(id: string) {
-  const headers = {
-    authorization: `Bearer ${token}`,
-  };
-
-  const { vote } = await Get(`question/myvote/${id}`, headers);
+  const { vote } = await Get(`question/myvote/${id}`, authHeaders());
 
   return Promise.resolve(vote);
 }
@@ -85,11 +69,7 @@ interface QuestionUpdateData {
   description: string;
 }
 async function saveQuestion(id: string, data: QuestionUpdateData) {
-  const headers = {
-    authorization: `Bearer ${token}`,
-  };
-
-  const response = await Patch(`question/${id}`, data, headers);
+  const response = await Patch(`question/${id}`, data, authHeaders());
 
   return Promise.resolve(response);
 }

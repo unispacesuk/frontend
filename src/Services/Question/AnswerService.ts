@@ -1,6 +1,4 @@
-import { Get, Post } from '../../Util/Request';
-
-const token = localStorage.getItem('access-token') || '';
+import { Get, Post, authHeaders } from '../../Util/Request';
 
 async function getAnswers(id: string) {
   const response = await Get(`answer/all/${id}`);
@@ -9,21 +7,13 @@ async function getAnswers(id: string) {
 }
 
 async function submitAnswer(id: string, content: any) {
-  const headers = {
-    'authorization': `Bearer ${token}`
-  }
-
-  const response = await Post(`answer/${id}`, content, headers);
+  const response = await Post(`answer/${id}`, content, authHeaders());
 
   return Promise.resolve(response);
 }
 
 async function markAsBest(id: string) {
-  const headers = {
-    'authorization': `Bearer ${token}`
-  }
-
-  const response = await Post(`answer/${id}/markbest`, {}, headers);
+  const response = await Post(`answer/${id}/markbest`, {}, authHeaders());
 
   return Promise.resolve(response);
 }
