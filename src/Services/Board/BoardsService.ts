@@ -10,21 +10,25 @@ async function getAllCategories(): Promise<any> {
 
 async function addCategory(data: any) {
   const response = await Post('category', data, authHeaders());
+
   return Promise.resolve(response);
 }
 
 async function editCategory(data: any) {
   const response = await Patch('category', data, authHeaders());
+
   return Promise.resolve(response);
 }
 
 async function deleteCategory(id: number) {
   const response = await Delete(`category/${id}`, authHeaders());
+
   return Promise.resolve(response);
 }
 
 async function duplicateCategory(id: number) {
   const response = await Get(`category/duplicate/${id}`, authHeaders());
+
   return Promise.resolve(response);
 }
 
@@ -100,6 +104,18 @@ async function getAllThreadReplies(id: string | string[]) {
   return Promise.resolve(response);
 }
 
+async function starThread(id: number, action: string) {
+  const response = await Post(`thread/star/${id}`, { action }, authHeaders());
+
+  return Promise.resolve(response);
+}
+
+async function getStarredState(id: number) {
+  const response = await Get(`thread/star/${id}`, authHeaders());
+
+  return Promise.resolve(response);
+}
+
 export {
   addCategory,
   editCategory,
@@ -117,4 +133,6 @@ export {
   deleteThread,
   addThreadReply,
   getAllThreadReplies,
+  starThread,
+  getStarredState,
 };

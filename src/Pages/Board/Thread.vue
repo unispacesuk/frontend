@@ -21,10 +21,12 @@
         <div class="w-3/4 border-l border-slate-200 px-3">
           <div class="p-3 border-b border-slate-200 flex items-center justify-between">
             <div class="text-2xl">{{ thread.title }}</div>
-            <div class="space-x-3" v-if="user.roleId === 1 || user.id === thread.userId">
-              <!-- Placeholder buttons -->
-              <Button @click="showConfirmDelete = true" type="error">Delete</Button>
-              <Button @click="handleEditThread" type="primary">Edit</Button>
+            <div v-if="user.username" class="flex space-x-3">
+              <div class="space-x-3" v-if="user.roleId === 1 || user.id === thread.userId">
+                <!-- Placeholder buttons -->
+                <Button @click="showConfirmDelete = true" type="error">Delete</Button>
+                <Button @click="handleEditThread" type="primary">Edit</Button>
+              </div>
               <Button @click="handleReplyThread" type="primary">Reply</Button>
             </div>
           </div>

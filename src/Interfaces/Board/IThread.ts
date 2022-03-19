@@ -8,4 +8,5 @@ export interface IThread {
   createdAt?: Date;
   boardTitle?: string;
   catTitle?: string;
+  stars?: number;
 }

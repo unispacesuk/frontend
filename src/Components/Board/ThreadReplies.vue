@@ -15,7 +15,7 @@
 
   const $bus = inject<IBus>('$bus');
   const { params } = toRefs(useRoute());
-  const isLoading = reactive(computed(() => !state.replies.length));
+  const isLoading = ref<boolean>(true);
 
   onBeforeMount(() => {
     // fetch the replies
@@ -37,6 +37,7 @@
   function fetchReplies() {
     getAllThreadReplies(params.value.id).then((d) => {
       state.replies = d.response;
+      isLoading.value = false;
     });
   }
 
