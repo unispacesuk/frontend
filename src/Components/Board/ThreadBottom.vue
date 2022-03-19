@@ -10,12 +10,16 @@
           :class="{ 'fill-yellow-500': state.isStarred }"
         />
       </template>
+      <template v-else>
+        <StarIcon class="w-5 container__icon container__icon__button smooth" />
+      </template>
       <ShareIcon @click="onClickShare" class="w-5 container__icon container__icon__button smooth" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+  import { useRoute } from 'vue-router';
   import { inject, onBeforeMount, reactive } from 'vue';
   import { storeToRefs } from 'pinia';
   import { useUser } from '../../Stores/UserStore';
@@ -28,6 +32,8 @@
     thread: IThread;
   }>();
 
+  const route = useRoute();
+  const urlBase = inject('urlBase');
   const { user } = storeToRefs(useUser());
   const $bus = inject<IBus>('$bus');
   // const isStarred = ref<boolean>(false);
@@ -67,12 +73,17 @@
   }
 
   function onClickShare() {
-    alert('sharing this thread');
+    try {
+      navigator.clipboard.writeText(`${urlBase}${route.fullPath}`);
+      $bus?.emit('add-toast', 'Url copied. Now share with friends.', 'success');
+    } catch (e) {
+      $bus?.emit('add-toast', 'Something went wrong with copying the url.', 'error');
+    }
   }
 
   function formattedDate() {
     // @ts-ignore
-    return new Date(props.thread.createdAt).toLocaleString();
+    return new Date(props.thread.createdAt).toDateString();
   }
 </script>
 

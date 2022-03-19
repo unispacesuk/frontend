@@ -1,7 +1,5 @@
 import { Delete, Get, Patch, Post, authHeaders } from '../../Util/Request';
 
-const token = localStorage.getItem('access-token') || '';
-
 async function getAllCategories(): Promise<any> {
   const response = await Get('category');
 

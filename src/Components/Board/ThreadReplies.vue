@@ -1,17 +1,22 @@
 <template>
   <div>
     <div v-if="isLoading">Loading...</div>
-    <div v-for="reply of state.replies">
-      {{ reply }}
+    <div v-else-if="state.replies.length > 0" v-for="reply of state.replies">
+      <ThreadReplyCard :reply="reply" />
+    </div>
+    <div v-else>
+      <Empty label="No replies here yet." />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
   import { useRoute } from 'vue-router';
-  import { toRefs, inject, onBeforeUnmount, onBeforeMount, ref, reactive, computed } from 'vue';
-  import { IBus } from '../../Interfaces/IBus';
+  import { toRefs, inject, onBeforeUnmount, onBeforeMount, ref, reactive } from 'vue';
   import { getAllThreadReplies } from '../../Services/Board/BoardsService';
+  import { IBus } from '../../Interfaces/IBus';
+  import Empty from '../Util/Empty.vue';
+  import ThreadReplyCard from './ThreadReplyCard.vue';
 
   const $bus = inject<IBus>('$bus');
   const { params } = toRefs(useRoute());
