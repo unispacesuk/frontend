@@ -157,7 +157,7 @@
   const newThreadContent = ref<string>('');
 
   onBeforeMount(() => {
-    const id: string | string[] = route.params.id;
+    const id: string | string[] = route.params['threadId'];
     getThread(id)
       .then((d) => {
         loading.value = false;

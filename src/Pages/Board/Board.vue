@@ -18,7 +18,7 @@
       </div>
       <div v-if="threads.length === 0">There are no threads on this board.</div>
       <div v-for="thread of threads" :key="thread.id">
-        <router-link :to="{ name: 'thread', params: { id: thread.id } }">
+        <router-link :to="{ name: 'thread', params: { threadId: thread.id } }">
           <Thread :thread="thread" />
         </router-link>
       </div>
@@ -57,7 +57,7 @@
   const { user } = storeToRefs(useUser());
 
   onBeforeMount(() => {
-    const id: string | string[] = route.params['id'];
+    const id: string | string[] = route.params['boardId'];
     getBoard(id)
       .then((d) => {
         if (d.threads) {

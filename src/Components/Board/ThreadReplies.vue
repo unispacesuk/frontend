@@ -40,7 +40,7 @@
   });
 
   function fetchReplies() {
-    getAllThreadReplies(params.value.id).then((d) => {
+    getAllThreadReplies(params.value.threadId).then((d) => {
       state.replies = d.response;
       isLoading.value = false;
     });

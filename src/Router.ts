@@ -63,8 +63,8 @@ const routes = [
 
   // board related routes
   { path: '/boards', name: 'boards', component: Boards },
-  { path: '/boards/:id', name: 'board', component: Board },
-  { path: '/thread/:id', name: 'thread', component: Thread },
+  { path: '/boards/:boardId', name: 'board', component: Board },
+  { path: '/thread/:threadId', name: 'thread', component: Thread },
 
   // question routes
   { path: '/questions', name: 'questions', component: Questions },
