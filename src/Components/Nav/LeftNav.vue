@@ -40,8 +40,8 @@
           <QuestionMarkCircleIcon class="w-5" />
         </NavLink>
       </router-link>
-      <router-link to="/">
-        <NavLink name="Blog" route="blog">
+      <router-link to="/blogs">
+        <NavLink name="Blogs" route="blogs">
           <RssIcon class="w-5" />
         </NavLink>
       </router-link>

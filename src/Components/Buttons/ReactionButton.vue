@@ -1,13 +1,13 @@
 <template>
-$END$
+  <button class="reaction_button smooth">
+    <slot></slot>
+  </button>
 </template>
 
-<script>
-export default {
-name: "ReactionButton"
-}
-</script>
+<script setup lang="ts"></script>
 
-<style scoped>
-
+<style scoped lang="scss">
+  .reaction_button {
+    @apply border border-gray-800 rounded text-sm py-1 px-2 flex space-x-2 hover:bg-gray-100 active:bg-blue-300;
+  }
 </style>

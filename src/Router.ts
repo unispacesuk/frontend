@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from './Pages/Home.vue';
 import NotFound from './Pages/NotFound.vue';
+import Blog from './Pages/Blog/Blog.vue';
 import Boards from './Pages/Board/Boards.vue';
 import Questions from './Pages/Question/Questions.vue';
 import Board from './Pages/Board/Board.vue';
@@ -79,6 +80,9 @@ const routes = [
     },
   },
   { path: '/questions/:id', name: 'question', component: Question },
+
+  // blog routes
+  { path: '/blogs', name: 'blogs', component: Blog },
 
   // utils
   { path: '/:pathMatch(.*)*', name: 'notfound', component: NotFound },

@@ -1,7 +1,7 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 import { router } from './Router';
-import './Assets/index.css';
+import './Assets/index.scss';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 
 import { createPinia } from 'pinia';

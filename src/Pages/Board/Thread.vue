@@ -66,20 +66,7 @@
     <div class="flex flex-col space-y-2 pt-3">
       <Input :input-value="thread.title" @input-change="(v) => (newThreadTitle = v)" />
 
-      <!-- TODO: extract EditorContent -->
-      <div class="flex space-x-2 pt-4">
-        <Button @button-click="editor.chain().focus().toggleBold().run()" type="plain">
-          <b>B</b>
-        </Button>
-        <Button @button-click="editor.chain().focus().toggleItalic().run()" type="plain">
-          <i>I</i>
-        </Button>
-        <!--      <Button @button-click="editor.commands.setHeading({ level: 1 })" type="plain"> H1 </Button>-->
-        <Button @button-click="editor.chain().toggleCode().run()" type="plain">
-          {{ codeButton }}
-        </Button>
-      </div>
-      <EditorContent :editor="editor" class="smooth-fast" />
+      <TextEditor />
     </div>
     <div class="flex space-x-2 justify-end pt-5">
       <Button type="error" @button-click="isEditing = false" :disabled="editLoading">Cancel</Button>
@@ -91,11 +78,11 @@
   </Modal>
 
   <!-- Add reply modal -->
-  <Modal v-if="isReplying" @close-modal="isReplying = false">
+  <Modal v-if="isReplying" @close-modal="isReplying = false" :allow-full="true">
     <div class="text-xl border-b border-gray-200 px-3 pb-3">Replying to: {{ thread.title }}</div>
-    <EditorContent :editor="replyBox" class="smooth-fast py-3" />
+    <TextEditor @update-content="handleReplyThreadContent" />
 
-    <div class="flex justify-end space-x-2">
+    <div class="flex justify-end space-x-2 mt-3">
       <Button type="error" v-if="!replySending" @button-click="handleReplyThreadClose">
         Cancel
       </Button>
@@ -120,8 +107,6 @@
   import { useUser } from '../../Stores/UserStore';
   import { IThread } from '../../Interfaces/Board/IThread';
   import { IBus } from '../../Interfaces/IBus';
-  import { EditorContent, useEditor } from '@tiptap/vue-3';
-  import StarterKit from '@tiptap/starter-kit';
   import Modal from '../../Components/Modal/Modal.vue';
   import UserInfo from '../../Components/Board/UserInfo.vue';
   import Button from '../../Components/Buttons/Button.vue';
@@ -131,6 +116,7 @@
   import Input from '../../Components/Form/Input.vue';
   import ThreadBottom from '../../Components/Board/ThreadBottom.vue';
   import ThreadReplies from '../../Components/Board/ThreadReplies.vue';
+  import TextEditor from '../../Components/Form/TextEditor.vue';
 
   const $bus = inject<IBus>('$bus');
   const route = useRoute();
@@ -146,8 +132,6 @@
   const isReplying = ref<boolean>(false);
   const replyContent = ref<string>('');
   const replySending = ref<boolean>(false);
-
-  const codeButton = '</>';
 
   const invalidThread = ref<boolean>(false);
 
@@ -172,20 +156,6 @@
       });
   });
 
-  const editor = useEditor({
-    extensions: [StarterKit],
-    onUpdate: () => {
-      newThreadContent.value = editor.value!.getHTML();
-    },
-  });
-
-  const replyBox = useEditor({
-    extensions: [StarterKit],
-    onUpdate: () => {
-      replyContent.value = replyBox.value!.getHTML();
-    },
-  });
-
   function doDeleteThread() {
     deleteLoading.value = true;
     deleteThread(thread.value!.id)
@@ -202,7 +172,6 @@
 
   function handleEditThread() {
     isEditing.value = true;
-    editor.value?.commands.setContent(thread.value!.content);
   }
 
   function doThreadEdit() {
@@ -226,7 +195,6 @@
         newThreadContent.value = '';
         isEditing.value = false;
         editLoading.value = false;
-        editor.value!.commands.clearContent(true);
       })
       .catch((e) => {
         // console.log(e.response);
@@ -241,7 +209,10 @@
 
   function handleReplyThreadClose() {
     isReplying.value = false;
-    replyBox.value?.commands.clearContent(true);
+  }
+
+  function handleReplyThreadContent(content: string) {
+    replyContent.value = content;
   }
 
   function doReplySend() {
@@ -255,7 +226,6 @@
         $bus?.emit('add-reply-success', d);
         replySending.value = false;
         isReplying.value = false;
-        replyBox.value?.commands.clearContent(true);
       })
       .catch((e) => {
         if (e.response) {
@@ -268,13 +238,4 @@
   }
 </script>
 
-<style lang="scss">
-  .ProseMirror {
-    @apply px-5 py-2 rounded-md outline-none border border-slate-300;
-
-    &:focus {
-      @apply outline-4 outline-$primary/40 ease-in-out duration-[35ms];
-      outline-offset: 0;
-    }
-  }
-</style>
+<style lang="scss"></style>

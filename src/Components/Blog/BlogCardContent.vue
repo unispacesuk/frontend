@@ -1,13 +1,9 @@
 <template>
-$END$
+  <div>
+    this is the main content....
+  </div>
 </template>
 
-<script>
-export default {
-name: "BlogCardContent"
-}
-</script>
+<script setup lang="ts"></script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
