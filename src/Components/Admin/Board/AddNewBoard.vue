@@ -13,10 +13,10 @@
       </div>
 
       <div class="flex justify-end mt-3">
-        <Button type="success" class="flex space-x-2" @button-click="addNewBoard">
+        <ButtonActionPrimary class="flex space-x-2" @button-click="addNewBoard">
           <div>Add</div>
           <Spinner v-if="loading" class="w-5" />
-        </Button>
+        </ButtonActionPrimary>
       </div>
     </Modal>
   </Transition>
@@ -26,13 +26,13 @@
   import { inject, ref } from 'vue';
   import { addBoard } from '../../../Services/Board/BoardsService';
   import { IBus } from '../../../Interfaces/IBus';
+  import { useCategories } from '../../../Stores/CategoriesStore';
   import Modal from '../../Modal/Modal.vue';
   import Input from '../../Form/Input.vue';
   import Label from '../../Form/Label.vue';
-  import Button from '../../Buttons/Button.vue';
   import Spinner from '../../../Icons/Util/Spinner.vue';
+  import ButtonActionPrimary from '../../Buttons/ButtonActionPrimary.vue';
 
-  import { useCategories } from '../../../Stores/CategoriesStore';
   const categoriesStore = useCategories();
 
   const props = defineProps<{

@@ -24,34 +24,36 @@
       <div class="flex space-x-2 justify-end pt-3">
         <div v-if="!editBoardAskConfirm">
           <div v-if="!deleteBoardAskConfirm">
-            <Button type="error" @button-click="handleDeleteBoard">Delete</Button>
+            <ButtonActionCancel
+              label="Delete"
+              @button-click="handleDeleteBoard"
+            ></ButtonActionCancel>
           </div>
           <div v-if="deleteBoardAskConfirm" class="flex space-x-2">
-            <Button
-              v-if="!deleteLoading"
-              type="error"
+            <ButtonActionCancel
+              label="Cancel"
               @button-click="deleteBoardAskConfirm = false"
-            >
-              Cancel
-            </Button>
-            <Button type="success" @button-click="handleDeleteBoardConfirm" class="flex space-x-2">
+            ></ButtonActionCancel>
+            <ButtonActionPrimary @button-click="handleDeleteBoardConfirm">
               <div>Confirm</div>
-              <Spinner v-if="deleteLoading" class="w-5" />
-            </Button>
+              <Spinner class="w-5" v-if="deleteLoading" />
+            </ButtonActionPrimary>
           </div>
         </div>
         <div v-if="!deleteBoardAskConfirm">
           <div v-if="!editBoardAskConfirm">
-            <Button type="primary" @button-click="handleEditBoard">Edit</Button>
+            <ButtonActionPrimary label="Edit" @button-click="handleEditBoard"></ButtonActionPrimary>
           </div>
           <div v-if="editBoardAskConfirm" class="flex space-x-2">
-            <Button type="error" v-if="!editLoading" @button-click="editBoardAskConfirm = false">
-              Cancel
-            </Button>
-            <Button type="success" @button-click="handleEditBoardConfirm" class="flex space-x-2">
+            <ButtonActionCancel
+              label="Cancel"
+              v-if="!editLoading"
+              @button-click="editBoardAskConfirm = false"
+            ></ButtonActionCancel>
+            <ButtonActionPrimary class="flex space-x-2" @button-click="handleEditBoardConfirm">
               <div>Confirm</div>
               <Spinner v-if="editLoading" class="w-5" />
-            </Button>
+            </ButtonActionPrimary>
           </div>
         </div>
       </div>
@@ -67,6 +69,8 @@
   import Button from '../../Buttons/Button.vue';
   import Spinner from '../../../Icons/Util/Spinner.vue';
   import Input from '../../Form/Input.vue';
+  import ButtonActionPrimary from '../../Buttons/ButtonActionPrimary.vue';
+  import ButtonActionCancel from '../../Buttons/ButtonActionCancel.vue';
 
   const props = defineProps<{
     board: IBoard;
@@ -84,8 +88,8 @@
   const editLoading = ref<boolean>(false);
   const editBoardAskConfirm = ref<boolean>(false);
 
-  const newTitle = ref<string>('');
-  const newDescription = ref<string>('');
+  const newTitle = ref<string>(props.board.title);
+  const newDescription = ref<string>(props.board.description);
 
   function handleDeleteBoardConfirm() {
     deleteLoading.value = true;

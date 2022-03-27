@@ -18,7 +18,10 @@
         <!-- Dropdown / filters / tags sorted by most used -->
       </div>
       <div v-if="user.username">
-        <Button @click="$router.push('/questions/ask')" type="primary">Ask</Button>
+        <ButtonActionPrimary
+          label="Ask Question"
+          @button-click="$router.push('/questions/ask')"
+        ></ButtonActionPrimary>
       </div>
     </div>
 
@@ -38,83 +41,91 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject, onBeforeMount, ref, watch, onActivated } from 'vue';
-import { useRoute } from 'vue-router';
-import Button from '../../Components/Buttons/Button.vue';
-import { getAllQuestions } from '../../Services/Question/QuestionService';
-import { IQuestion } from '../../Interfaces/Question/IQuestion';
-import QuestionListItem from '../../Components/Question/QuestionListCard.vue';
-import Input from '../../Components/Form/Input.vue';
-import { SearchCircleIcon } from '@heroicons/vue/solid';
-import QuestionListSkeleton from '../../Components/Skeletons/QuestionListSkeleton.vue';
-import { router } from '../../Router';
-import { useUser } from '../../Stores/UserStore';
-import { storeToRefs } from 'pinia';
+  import { defineComponent, inject, onBeforeMount, ref, watch, onActivated } from 'vue';
+  import { useRoute } from 'vue-router';
+  import Button from '../../Components/Buttons/Button.vue';
+  import { getAllQuestions } from '../../Services/Question/QuestionService';
+  import { IQuestion } from '../../Interfaces/Question/IQuestion';
+  import QuestionListItem from '../../Components/Question/QuestionListCard.vue';
+  import Input from '../../Components/Form/Input.vue';
+  import { SearchCircleIcon } from '@heroicons/vue/solid';
+  import QuestionListSkeleton from '../../Components/Skeletons/QuestionListSkeleton.vue';
+  import { router } from '../../Router';
+  import { useUser } from '../../Stores/UserStore';
+  import { storeToRefs } from 'pinia';
+  import ButtonActionPrimary from '../../Components/Buttons/ButtonActionPrimary.vue';
 
-export default defineComponent({
-  name: 'Questions',
-  components: { QuestionListSkeleton, Input, QuestionListItem, Button, SearchCircleIcon },
-  data() {
-    return {
-      isSearchFocused: false,
-    };
-  },
-  setup() {
-    const questions = ref<IQuestion[]>([]);
-    const loading = ref<boolean>(true);
-    const $bus: any = inject('$bus');
-    const searchQuery = ref<string>('');
-    const route = useRoute();
-    const userStore = useUser();
-    const { user } = storeToRefs(userStore);
+  export default defineComponent({
+    name: 'Questions',
+    components: {
+      ButtonActionPrimary,
+      QuestionListSkeleton,
+      Input,
+      QuestionListItem,
+      Button,
+      SearchCircleIcon,
+    },
+    data() {
+      return {
+        isSearchFocused: false,
+      };
+    },
+    setup() {
+      const questions = ref<IQuestion[]>([]);
+      const loading = ref<boolean>(true);
+      const $bus: any = inject('$bus');
+      const searchQuery = ref<string>('');
+      const route = useRoute();
+      const userStore = useUser();
+      const { user } = storeToRefs(userStore);
 
-    onBeforeMount(() => {
-      let query = '';
-      if (route.query.keyword) {
-        query = `keyword=${route.query.keyword}`;
-      }
-      if (route.query.tag) {
-        query = `tag=${route.query.tag}`;
-      }
-      getAllQuestions(query).then((d) => {
-        questions.value = d.questions;
-        loading.value = false;
+      onBeforeMount(() => {
+        let query = '';
+        if (route.query.keyword) {
+          query = `keyword=${route.query.keyword}`;
+        }
+        if (route.query.tag) {
+          query = `tag=${route.query.tag}`;
+        }
+        getAllQuestions(query).then((d) => {
+          questions.value = d.questions;
+          loading.value = false;
+        });
+        // $bus.listen('question-delete-success', updateQuestions);
+        $bus.listen('question-delete-success', updateQuestions);
+        $bus.listen('question-delete-request', () => {
+          loading.value = true;
+        });
       });
-      // $bus.listen('question-delete-success', updateQuestions);
-      $bus.listen('question-delete-success', updateQuestions);
-      $bus.listen('question-delete-request', () => {
+
+      const updateQuestions = () => {
+        getAllQuestions(' ').then((d) => {
+          questions.value = d.questions;
+          loading.value = false;
+        });
+      };
+
+      const searchQuestions = () => {
         loading.value = true;
-      });
-    });
+        router.push(`/questions/search?keyword=${searchQuery.value}`).then(() => {
+          getAllQuestions(`keyword=${searchQuery.value}`)
+            .then((d) => {
+              questions.value = d.questions;
+              loading.value = false;
+            })
+            .catch((e) => {
+              console.log(e);
+            });
+        });
+      };
 
-    const updateQuestions = () => {
-      getAllQuestions(' ').then((d) => {
-        questions.value = d.questions;
-        loading.value = false;
-      });
-    };
-
-    const searchQuestions = () => {
-      loading.value = true;
-      router.push(`/questions/search?keyword=${searchQuery.value}`).then(() => {
-        getAllQuestions(`keyword=${searchQuery.value}`)
-          .then((d) => {
-            questions.value = d.questions;
-            loading.value = false;
-          })
-          .catch((e) => {
-            console.log(e);
-          });
-      });
-    };
-
-    return {
-      questions,
-      loading,
-      searchQuestions,
-      searchQuery,
-      user,
-    };
-  },
-});
+      return {
+        questions,
+        loading,
+        searchQuestions,
+        searchQuery,
+        user,
+      };
+    },
+  });
 </script>

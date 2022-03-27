@@ -18,22 +18,33 @@
         <!--        <div>Threads: 15</div>-->
       </div>
       <div class="flex space-x-2 justify-end">
-        <Button type="success" @button-click="emit('add-board')">Add Board</Button>
+        <!--        <Button type="success" @button-click="emit('add-board')">Add Board</Button>-->
         <!--        <Button type="plain" @button-click="doDuplicateCategory">Duplicate</Button>-->
-        <Button type="error" @button-click="showDeleteDialog = true">Delete</Button>
-        <Button type="primary" @button-click="editingCategory = true">Edit</Button>
+        <!--        <Button type="error" @button-click="showDeleteDialog = true">Delete</Button>-->
+        <!--        <Button type="primary" @button-click="editingCategory = true">Edit</Button>-->
+        <ButtonActionCancel
+          label="Delete"
+          @button-click="showDeleteDialog = true"
+        ></ButtonActionCancel>
+        <ButtonActionSecondary
+          label="Edit"
+          @button-click="action = 'editing'"
+        ></ButtonActionSecondary>
+        <ButtonActionPrimary
+          label="Add Board"
+          @button-click="emit('add-board')"
+        ></ButtonActionPrimary>
       </div>
       <!--          <div>{{ category.description }}</div>-->
     </div>
   </div>
 
   <AddNewCategory
-    :adding-category="editingCategory"
-    @close-modal="editingCategory = false"
+    @close-modal="action = ''"
+    :action="action"
     :id="category.id"
     :title="category.title"
     :description="category.description"
-    :is-editing="true"
   />
 
   <BoardCategoryDeleteConfirmModal
@@ -56,10 +67,12 @@
   import { deleteCategory, duplicateCategory } from '../../../Services/Board/BoardsService';
   import { ICategory } from '../../../Interfaces/Board/ICategory';
   import { IBus } from '../../../Interfaces/IBus';
-  import Button from '../../Buttons/Button.vue';
   import AddNewCategory from './AddNewCategory.vue';
   import BoardCategoryDeleteConfirmModal from './CategoryDeleteConfirmModal.vue';
   import BoardList from './BoardList.vue';
+  import ButtonActionCancel from '../../Buttons/ButtonActionCancel.vue';
+  import ButtonActionSecondary from '../../Buttons/ButtonActionSecondary.vue';
+  import ButtonActionPrimary from '../../Buttons/ButtonActionPrimary.vue';
 
   const props = defineProps<{
     category: ICategory;
@@ -71,7 +84,8 @@
   }>();
 
   const $bus = inject<IBus>('$bus');
-  const editingCategory = ref<boolean>(false);
+  // const editingCategory = ref<boolean>(false);
+  const action = ref<string>('');
   const showDeleteDialog = ref<boolean>(false);
   const viewBoards = ref<boolean>(false);
 

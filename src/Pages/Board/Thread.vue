@@ -4,10 +4,10 @@
     <!-- Page header -->
     <div class="p-3 border-b border-slate-200">
       <!-- TEMP BUTTON -->
-      <Button @click="$router.back()" class="flex space-x-2 items-center" type="primary">
-        <ArrowLeftIcon class="w-4" />
+      <ButtonActionSecondary class="flex space-x-2" @button-click="router.back()">
+        <ArrowLeftIcon class="w-5" />
         <div>Go Back</div>
-      </Button>
+      </ButtonActionSecondary>
     </div>
     <div v-if="invalidThread">The thread you are looking for does not exist.</div>
     <div v-if="!invalidThread">
@@ -24,10 +24,19 @@
             <div v-if="user.username" class="flex space-x-3">
               <div class="space-x-3" v-if="user.roleId === 1 || user.id === thread.userId">
                 <!-- Placeholder buttons -->
-                <Button @click="showConfirmDelete = true" type="error">Delete</Button>
-                <Button @click="handleEditThread" type="primary">Edit</Button>
+                <ButtonActionCancel
+                  label="Delete"
+                  @button-click="showConfirmDelete = true"
+                ></ButtonActionCancel>
+                <ButtonActionSecondary
+                  label="Edit"
+                  @button-click="handleEditThread"
+                ></ButtonActionSecondary>
               </div>
-              <Button @click="handleReplyThread" type="primary">Reply</Button>
+              <ButtonActionPrimary
+                label="Reply"
+                @button-click="handleReplyThread"
+              ></ButtonActionPrimary>
             </div>
           </div>
           <div class="p-3" v-html="thread.content"></div>
@@ -45,35 +54,40 @@
     <div>
       Do you really want to delete this thread?<br />
       <div class="flex space-x-2 py-3">
-        <Button type="error" v-if="!deleteLoading" @button-click="showConfirmDelete = false">
-          Cancel
-        </Button>
-        <Button
-          type="success"
-          @button-click="doDeleteThread"
+        <ButtonActionCancel
+          label="Cancel"
+          v-if="!deleteLoading"
+          @button-click="showConfirmDelete = false"
+        ></ButtonActionCancel>
+        <ButtonActionPrimary
           class="flex space-x-2"
+          @button-click="doDeleteThread"
           :disabled="deleteLoading"
         >
           <div>Confirm</div>
-          <Spinner v-if="deleteLoading" class="w-5" />
-        </Button>
+          <Spinner class="w-5" v-if="deleteLoading" />
+        </ButtonActionPrimary>
       </div>
     </div>
   </Modal>
 
-  <Modal v-if="isEditing" @close-modal="isEditing = false">
+  <Modal v-if="isEditing" @close-modal="isEditing = false" :allow-full="true">
     <div class="text-lg px-3 pb-3 border-b border-gray-200">Editing Thread</div>
     <div class="flex flex-col space-y-2 pt-3">
       <Input :input-value="thread.title" @input-change="(v) => (newThreadTitle = v)" />
 
-      <TextEditor />
+      <TextEditor :content="thread.content" @update-content="(v) => (newThreadContent = v)" />
     </div>
     <div class="flex space-x-2 justify-end pt-5">
-      <Button type="error" @button-click="isEditing = false" :disabled="editLoading">Cancel</Button>
-      <Button type="success" @button-click="doThreadEdit" class="flex space-x-2">
+      <ButtonActionCancel
+        label="Cancel"
+        @button-click="isEditing = false"
+        :disable="editLoading"
+      ></ButtonActionCancel>
+      <ButtonActionPrimary class="flex space-x-2" @button-click="doThreadEdit">
         <div>Save</div>
-        <Spinner v-if="editLoading" class="w-5" />
-      </Button>
+        <Spinner class="w-5" v-if="editLoading" />
+      </ButtonActionPrimary>
     </div>
   </Modal>
 
@@ -83,19 +97,21 @@
     <TextEditor @update-content="handleReplyThreadContent" />
 
     <div class="flex justify-end space-x-2 mt-3">
-      <Button type="error" v-if="!replySending" @button-click="handleReplyThreadClose">
-        Cancel
-      </Button>
-      <Button type="success" @button-click="doReplySend" class="flex space-x-2">
+      <ButtonActionCancel
+        label="Cancel"
+        v-if="!replySending"
+        @button-click="handleReplyThreadClose"
+      ></ButtonActionCancel>
+      <ButtonActionPrimary class="flex space-x-2" @button-click="doReplySend">
         <div>Submit</div>
         <Spinner class="w-5" v-if="replySending" />
-      </Button>
+      </ButtonActionPrimary>
     </div>
   </Modal>
 </template>
 
 <script setup lang="ts">
-  import { inject, onBeforeMount, ref } from 'vue';
+  import { inject, onBeforeMount, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import {
     addThreadReply,
@@ -107,16 +123,17 @@
   import { useUser } from '../../Stores/UserStore';
   import { IThread } from '../../Interfaces/Board/IThread';
   import { IBus } from '../../Interfaces/IBus';
+  import { ArrowLeftIcon } from '@heroicons/vue/solid';
   import Modal from '../../Components/Modal/Modal.vue';
   import UserInfo from '../../Components/Board/UserInfo.vue';
-  import Button from '../../Components/Buttons/Button.vue';
-
-  import { ArrowLeftIcon } from '@heroicons/vue/solid';
   import Spinner from '../../Icons/Util/Spinner.vue';
   import Input from '../../Components/Form/Input.vue';
   import ThreadBottom from '../../Components/Board/ThreadBottom.vue';
   import ThreadReplies from '../../Components/Board/ThreadReplies.vue';
   import TextEditor from '../../Components/Form/TextEditor.vue';
+  import ButtonActionSecondary from '../../Components/Buttons/ButtonActionSecondary.vue';
+  import ButtonActionCancel from '../../Components/Buttons/ButtonActionCancel.vue';
+  import ButtonActionPrimary from '../../Components/Buttons/ButtonActionPrimary.vue';
 
   const $bus = inject<IBus>('$bus');
   const route = useRoute();
@@ -137,8 +154,13 @@
 
   const { user } = storeToRefs(useUser());
 
-  const newThreadTitle = ref<string>('');
-  const newThreadContent = ref<string>('');
+  const newThreadTitle = ref<string>();
+  const newThreadContent = ref<string>();
+
+  watch(thread, () => {
+    newThreadTitle.value = thread.value?.title;
+    newThreadContent.value = thread.value?.content;
+  });
 
   onBeforeMount(() => {
     const id: string | string[] = route.params['threadId'];

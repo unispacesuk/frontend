@@ -8,7 +8,7 @@
 
     <div v-if="!boardExists" class="text-center text-2xl mt-10">
       <div>The board you are looking for does not exist.</div>
-      <Button type="primary" @click="router.back()"> Go Back </Button>
+      <ButtonActionSecondary label="Go Back" @button-click="router.back()"></ButtonActionSecondary>
     </div>
 
     <div v-if="!loading && boardExists">
@@ -16,7 +16,9 @@
         <div class="text-2xl">{{ boardData.catTitle }}</div>
         <div class="text-lg px-3 truncate">{{ boardData.boardTitle }}</div>
       </div>
-      <div v-if="threads.length === 0">There are no threads on this board.</div>
+      <div v-if="threads.length === 0">
+        <Empty label="There are no threads on this board." />
+      </div>
       <div v-for="thread of threads" :key="thread.id">
         <router-link :to="{ name: 'thread', params: { threadId: thread.id } }">
           <Thread :thread="thread" />
@@ -44,6 +46,8 @@
   import NewThread from '../../Components/Board/Forms/NewThread.vue';
   import Pagination from '../../Components/Pagination/Pagination.vue';
   import Button from '../../Components/Buttons/Button.vue';
+  import ButtonActionSecondary from '../../Components/Buttons/ButtonActionSecondary.vue';
+  import Empty from '../../Components/Util/Empty.vue';
 
   const $bus = inject<IBus>('$bus');
   const route = useRoute();

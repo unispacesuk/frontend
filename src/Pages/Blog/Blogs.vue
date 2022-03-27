@@ -1,7 +1,8 @@
 <template>
   <div class="container">
     <div class="container__top">
-      <Button type="success" @button-click="handleIsAdding">Add Entry</Button>
+      <!--      <Button type="success" @button-click="handleIsAdding">Add Entry</Button>-->
+      <ButtonActionPrimary label="Add Entry" @button-click="handleIsAdding"></ButtonActionPrimary>
     </div>
 
     <template v-if="!blogs.length">
@@ -30,11 +31,15 @@
       <TextEditor @update-content="handleContentInputChange" />
 
       <div class="flex space-x-2 justify-end mt-3">
-        <Button v-if="!sending" @click="isAdding = false" type="error">Cancel</Button>
-        <Button type="success" @button-click="handleOnSubmit" class="flex space-x-2">
+        <ButtonActionCancel
+          label="Cancel"
+          @button-click="isAdding = false"
+          :disabled="isSending"
+        ></ButtonActionCancel>
+        <ButtonActionPrimary class="flex space-x-2" @button-click="handleOnSubmit">
           <div>Submit</div>
-          <Spinner v-if="sending" class="w-5" />
-        </Button>
+          <Spinner class="w-5" v-if="isSending" />
+        </ButtonActionPrimary>
       </div>
     </div>
   </Modal>
@@ -52,6 +57,8 @@
   import Empty from '../../Components/Util/Empty.vue';
   import Input from '../../Components/Form/Input.vue';
   import Spinner from '../../Icons/Util/Spinner.vue';
+  import ButtonActionPrimary from '../../Components/Buttons/ButtonActionPrimary.vue';
+  import ButtonActionCancel from '../../Components/Buttons/ButtonActionCancel.vue';
 
   const router = useRouter();
   const $bus = inject<IBus>('$bus');
@@ -60,7 +67,7 @@
 
   const title = ref<string>('');
   const content = ref<string>('');
-  const sending = ref<boolean>(false);
+  const isSending = ref<boolean>(false);
 
   onBeforeMount(() => {
     getAllBlogs()
@@ -85,7 +92,11 @@
   }
 
   function handleOnSubmit() {
-    sending.value = true;
+    if (title.value === '' || content.value === '') {
+      return $bus?.emit('add-toast', 'Add a Title and Content.', 'error');
+    }
+
+    isSending.value = true;
 
     const body = {
       title: title.value,
@@ -94,14 +105,13 @@
 
     createNewBlog(body)
       .then((d) => {
-        // console.log(d);
         $bus?.emit('add-toast', 'Blog article created.', 'success');
-        sending.value = false;
+        isSending.value = false;
         router.push({ name: 'blogsArticle', params: { articleId: d.response._id } });
       })
-      .catch((error) => {
+      .catch(() => {
         $bus?.emit('add-toast', 'Something went wrong.', 'error');
-        sending.value = false;
+        isSending.value = false;
       });
   }
 </script>
@@ -111,7 +121,7 @@
     @apply flex flex-col space-y-3;
 
     &__top {
-      @apply flex justify-end border-b;
+      @apply flex justify-end border-b pb-3;
     }
 
     &__list {

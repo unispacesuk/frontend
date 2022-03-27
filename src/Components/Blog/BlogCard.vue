@@ -18,7 +18,13 @@
       <div>
         {{ new Date(blog.created_at).toDateString() }}
       </div>
-      <div><Button type="primary" @button-click="handleReadMore">Read More</Button></div>
+      <!--      <div><Button type="primary" @button-click="handleReadMore">Read More</Button></div>-->
+      <div>
+        <ButtonActionSecondary
+          label="Read More"
+          @button-click="handleReadMore"
+        ></ButtonActionSecondary>
+      </div>
     </div>
   </div>
 </template>
@@ -28,6 +34,7 @@
   import BlogCardUserInfo from './BlogCardUserInfo.vue';
   import BlogCardContent from './BlogCardContent.vue';
   import Button from '../Buttons/Button.vue';
+  import ButtonActionSecondary from '../Buttons/ButtonActionSecondary.vue';
 
   const router = useRouter();
 

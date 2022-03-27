@@ -1,85 +1,69 @@
 <template>
-  <form class="px-3 text-center">
+  <form class="px-3">
     <div class="text-xl py-3">Add a New Thread</div>
     <div class="flex flex-col space-y-2">
       <Input
         placeholder="Thread title"
-        @input-change="(v: String) => newThread.title = v"
+        @input-change="(v: String) => newThreadTitle = v"
         ref="reset"
       />
-      <!-- replace this with a cool html editor to allow for styling and stuff -->
-      <!--      <textarea-->
-      <!--        class="border border-slate-300 rounded-md px-5 py-2 outline-none resize-none focus:border-slate-500 shadow-sm"-->
-      <!--        rows="10"-->
-      <!--        v-model="newThread.content"-->
-      <!--        placeholder="Thread content"-->
-      <!--      ></textarea>-->
-      <Textarea
-        @textarea-change="(v: String) => newThread.content = v"
-        placeholder="Thread content"
-        :height="100"
-      />
+      <TextEditor @update-content="(v: String) => newThreadContent = v"></TextEditor>
       <div class="flex justify-end space-x-2">
-        <Button @button-click="submit" type="primary" class="flex space-x-2" :disabled="loading">
+        <ButtonActionSecondary label="Clear Form" @button-click="clearForm"></ButtonActionSecondary>
+        <ButtonActionPrimary @button-click="submit" class="flex space-x-2" :disabled="loading">
           <div>Submit</div>
-          <Spinner v-if="loading" class="w-5" />
-        </Button>
-        <Button @button-click="clearForm(true)" type="plain">Clear Form</Button>
+          <Spinner class="w-5" v-if="loading" />
+        </ButtonActionPrimary>
       </div>
     </div>
   </form>
 </template>
 
-<script lang="ts">
-  import { defineComponent } from 'vue';
+<script setup lang="ts">
+  import { inject, ref } from 'vue';
+  import { useRoute } from 'vue-router';
   import { IThread } from '../../../Interfaces/Board/IThread';
-  import Button from '../../Buttons/Button.vue';
+  import { IBus } from '../../../Interfaces/IBus';
   import Input from '../../Form/Input.vue';
-  import Textarea from '../../Form/Textarea.vue';
   import Spinner from '../../../Icons/Util/Spinner.vue';
+  import TextEditor from '../../Form/TextEditor.vue';
+  import ButtonActionSecondary from '../../Buttons/ButtonActionSecondary.vue';
+  import ButtonActionPrimary from '../../Buttons/ButtonActionPrimary.vue';
 
-  export default defineComponent({
-    name: 'NewThread',
-    components: {
-      Spinner,
-      Textarea,
-      Input,
-      Button,
-    },
-    props: ['loading'],
-    emits: ['submit-form', 'reset-form'],
-    data() {
-      return {
-        newThread: <IThread>{
-          title: '',
-          content: '',
-          board: this.$route.params.id,
-        },
-      };
-    },
-    mounted() {
-      this.$bus.listen('submit-success', this.clearForm);
-    },
-    methods: {
-      clearForm(click?: boolean) {
-        this.newThread = {
-          id: 0,
-          title: '',
-          content: '',
-          board: this.$route.params.id,
-        };
-        this.$bus.emit('input-reset');
+  const props = defineProps<{
+    loading: boolean;
+  }>();
 
-        if (click) {
-          this.$bus.emit('add-toast', 'Form cleared.');
-        }
-      },
-      submit() {
-        this.$emit('submit-form', this.newThread);
-        // this.clearForm();
-      },
-    },
-  });
+  const emit = defineEmits<{
+    (event: 'submit-form', body: object): void;
+  }>();
+
+  const $route = useRoute();
+  const $bus = inject<IBus>('$bus');
+  const newThreadTitle = ref<string>('');
+  const newThreadContent = ref<string>('');
+
+  $bus?.listen('submit-success', clearForm);
+
+  function submit() {
+    if (newThreadTitle.value === '' || newThreadContent.value === '') {
+      $bus?.emit('add-toast', 'Please fill up Title and Content.', 'error');
+    }
+
+    const body = {
+      title: newThreadTitle.value,
+      content: newThreadContent.value,
+      board: $route.params.boardId,
+    };
+
+    emit('submit-form', body);
+  }
+
+  function clearForm() {
+    $bus?.emit('input-reset');
+    $bus?.emit('text-reset-content');
+    $bus?.emit('add-toast', 'Form cleared.', 'success');
+  }
 </script>
 
 <style scoped></style>

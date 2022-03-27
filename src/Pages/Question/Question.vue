@@ -49,13 +49,11 @@
               <MinusIcon class="w-2" />
             </button>
           </div>
-          <Button
-            class="cursor-pointer w-auto"
-            @click="showReplyForm = true"
+          <ButtonActionPrimary
+            label="Reply"
+            @button-click="showReplyForm = true"
             v-if="question.active"
-            type="primary"
-            >Reply
-          </Button>
+          ></ButtonActionPrimary>
         </div>
       </div>
     </div>
@@ -71,175 +69,171 @@
       <div v-if="index > 0" class="h-7 border-l-2 border-gray-200 w-[95%] mx-auto">
         <!-- spacing only -->
       </div>
-      <Answer
-        :answer="answer"
-        :owner="question.userId"
-        :has-best-answer="getBestAnswer()"
-      />
+      <Answer :answer="answer" :owner="question.userId" :has-best-answer="getBestAnswer()" />
     </div>
   </div>
 
   <Transition name="modal">
-    <Modal v-if="showReplyForm" @close-modal="showReplyForm = false">
+    <Modal v-if="showReplyForm" @close-modal="showReplyForm = false" :allow-full="true">
       <form @submit.prevent>
         <div class="pl-3 text-xl pb-3">Replying to: {{ question.title }}</div>
-        <Textarea
-          placeholder="write a good helping answer"
-          @textarea-change="(value: String) => (replyContent = value)"
-        />
-        <Button class="flex items-center" type="primary" @click="doSubmitAnswer"
-          >Send
-          <Spinner v-if="submittingAnswer" class="w-5 ml-2" />
-        </Button>
+        <TextEditor @update-content="(value: String) => (replyContent = value)"></TextEditor>
+        <div class="flex justify-end pt-3">
+          <ButtonActionPrimary @button-click="doSubmitAnswer">
+            <div>Send</div>
+            <Spinner v-if="submittingAnswer" class="w-5 ml-2" />
+          </ButtonActionPrimary>
+        </div>
       </form>
     </Modal>
   </Transition>
 </template>
 
 <script setup lang="ts">
-import { inject, onBeforeMount, ref, watch } from 'vue';
-import {
-  getMyVote,
-  getOPData,
-  getQuestion,
-  submitVote,
-} from '../../Services/Question/QuestionService';
-import { IAnswer } from '../../Interfaces/Question/IQuestion';
-import { useRoute } from 'vue-router';
-import { getAnswers, submitAnswer } from '../../Services/Question/AnswerService';
-import Modal from '../../Components/Modal/Modal.vue';
-import Button from '../../Components/Buttons/Button.vue';
-import Textarea from '../../Components/Form/Textarea.vue';
-import Spinner from '../../Icons/Util/Spinner.vue';
-import { useUser } from '../../Stores/UserStore';
-import { useQuestion } from '../../Stores/QuestionStore';
-import { storeToRefs } from 'pinia';
-import { PlusIcon, MinusIcon } from '@heroicons/vue/solid';
-import Answer from '../../Components/Question/Answer.vue';
-import QuestionContent from '../../Components/Question/QuestionContent.vue';
-import { IBus } from '../../Interfaces/IBus';
+  import { inject, onBeforeMount, ref, watch } from 'vue';
+  import {
+    getMyVote,
+    getOPData,
+    getQuestion,
+    submitVote,
+  } from '../../Services/Question/QuestionService';
+  import { IAnswer } from '../../Interfaces/Question/IQuestion';
+  import { useRoute } from 'vue-router';
+  import { getAnswers, submitAnswer } from '../../Services/Question/AnswerService';
+  import Modal from '../../Components/Modal/Modal.vue';
+  import Button from '../../Components/Buttons/Button.vue';
+  import Spinner from '../../Icons/Util/Spinner.vue';
+  import { useUser } from '../../Stores/UserStore';
+  import { useQuestion } from '../../Stores/QuestionStore';
+  import { storeToRefs } from 'pinia';
+  import { PlusIcon, MinusIcon } from '@heroicons/vue/solid';
+  import Answer from '../../Components/Question/Answer.vue';
+  import QuestionContent from '../../Components/Question/QuestionContent.vue';
+  import { IBus } from '../../Interfaces/IBus';
+  import ButtonActionPrimary from '../../Components/Buttons/ButtonActionPrimary.vue';
+  import TextEditor from '../../Components/Form/TextEditor.vue';
 
-const $bus: IBus | undefined = inject('$bus');
-const route = useRoute();
-const answers = ref<IAnswer[]>([]);
-const showReplyForm = ref<boolean>(false);
-const replyContent = ref<string>('');
+  const $bus: IBus | undefined = inject('$bus');
+  const route = useRoute();
+  const answers = ref<IAnswer[]>([]);
+  const showReplyForm = ref<boolean>(false);
+  const replyContent = ref<string>('');
 
-const loadingQuestion = ref<boolean>(true);
-const loadingAnswers = ref<boolean>(true);
-const submittingAnswer = ref<boolean>(false);
-const changing = ref<boolean>(false); // refers to changing the vote value
-const bestAnswer = ref<any>();
+  const loadingQuestion = ref<boolean>(true);
+  const loadingAnswers = ref<boolean>(true);
+  const submittingAnswer = ref<boolean>(false);
+  const changing = ref<boolean>(false); // refers to changing the vote value
+  const bestAnswer = ref<any>();
 
-const userStore = useUser();
-const { user } = storeToRefs(userStore);
-const questionStore = useQuestion();
-const { question, votes, vote, op } = storeToRefs(questionStore);
+  const userStore = useUser();
+  const { user } = storeToRefs(userStore);
+  const questionStore = useQuestion();
+  const { question, votes, vote, op } = storeToRefs(questionStore);
 
-const avatarBase = inject('avatarBase');
-const opAvatar = ref<string>('');
+  const avatarBase = inject('avatarBase');
+  const opAvatar = ref<string>('');
 
-onBeforeMount(async () => {
-  getQuestionData();
-  $bus?.listen('best-answer', doMarkAsBest);
-});
+  onBeforeMount(async () => {
+    getQuestionData();
+    $bus?.listen('best-answer', doMarkAsBest);
+  });
 
-watch(answers, () => {
-  bestAnswer.value = answers.value.filter((a) => a.best === true)[0];
-});
+  watch(answers, () => {
+    bestAnswer.value = answers.value.filter((a) => a.best === true)[0];
+  });
 
-function getQuestionData() {
-  getQuestion(<string>route.params.id).then(async (d) => {
-    question.value = d.question;
-    votes.value = d.question.votes;
-    loadingQuestion.value = false;
-    if (user.value.username) {
-      await doGetMyVote();
-    }
-    await doGetOPData();
-    getAnswers(<string>route.params.id).then((d) => {
-      answers.value = d.answers;
-      if (answers.value.filter((a) => a.best === true).length > 0) {
+  function getQuestionData() {
+    getQuestion(<string>route.params.id).then(async (d) => {
+      question.value = d.question;
+      votes.value = d.question.votes;
+      loadingQuestion.value = false;
+      if (user.value.username) {
+        await doGetMyVote();
+      }
+      await doGetOPData();
+      getAnswers(<string>route.params.id).then((d) => {
+        answers.value = d.answers;
+        if (answers.value.filter((a) => a.best === true).length > 0) {
+          questionStore.setBestAnswer(true);
+        }
+        loadingAnswers.value = false;
+      });
+    });
+  }
+
+  function doGetMyVote() {
+    return getMyVote(question.value.id!.toString()).then((d) => {
+      if (d !== null) {
+        questionStore.setVote(d);
+      }
+    });
+  }
+
+  function doGetOPData() {
+    return getOPData(question.value.userId!.toString()).then((d) => {
+      questionStore.setOp(d.user);
+    });
+  }
+
+  function doSubmitAnswer() {
+    submittingAnswer.value = true;
+    const body = {
+      content: replyContent.value,
+    };
+
+    submitAnswer(<string>route.params.id, body).then((d) => {
+      answers.value.push(d.answer);
+      showReplyForm.value = false;
+      submittingAnswer.value = false;
+    });
+  }
+
+  function doUpvote() {
+    submitVote(question.value.id!.toString(), 'up')
+      .then(() => {
+        questionStore.doVote('up');
+        changing.value = true;
+        setTimeout(() => {
+          changing.value = false;
+        }, 500);
+        // questionStore.setVoted(true);
+        // questionStore.setType('up');
+      })
+      .catch((e) => {
+        if (e.response) {
+          console.log(e);
+        }
+      });
+  }
+
+  function doDownvote() {
+    submitVote(question.value.id!.toString(), 'down')
+      .then(() => {
+        questionStore.doVote('down');
+        changing.value = true;
+        setTimeout(() => {
+          changing.value = false;
+        }, 500);
+        // questionStore.setVoted(true);
+        // questionStore.setType('down');
+      })
+      .catch((e) => {
+        if (e.response) {
+          console.log(e);
+        }
+      });
+  }
+
+  function getBestAnswer(): boolean {
+    return questionStore.hasBestAnswer;
+  }
+
+  function doMarkAsBest(id: number) {
+    answers.value.map((answer) => {
+      if (answer.id === id) {
+        answer.best = true;
         questionStore.setBestAnswer(true);
       }
-      loadingAnswers.value = false;
     });
-  });
-}
-
-function doGetMyVote() {
-  return getMyVote(question.value.id!.toString()).then((d) => {
-    if (d !== null) {
-      questionStore.setVote(d);
-    }
-  });
-}
-
-function doGetOPData() {
-  return getOPData(question.value.userId!.toString()).then((d) => {
-    questionStore.setOp(d.user);
-  });
-}
-
-function doSubmitAnswer() {
-  submittingAnswer.value = true;
-  const body = {
-    content: replyContent.value,
-  };
-
-  submitAnswer(<string>route.params.id, body).then((d) => {
-    answers.value.push(d.answer);
-    showReplyForm.value = false;
-    submittingAnswer.value = false;
-  });
-}
-
-function doUpvote() {
-  submitVote(question.value.id!.toString(), 'up')
-    .then(() => {
-      questionStore.doVote('up');
-      changing.value = true;
-      setTimeout(() => {
-        changing.value = false;
-      }, 500);
-      // questionStore.setVoted(true);
-      // questionStore.setType('up');
-    })
-    .catch((e) => {
-      if (e.response) {
-        console.log(e);
-      }
-    });
-}
-
-function doDownvote() {
-  submitVote(question.value.id!.toString(), 'down')
-    .then(() => {
-      questionStore.doVote('down');
-      changing.value = true;
-      setTimeout(() => {
-        changing.value = false;
-      }, 500);
-      // questionStore.setVoted(true);
-      // questionStore.setType('down');
-    })
-    .catch((e) => {
-      if (e.response) {
-        console.log(e);
-      }
-    });
-}
-
-function getBestAnswer(): boolean {
-  return questionStore.hasBestAnswer;
-}
-
-function doMarkAsBest(id: number) {
-  answers.value.map((answer) => {
-    if (answer.id === id) {
-      answer.best = true;
-      questionStore.setBestAnswer(true);
-    }
-  });
-}
+  }
 </script>

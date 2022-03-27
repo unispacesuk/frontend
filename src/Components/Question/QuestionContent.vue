@@ -30,73 +30,73 @@
     <div class="p-3 whitespace-pre-line" v-html="question.description"></div>
   </div>
 
-  <Modal v-if="editing" @close-modal="editing = false">
+  <Modal v-if="editing" @close-modal="editing = false" :allow-full="true">
     <QuestionContentEdit :question="question" />
   </Modal>
 </template>
 
 <script setup lang="ts">
-import { defineProps, inject, onBeforeMount, ref } from 'vue';
-import { DotsVerticalIcon } from '@heroicons/vue/solid';
-import { useUser } from '../../Stores/UserStore';
-import { storeToRefs } from 'pinia';
-import Modal from '../Modal/Modal.vue';
-import QuestionContentEdit from './QuestionContentEdit.vue';
-import { IBus } from '../../Interfaces/IBus';
-import { useRoute, useRouter } from 'vue-router';
-import { IQuestion } from '../../Interfaces/Question/IQuestion';
-import { deleteQuestion } from '../../Services/Question/QuestionService';
-import Spinner from '../../Icons/Util/Spinner.vue';
+  import { defineProps, inject, onBeforeMount, ref } from 'vue';
+  import { DotsVerticalIcon } from '@heroicons/vue/solid';
+  import { useUser } from '../../Stores/UserStore';
+  import { storeToRefs } from 'pinia';
+  import Modal from '../Modal/Modal.vue';
+  import QuestionContentEdit from './QuestionContentEdit.vue';
+  import { IBus } from '../../Interfaces/IBus';
+  import { useRoute, useRouter } from 'vue-router';
+  import { IQuestion } from '../../Interfaces/Question/IQuestion';
+  import { deleteQuestion } from '../../Services/Question/QuestionService';
+  import Spinner from '../../Icons/Util/Spinner.vue';
 
-const $bus: IBus | undefined = inject('$bus');
-const urlBase = inject('urlBase');
-const userStore: any = storeToRefs(useUser());
-const user = userStore.user;
-const route = useRoute();
-const router = useRouter();
+  const $bus: IBus | undefined = inject('$bus');
+  const urlBase = inject('urlBase');
+  const userStore: any = storeToRefs(useUser());
+  const user = userStore.user;
+  const route = useRoute();
+  const router = useRouter();
 
-const loading = ref<boolean>(false);
-const moreMenu = ref<boolean>(false);
-const editing = ref<boolean>(false);
+  const loading = ref<boolean>(false);
+  const moreMenu = ref<boolean>(false);
+  const editing = ref<boolean>(false);
 
-const props = defineProps<{
-  question: IQuestion;
-}>();
+  const props = defineProps<{
+    question: IQuestion;
+  }>();
 
-const question = ref(props.question);
+  const question = ref(props.question);
 
-onBeforeMount(() => {
-  $bus?.listen('question-update-success', updateQuestion);
-});
+  onBeforeMount(() => {
+    $bus?.listen('question-update-success', updateQuestion);
+  });
 
-function updateQuestion(q: IQuestion) {
-  question.value = q;
-  editing.value = false;
-  // $bus?.emit('add-toast', 'Question edited.', 'success');
-  moreMenu.value = false;
-}
+  function updateQuestion(q: IQuestion) {
+    question.value = q;
+    editing.value = false;
+    // $bus?.emit('add-toast', 'Question edited.', 'success');
+    moreMenu.value = false;
+  }
 
-function doDeleteQuestion() {
-  loading.value = true;
-  deleteQuestion(question.value.id!)
-    .then((r) => {
-      $bus?.emit('add-toast', 'Question deleted.', 'success');
-      router.push('/questions');
-    })
-    .catch((e) => {
-      console.log(e.response);
-      $bus?.emit('add-toast', 'Could not delete question.', 'error');
-      loading.value = false;
-    });
-}
+  function doDeleteQuestion() {
+    loading.value = true;
+    deleteQuestion(question.value.id!)
+      .then((r) => {
+        $bus?.emit('add-toast', 'Question deleted.', 'success');
+        router.push('/questions');
+      })
+      .catch((e) => {
+        console.log(e.response);
+        $bus?.emit('add-toast', 'Could not delete question.', 'error');
+        loading.value = false;
+      });
+  }
 
-function copyToClipboard() {
-  navigator.clipboard
-    .writeText(urlBase + route.fullPath)
-    .then(() => {
-      $bus?.emit('add-toast', 'Link copied to clipboard.', 'success');
-    })
-    .catch((e) => console.log(e));
-  moreMenu.value = false;
-}
+  function copyToClipboard() {
+    navigator.clipboard
+      .writeText(urlBase + route.fullPath)
+      .then(() => {
+        $bus?.emit('add-toast', 'Link copied to clipboard.', 'success');
+      })
+      .catch((e) => console.log(e));
+    moreMenu.value = false;
+  }
 </script>

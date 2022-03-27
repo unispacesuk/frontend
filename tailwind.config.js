@@ -6,6 +6,7 @@ module.exports = {
         $action: '#69EA9D',
         '$action-hover': '#42D97E',
         '$action-active': '#79D29D',
+        $accent: '#1E293B',
         $error: '#ef5e5e',
         '$error-hover': '#eb3b3b',
         '$error-active': '#e81717',

@@ -3,9 +3,10 @@
     <div class="flex items-center justify-between px-5 py-3">
       <div class="text-lg">Board Categories</div>
       <div>
-        <Button type="primary" @button-click="addingCategory = !addingCategory">
-          Add New Category
-        </Button>
+        <ButtonActionPrimary
+          label="Add New Category"
+          @button-click="action = 'adding'"
+        ></ButtonActionPrimary>
       </div>
     </div>
     <div v-if="loading" class="flex justify-center">
@@ -13,7 +14,7 @@
     </div>
 
     <div v-if="!loading">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-5">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 px-5">
         <div v-for="(category, index) of cats" :key="index">
           <BoardCategoriesItemCard
             :category="category"
@@ -32,7 +33,7 @@
       />
     </div>
 
-    <AddNewCategory :adding-category="addingCategory" @close-modal="handleCloseModal" />
+    <AddNewCategory :action="action" @close-modal="handleCloseModal" />
     <AddNewBoard
       :adding-board="addingBoard"
       :category-id="addingBoardCatId"
@@ -46,21 +47,22 @@
   import { storeToRefs } from 'pinia';
   import { useCategories } from '../../../Stores/CategoriesStore';
   import { fetchAllCategories } from '../Helpers';
+  import { getAllCategories } from '../../../Services/Board/BoardsService';
   import { ICategory } from '../../../Interfaces/Board/ICategory';
   import { IBus } from '../../../Interfaces/IBus';
-  import Button from '../../Buttons/Button.vue';
   import AddNewCategory from './AddNewCategory.vue';
   import BoardCategoriesItemCard from './CategoriesItemCard.vue';
   import Pagination from '../../Pagination/Pagination.vue';
   import Spinner from '../../../Icons/Util/Spinner.vue';
   import AddNewBoard from './AddNewBoard.vue';
-  import { getAllCategories } from '../../../Services/Board/BoardsService';
+  import ButtonActionPrimary from '../../Buttons/ButtonActionPrimary.vue';
 
   const categoriesStore = useCategories();
   const { categories, getCategories } = storeToRefs(useCategories());
 
   const $bus = inject<IBus>('$bus');
-  const addingCategory = ref<boolean>(false);
+  // const addingCategory = ref<boolean>(false);
+  const action = ref<string>('');
   const addingBoard = ref<boolean>(false);
   const addingBoardCatId = ref<number>(0);
 
@@ -98,7 +100,7 @@
   }
 
   function handleCloseModal(value: boolean) {
-    if (addingCategory.value) return (addingCategory.value = value);
+    if (action.value) return (action.value = '');
     if (addingBoard.value) return (addingBoard.value = value);
   }
 

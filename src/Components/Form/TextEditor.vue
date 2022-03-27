@@ -11,12 +11,20 @@
 </template>
 
 <script setup lang="ts">
-  import { onBeforeMount, ref } from 'vue';
   import { EditorContent, useEditor } from '@tiptap/vue-3';
+  import { inject, onMounted } from 'vue';
   import StarterKit from '@tiptap/starter-kit';
   import TextEditorButton from './TextEditorButton.vue';
+  import { IBus } from '../../Interfaces/IBus';
+
+  const props = defineProps<{
+    content?: string;
+  }>();
 
   const emits = defineEmits(['update-content']);
+
+  const $bus = inject<IBus>('$bus');
+  $bus?.listen('text-reset-content', onTextResetContent);
 
   const editor = useEditor({
     extensions: [StarterKit],
@@ -25,16 +33,18 @@
     },
   });
 
-  // onBeforeMount(() => {
-  //   window.addEventListener('keydown', (e) => {
-  //     if (e.key === 'Enter') {
-  //       editor.value?.chain().setHardBreak().run();
-  //     }
-  //   });
-  // });
+  onMounted(() => {
+    if (props.content) {
+      editor.value?.commands.setContent(props.content);
+    }
+  });
 
   function onTextEditorUpdate(content: string | undefined) {
     emits('update-content', content);
+  }
+
+  function onTextResetContent() {
+    editor.value?.commands.setContent('');
   }
 </script>
 

@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent } from 'vue';
 import { IToast } from '../../Interfaces/Toast/IToast';
 
 export default defineComponent({

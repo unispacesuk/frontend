@@ -60,14 +60,13 @@
 <script lang="ts">
 import { defineComponent, inject, PropType, ref } from 'vue';
 import { IQuestion } from '../../Interfaces/Question/IQuestion';
-import Tag from '../Tag/Tag.vue';
 import { DotsVerticalIcon, XCircleIcon } from '@heroicons/vue/solid';
 import { deleteQuestion } from '../../Services/Question/QuestionService';
-import QuestionUserInfo from './QuestionListCardUserInfo.vue';
 import { storeToRefs } from 'pinia';
 import { useUser } from '../../Stores/UserStore';
-import { $ } from 'vue/macros';
 import { IBus } from '../../Interfaces/IBus';
+import QuestionUserInfo from './QuestionListCardUserInfo.vue';
+import Tag from '../Tag/Tag.vue';
 
 interface QuestionProp {
   question: IQuestion;
