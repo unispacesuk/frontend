@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
 import { IUser } from '../Interfaces/User/IUser';
 import { Post } from '../Util/Request';
-import { router } from '../Router';
 
 // TODO: Error Handle this.......
 async function doAuthenticate() {
@@ -26,6 +25,7 @@ async function doAuthenticate() {
 export const useUser = defineStore('userStore', {
   state: () => ({
     user: <IUser>{},
+    websocket: <WebSocket | null>null,
   }),
   getters: {
     currentUser: (state) => {

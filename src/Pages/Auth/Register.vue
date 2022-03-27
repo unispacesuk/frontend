@@ -12,14 +12,14 @@
         />
         <Input
           class="w-full"
-          :class="!passwordsMatch ? 'border-red-700 focus:border-red-700' : ''"
+          :class="!passwordsMatch ? 'outline outline-$error/50 focus:outline-$error/50' : ''"
           type="password"
           placeholder="password"
           @input-change="(v) => (password = v)"
         />
         <Input
           class="w-full"
-          :class="!passwordsMatch ? 'border-red-700 focus:border-red-700' : ''"
+          :class="!passwordsMatch ? 'outline outline-$error/50 focus:outline-$error/50' : ''"
           type="password"
           placeholder="password verify"
           @input-change="handlePasswordVerifyInput"

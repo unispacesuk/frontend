@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from './Pages/Home.vue';
 import NotFound from './Pages/NotFound.vue';
-import Blog from './Pages/Blog/Blog.vue';
+import Blogs from './Pages/Blog/Blogs.vue';
+import Article from './Pages/Blog/Article.vue';
 import Boards from './Pages/Board/Boards.vue';
 import Questions from './Pages/Question/Questions.vue';
 import Board from './Pages/Board/Board.vue';
@@ -11,6 +12,8 @@ import Admin from './Pages/Admin/Admin.vue';
 import Login from './Pages/Auth/Login.vue';
 import Register from './Pages/Auth/Register.vue';
 import Logout from './Pages/Auth/Logout.vue';
+import Rooms from './Pages/Rooms/Rooms.vue';
+import Room from './Pages/Rooms/Room.vue';
 
 // guards
 import { AdminGuard } from './Guards/AdminGuard';
@@ -82,7 +85,12 @@ const routes = [
   { path: '/questions/:id', name: 'question', component: Question },
 
   // blog routes
-  { path: '/blogs', name: 'blogs', component: Blog },
+  { path: '/blogs', name: 'blogs', component: Blogs },
+  { path: '/blog/article/:articleId', name: 'blogsArticle', component: Article },
+
+  // room routes
+  { path: '/rooms', name: 'rooms', component: Rooms },
+  { path: '/room/:roomId', name: 'room', component: Room },
 
   // utils
   { path: '/:pathMatch(.*)*', name: 'notfound', component: NotFound },

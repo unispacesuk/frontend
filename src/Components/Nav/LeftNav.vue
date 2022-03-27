@@ -46,6 +46,12 @@
         </NavLink>
       </router-link>
 
+      <router-link to="/rooms">
+        <NavLink name="Rooms" route="rooms">
+          <ArchiveIcon class="w-5" />
+        </NavLink>
+      </router-link>
+
       <div v-if="user.username" class="flex flex-col space-y-3">
         <!-- user dashboard // can change in the future -->
         <router-link to="/dashboard">
@@ -75,57 +81,59 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
-import NavLink from './NavLink.vue';
-import {
-  CameraIcon,
-  ClipboardIcon,
-  CogIcon,
-  HomeIcon,
-  LockClosedIcon,
-  LockOpenIcon,
-  LogoutIcon,
-  QuestionMarkCircleIcon,
-  RssIcon,
-  UserCircleIcon,
-} from '@heroicons/vue/solid';
-import Spinner from '../../Icons/Util/Spinner.vue';
-import { IUser } from '../../Interfaces/User/IUser';
-import AvatarSkeleton from '../Skeletons/AvatarSkeleton.vue';
-import Avatar from '../User/Avatar.vue';
-
-export default defineComponent({
-  name: 'LeftNav',
-  components: {
-    Avatar,
-    AvatarSkeleton,
-    Spinner,
-    HomeIcon,
-    ClipboardIcon,
-    QuestionMarkCircleIcon,
-    CogIcon,
-    UserCircleIcon,
-    LogoutIcon,
+  import { defineComponent, PropType } from 'vue';
+  import NavLink from './NavLink.vue';
+  import {
     CameraIcon,
+    ClipboardIcon,
+    CogIcon,
+    HomeIcon,
     LockClosedIcon,
     LockOpenIcon,
-    NavLink,
+    LogoutIcon,
+    QuestionMarkCircleIcon,
     RssIcon,
-  },
-  props: {
-    user: {
-      type: Object as PropType<IUser>,
+    UserCircleIcon,
+    ArchiveIcon,
+  } from '@heroicons/vue/solid';
+  import Spinner from '../../Icons/Util/Spinner.vue';
+  import { IUser } from '../../Interfaces/User/IUser';
+  import AvatarSkeleton from '../Skeletons/AvatarSkeleton.vue';
+  import Avatar from '../User/Avatar.vue';
+
+  export default defineComponent({
+    name: 'LeftNav',
+    components: {
+      Avatar,
+      AvatarSkeleton,
+      Spinner,
+      HomeIcon,
+      ClipboardIcon,
+      QuestionMarkCircleIcon,
+      CogIcon,
+      UserCircleIcon,
+      LogoutIcon,
+      CameraIcon,
+      LockClosedIcon,
+      LockOpenIcon,
+      NavLink,
+      RssIcon,
+      ArchiveIcon,
     },
-  },
-  data() {
-    return {
-      file: '',
-      loading: false,
-    };
-  },
-  setup() {
-    return {};
-  },
-  methods: {},
-});
+    props: {
+      user: {
+        type: Object as PropType<IUser>,
+      },
+    },
+    data() {
+      return {
+        file: '',
+        loading: false,
+      };
+    },
+    setup() {
+      return {};
+    },
+    methods: {},
+  });
 </script>

@@ -8,19 +8,18 @@
   <!--    :value="textContent"-->
   <!--  ></textarea>-->
   <div class="mb-3">
-    <QuillEditor
-      v-model:content="content"
-      ref="editor"
-      content-type="html"
-      :options="options"
-      @keyup="emitValue"
-    />
+<!--    <QuillEditor-->
+<!--      v-model:content="content"-->
+<!--      ref="editor"-->
+<!--      content-type="html"-->
+<!--      :options="options"-->
+<!--      @keyup="emitValue"-->
+<!--    />-->
   </div>
 </template>
 
 <script lang="ts">
   import { defineComponent, ref } from 'vue';
-  import { QuillEditor } from '@vueup/vue-quill';
 
   interface TextareaProps {
     placeholder: string;
@@ -30,9 +29,7 @@
 
   export default defineComponent({
     name: 'Textarea',
-    components: {
-      QuillEditor,
-    },
+    components: {},
     setup(props: TextareaProps) {
       const content = ref<string>(props.textContent ?? '');
 

@@ -8,38 +8,48 @@
   <Toasts />
 </template>
 
-<script lang="ts">
-  import { ref, onBeforeMount, watch, onMounted } from 'vue';
-  import Layout from './Layouts/Layout.vue';
-  import Spinner from './Icons/Util/Spinner.vue';
-  import Toasts from './Components/Toast/Toasts.vue';
+<script setup lang="ts">
+  import { onMounted, ref, inject } from 'vue';
   import { usePage } from './Stores/PageStore';
   import { useUser } from './Stores/UserStore';
   import { storeToRefs } from 'pinia';
+  import { IBus } from './Interfaces/IBus';
+  import Layout from './Layouts/Layout.vue';
+  import Spinner from './Icons/Util/Spinner.vue';
+  import Toasts from './Components/Toast/Toasts.vue';
 
-  export default {
-    name: 'App',
-    components: { Toasts, Spinner, Layout },
-    setup() {
-      const loading = ref<boolean>(true);
-      const { user } = storeToRefs(useUser());
-      const pageStore = usePage();
+  const loading = ref<boolean>(true);
+  const { user, websocket } = storeToRefs(useUser());
+  const pageStore = usePage();
 
-      // watch(user, () => {
-      //   pageStore.setPageLoading(false);
-      // });
-      onMounted(() => {
-        pageStore.setPageLoading(false);
-      });
-      // onBeforeMount(() => {
-      //   pageStore.setPageLoading(false);
-      // });
+  const $bus = inject<IBus>('$bus');
 
-      return {
-        loading,
-        pageStore,
-        user,
-      };
-    },
-  };
+  setTimeout(() => {
+    if (user.value.id) {
+      websocket.value = new WebSocket('wss://ws.unispaces.test');
+      connectWebsocket();
+      $bus?.emit('add-toast', 'Websocket connected.', 'success');
+    }
+  }, 5000);
+
+  onMounted(() => {
+    pageStore.setPageLoading(false);
+  });
+
+  function connectWebsocket() {
+    websocket.value!.onopen = () => {
+      websocket.value!.send(JSON.stringify({ type: 'connect', user: user.value.id }));
+    };
+    websocket.value!.onmessage = (rawData) => {
+      const data = JSON.parse(rawData.data);
+
+      if (data.type === 'ping' && data.user === user.value.id) {
+        websocket.value!.send(JSON.stringify({ type: 'pong', user: user.value.id }));
+      }
+
+      if (data.event === 'notification' && data.user === user.value.id) {
+        $bus?.emit('add-toast', data, 'success');
+      }
+    };
+  }
 </script>
