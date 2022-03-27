@@ -26,17 +26,25 @@
 
   setTimeout(() => {
     if (user.value.id) {
-      websocket.value = new WebSocket('wss://ws.unispaces.test');
+      // $bus?.emit('add-toast', 'Websocket connected.', 'success');
+      // $bus?.emit('add-toast', 'Something went wrong when connecting to the Websocket.', 'error');
       connectWebsocket();
-      $bus?.emit('add-toast', 'Websocket connected.', 'success');
     }
   }, 5000);
+
+  setInterval(() => {
+    if (websocket.value!.readyState === websocket.value!.CLOSED) {
+      console.log('Websocket is disconnected... attempting to reconnect...');
+      return connectWebsocket();
+    }
+  }, 10000);
 
   onMounted(() => {
     pageStore.setPageLoading(false);
   });
 
   function connectWebsocket() {
+    websocket.value = new WebSocket('wss://ws.unispaces.test2');
     websocket.value!.onopen = () => {
       websocket.value!.send(JSON.stringify({ type: 'connect', user: user.value.id }));
     };
