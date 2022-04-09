@@ -2,16 +2,7 @@
   <div class="card_info">
     <div class="card_info__user_info">
       <div>
-        <template v-if="user.avatar">
-          <img class="w-[110px] rounded-full" :src="avatarBase + user.avatar" alt="avatar" />
-        </template>
-        <template v-else>
-          <img
-            class="w-[110px] rounded-full"
-            :src="avatarApi + user.username + '.svg'"
-            alt="avatar"
-          />
-        </template>
+        <UserAvatar :user="user" size="lg" />
       </div>
       <div>{{ user.username }}</div>
       <div>BSc Computer Science</div>
@@ -47,12 +38,14 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, inject, reactive } from 'vue';
+  import { inject, reactive } from 'vue';
   import { storeToRefs } from 'pinia';
   import { useUser } from '../../Stores/UserStore';
-  import { voteBlogArticle } from '../../Services/Blog/BlogService';
+  import { calculateVotes, isVoted, voteBlogArticle } from '../../Services/Blog/BlogService';
   import { IBus } from '../../Interfaces/IBus';
   import ReactionButton from '../Buttons/ReactionButton.vue';
+  import CurrentAvatar from '../User/CurrentAvatar.vue';
+  import UserAvatar from '../User/UserAvatar.vue';
 
   const { currentUser } = storeToRefs(useUser());
 
@@ -74,56 +67,22 @@
     6: 'surprised',
   };
 
-  const votes = computed(() => {
-    if (props.votes[0] === null) return [];
-    return props.votes;
-  });
-
-  // TODO: maybe extract and refactor this?
   const state = reactive<any>({
     bigSmile: {
-      count: votes.value.filter((vote) => vote.blog_id === props.articleId && vote.vote_type === 3)
-        .length,
-      isVoted:
-        votes.value.filter(
-          (vote) =>
-            vote.blog_id === props.articleId &&
-            vote.user_id === currentUser.value.id &&
-            vote.vote_type === 3
-        ).length > 0,
+      count: calculateVotes(props.votes, 3, props.articleId),
+      isVoted: isVoted(props.votes, 3, props.articleId, currentUser.value.id),
     },
     heartEyes: {
-      count: votes.value.filter((vote) => vote.blog_id === props.articleId && vote.vote_type === 4)
-        .length,
-      isVoted:
-        votes.value.filter(
-          (vote) =>
-            vote.blog_id === props.articleId &&
-            vote.user_id === currentUser.value.id &&
-            vote.vote_type === 4
-        ).length > 0,
+      count: calculateVotes(props.votes, 4, props.articleId),
+      isVoted: isVoted(props.votes, 4, props.articleId, currentUser.value.id),
     },
     rofl: {
-      count: votes.value.filter((vote) => vote.blog_id === props.articleId && vote.vote_type === 5)
-        .length,
-      isVoted:
-        votes.value.filter(
-          (vote) =>
-            vote.blog_id === props.articleId &&
-            vote.user_id === currentUser.value.id &&
-            vote.vote_type === 5
-        ).length > 0,
+      count: calculateVotes(props.votes, 5, props.articleId),
+      isVoted: isVoted(props.votes, 5, props.articleId, currentUser.value.id),
     },
     surprised: {
-      count: votes.value.filter((vote) => vote.blog_id === props.articleId && vote.vote_type === 6)
-        .length,
-      isVoted:
-        votes.value.filter(
-          (vote) =>
-            vote.blog_id === props.articleId &&
-            vote.user_id === currentUser.value.id &&
-            vote.vote_type === 6
-        ).length > 0,
+      count: calculateVotes(props.votes, 6, props.articleId),
+      isVoted: isVoted(props.votes, 6, props.articleId, currentUser.value.id),
     },
   });
 

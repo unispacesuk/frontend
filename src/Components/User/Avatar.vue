@@ -11,7 +11,11 @@
         />
       </div>
       <div v-if="!userStore.user.avatar">
-        <img :src="`https://avatars.dicebear.com/api/male/${userStore.user.username}.svg`" alt="avatar" class="rounded-full" />
+        <img
+          :src="`https://avatars.dicebear.com/api/male/${userStore.user.username}.svg`"
+          alt="avatar"
+          class="rounded-full"
+        />
       </div>
     </div>
     <div
@@ -26,58 +30,58 @@
         <!--                   @change="avatarService.assignAvatar($event)">-->
       </form>
     </div>
-<!--    <Modal v-if="cropping" @close-modal="cropping = false">-->
-<!--      <AvatarCrop :avatar="dataUrl" />-->
-<!--    </Modal>-->
+    <!--    <Modal v-if="cropping" @close-modal="cropping = false">-->
+    <!--      <AvatarCrop :avatar="dataUrl" />-->
+    <!--    </Modal>-->
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, inject } from 'vue';
-import AvatarSkeleton from '../Skeletons/AvatarSkeleton.vue';
-import { CameraIcon } from '@heroicons/vue/solid';
-import { uploadAvatar } from '../../Services/User/UserService';
-import { useUser } from '../../Stores/UserStore';
-import AvatarCrop from './AvatarCrop.vue';
-import Modal from '../Modal/Modal.vue';
+  import { ref, inject } from 'vue';
+  import AvatarSkeleton from '../Skeletons/AvatarSkeleton.vue';
+  import { CameraIcon } from '@heroicons/vue/solid';
+  import { uploadAvatar } from '../../Services/User/UserService';
+  import { useUser } from '../../Stores/UserStore';
+  import AvatarCrop from './AvatarCrop.vue';
+  import Modal from '../Modal/Modal.vue';
 
-const loading = ref<boolean>();
-const selectedFile = ref();
-const userStore = useUser();
-const cropping = ref<boolean>();
+  const loading = ref<boolean>();
+  const selectedFile = ref();
+  const userStore = useUser();
+  const cropping = ref<boolean>();
 
-const avatarBase = inject('avatarBase');
+  const avatarBase = inject('avatarBase');
 
-function upload() {
-  loading.value = true;
-  const formData = new FormData();
-  formData.append('avatar', selectedFile.value);
+  function upload() {
+    loading.value = true;
+    const formData = new FormData();
+    formData.append('avatar', selectedFile.value);
 
-  uploadAvatar(formData)
-    .then((d) => {
-      userStore.user.avatar = d.avatar.avatar;
-      loading.value = false;
-    })
-    .catch((e) => {
-      if (e.response) {
-        console.log(e.response);
+    uploadAvatar(formData)
+      .then((d) => {
+        userStore.user.avatar = d.avatar.avatar;
         loading.value = false;
-      }
-    });
-}
+      })
+      .catch((e) => {
+        if (e.response) {
+          console.log(e.response);
+          loading.value = false;
+        }
+      });
+  }
 
-// const dataUrl = ref();
-function fileSelect(files: any) {
-  selectedFile.value = files[0];
-  // const reader = new FileReader();
-  // reader.onload = (e) => {
-  //   dataUrl.value = e.target!.result;
-  //   cropping.value = true;
-  // };
-  // reader.readAsDataURL(selectedFile.value);
-  //
-  // cropping.value = true;
+  // const dataUrl = ref();
+  function fileSelect(files: any) {
+    selectedFile.value = files[0];
+    // const reader = new FileReader();
+    // reader.onload = (e) => {
+    //   dataUrl.value = e.target!.result;
+    //   cropping.value = true;
+    // };
+    // reader.readAsDataURL(selectedFile.value);
+    //
+    // cropping.value = true;
 
-  upload();
-}
+    upload();
+  }
 </script>

@@ -1,39 +1,102 @@
-import { Delete, Get, Patch, Post, authHeaders } from '../../Util/Request';
+import { authHeaders, Delete, Get, Patch, Post } from '../../Util/Request';
 
 async function getAllBlogs() {
-  const response = await Get('blogs');
+  let response;
+
+  try {
+    response = await Get('blogs');
+  } catch (error) {
+    return Promise.reject(error);
+  }
 
   return Promise.resolve(response);
 }
 
 async function createNewBlog(body: object) {
-  const response = await Post('blogs', body, authHeaders());
+  let response;
+
+  try {
+    response = await Post('blogs', body, authHeaders());
+  } catch (error) {
+    return Promise.reject(error);
+  }
 
   return Promise.resolve(response);
 }
 
 async function getBlogArticle(articleId: string | string[]) {
-  const response = await Get(`blogs/article/${articleId}`);
+  let response;
+
+  try {
+    response = await Get(`blogs/article/${articleId}`);
+  } catch (error) {
+    return Promise.reject(error);
+  }
 
   return Promise.resolve(response);
 }
 
 async function updateBlogArticle(articleId: number | string[], data: any) {
-  const response = await Patch(`blogs/article/${articleId}`, data, authHeaders());
+  let response;
+
+  try {
+    response = await Patch(`blogs/article/${articleId}`, data, authHeaders());
+  } catch (error) {
+    return Promise.reject(error);
+  }
 
   return Promise.resolve(response);
 }
 
 async function deleteBlogArticle(articleId: number) {
-  const response = await Delete(`blogs/article/${articleId}`, authHeaders());
+  let response;
+
+  try {
+    response = await Delete(`blogs/article/${articleId}`, authHeaders());
+  } catch (error) {
+    return Promise.reject(error);
+  }
 
   return Promise.resolve(response);
 }
 
 async function voteBlogArticle(articleId: number, data: any) {
-  const response = await Post(`blogs/article/vote/${articleId}`, data, authHeaders());
+  let response;
+
+  try {
+    response = await Post(`blogs/article/vote/${articleId}`, data, authHeaders());
+  } catch (error) {
+    return Promise.reject(error);
+  }
 
   return Promise.resolve(response);
+}
+
+async function submitNewComment(articleId: any, data: any) {
+  let response;
+
+  try {
+    response = await Post(`blogs/article/comment/${articleId}`, data, authHeaders());
+  } catch (error) {
+    return Promise.reject(error);
+  }
+
+  return Promise.resolve(response);
+}
+
+function calculateVotes(votes: any[], type: number, articleId: number) {
+  if (votes[0] === null) return 0;
+  return votes.filter((vote) => vote.vote_type === type && vote.blog_id === articleId).length;
+}
+
+function isVoted(votes: any[], type: number, articleId: number, currentUser: number) {
+  if (votes[0] === null) return false;
+  return (
+    votes.filter(
+      (vote) =>
+        vote.vote_type === type && vote.blog_id === articleId && vote.user_id === currentUser
+    ).length > 0
+  );
 }
 
 export {
@@ -43,4 +106,7 @@ export {
   updateBlogArticle,
   deleteBlogArticle,
   voteBlogArticle,
+  submitNewComment,
+  calculateVotes,
+  isVoted,
 };

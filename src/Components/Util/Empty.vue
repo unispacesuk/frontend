@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col justify-center items-center py-5">
+  <div class="flex flex-col justify-center items-center py-5 text-zinc-500">
     <div>
       <img src="/src/Assets/empty-folder.png" width="100" alt="empty folder" />
     </div>
