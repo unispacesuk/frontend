@@ -84,6 +84,18 @@ async function submitNewComment(articleId: any, data: any) {
   return Promise.resolve(response);
 }
 
+async function getRecentActivity(articleId: number) {
+  let response;
+
+  try {
+    response = await Get(`blogs/article/${articleId}/recentactivity`);
+  } catch (error) {
+    return Promise.reject(error);
+  }
+
+  return Promise.resolve(response);
+}
+
 function calculateVotes(votes: any[], type: number, articleId: number) {
   if (votes[0] === null) return 0;
   return votes.filter((vote) => vote.vote_type === type && vote.blog_id === articleId).length;
@@ -107,6 +119,7 @@ export {
   deleteBlogArticle,
   voteBlogArticle,
   submitNewComment,
+  getRecentActivity,
   calculateVotes,
   isVoted,
 };

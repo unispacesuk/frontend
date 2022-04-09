@@ -23,7 +23,8 @@
       <div>
         {{ new Date(blog.createdAt).toDateString() }}
       </div>
-      <div>
+      <div class="card__bottom_right">
+        <BlogRecentComents :article-id="state.blog.id" />
         <ButtonActionSecondary
           label="Read More"
           @button-click="handleReadMore"
@@ -60,6 +61,7 @@
   import BlogCardContent from './BlogCardContent.vue';
   import BlogEditDialog from './BlogEditDialog.vue';
   import BlogDeleteDialog from './BlogDeleteDialog.vue';
+  import BlogRecentComents from './BlogRecentComents.vue';
 
   const { currentUser } = storeToRefs(useUser());
   const router = useRouter();
@@ -151,6 +153,10 @@
 
     &__bottom {
       @apply flex justify-between items-center border-t border-gray-200 px-5 pt-3 text-sm text-gray-500;
+
+      &_right {
+        @apply flex space-x-5 items-center;
+      }
     }
   }
 </style>

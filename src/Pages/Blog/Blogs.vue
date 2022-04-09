@@ -1,29 +1,33 @@
 <template>
-  <div class="container">
-    <div class="container__top">
-      <div class="container__top_title">Recent Blog Articles</div>
-      <ButtonActionPrimary
-        v-if="currentUser.username"
-        label="Add Entry"
-        @button-click="handleIsAdding"
-      ></ButtonActionPrimary>
-    </div>
+  <template v-if="state.isLoading">Loading...</template>
 
-    <template v-if="!blogs.length">
-      <Empty label="No blog articles to show." />
-    </template>
-    <template v-else>
-      <div class="container__list">
-        <div v-for="blog of blogs" :key="blog.id">
-          <BlogCard :blog="blog" @blogDelete="onBlogDelete" />
-        </div>
+  <template v-else>
+    <div class="container">
+      <div class="container__top">
+        <div class="container__top_title">Recent Blog Articles</div>
+        <ButtonActionPrimary
+          v-if="currentUser.username"
+          label="Add Entry"
+          @button-click="handleIsAdding"
+        ></ButtonActionPrimary>
       </div>
-    </template>
-  </div>
+
+      <template v-if="!state.blogs.length">
+        <Empty label="No blog articles to show." />
+      </template>
+      <template v-else>
+        <div class="container__list">
+          <div v-for="blog of state.blogs" :key="blog.id">
+            <BlogCard :blog="blog" @blogDelete="onBlogDelete" />
+          </div>
+        </div>
+      </template>
+    </div>
+  </template>
 
   <Modal
-    v-if="isAdding"
-    @close-modal="isAdding = false"
+    v-if="state.isAdding"
+    @close-modal="state.isAdding = false"
     :allow-full="true"
     title="Adding a new entry"
   >
@@ -42,12 +46,12 @@
       <div class="flex space-x-2 justify-end mt-3">
         <ButtonActionCancel
           label="Cancel"
-          @button-click="isAdding = false"
-          :disabled="isSending"
+          @button-click="state.isAdding = false"
+          :disabled="state.isSending"
         ></ButtonActionCancel>
         <ButtonActionPrimary class="flex space-x-2" @button-click="handleOnSubmit">
           <div>Submit</div>
-          <Spinner class="w-5" v-if="isSending" />
+          <Spinner class="w-5" v-if="state.isSending" />
         </ButtonActionPrimary>
       </div>
     </div>
@@ -56,7 +60,7 @@
 
 <script setup lang="ts">
   import { useRouter } from 'vue-router';
-  import { inject, onBeforeMount, ref } from 'vue';
+  import { inject, onBeforeMount, reactive, ref } from 'vue';
   import { useUser } from '../../Stores/UserStore';
   import { storeToRefs } from 'pinia';
   import { getAllBlogs, createNewBlog, deleteBlogArticle } from '../../Services/Blog/BlogService';
@@ -76,63 +80,68 @@
 
   const router = useRouter();
   const $bus = inject<IBus>('$bus');
-  const isAdding = ref<boolean>(false);
-  const blogs = ref<IBlog[]>([]);
 
-  const title = ref<string>('');
-  const content = ref<string>('');
-  const isSending = ref<boolean>(false);
+  const state = reactive({
+    blogs: <IBlog[]>[],
+    title: '',
+    content: '',
+    isAdding: false,
+    isSending: false,
+    isLoading: true,
+  });
 
   onBeforeMount(() => {
     getAllBlogs()
       .then((d) => {
-        blogs.value = d.response;
+        state.blogs = d.response;
+        state.isLoading = false;
       })
       .catch((error) => {
         $bus?.emit('add-toast', 'Something went wrong.', 'error');
+        state.isLoading = false;
       });
   });
 
   function handleIsAdding() {
-    isAdding.value = true;
+    state.isAdding = true;
   }
 
   function handleTitleInputChange(value: string) {
-    title.value = value;
+    state.title = value;
   }
 
   function handleContentInputChange(value: string) {
-    content.value = value;
+    state.content = value;
   }
 
   function handleOnSubmit() {
-    if (title.value === '' || content.value === '') {
+    if (state.title === '' || state.content === '') {
       return $bus?.emit('add-toast', 'Add a Title and Content.', 'error');
     }
 
-    isSending.value = true;
+    state.isSending = true;
 
     const body = {
-      title: title.value,
-      content: content.value,
+      title: state.title,
+      content: state.content,
     };
 
     createNewBlog(body)
       .then((d) => {
         $bus?.emit('add-toast', 'Blog article created.', 'success');
-        isSending.value = false;
+        state.isSending = false;
         router.push({ name: 'blogsArticle', params: { articleId: d.response._id } });
       })
       .catch(() => {
         $bus?.emit('add-toast', 'Something went wrong.', 'error');
-        isSending.value = false;
+        state.isSending = false;
       });
   }
 
   function onBlogDelete(articleId: number) {
     deleteBlogArticle(articleId)
       .then((res) => {
-        blogs.value = blogs.value.filter((b: IBlog) => b.id !== articleId);
+        state.blogs = state.blogs.filter((b: IBlog) => b.id !== articleId);
         $bus?.emit('add-toast', 'Blog article deleted with success.', 'success');
       })
       .catch((error) => {

@@ -1,14 +1,14 @@
 <template>
   <div>
     <template v-if="user.avatar">
-      <img :src="avatarBase + user.avatar" :class="avatarSize" alt="avatar" class="rounded-full" />
+      <img :src="avatarBase + user.avatar" :class="avatarSize" :alt="user.username" class="rounded-full" />
     </template>
 
     <template v-else>
       <img
         :src="avatarApi + user.username + '.svg'"
         :class="avatarSize"
-        alt="avatar"
+        :alt="user.username"
         class="rounded-full"
       />
     </template>

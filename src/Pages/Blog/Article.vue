@@ -16,16 +16,18 @@
       </div>
     </div>
 
-    <template v-if="state.comments[0] === null">
-      <Empty label="No comments yet. Be the first." />
-    </template>
-    <template v-if="state.comments[0] !== null">
-      <div v-for="(comment, index) of state.comments" :key="index">
-        <BlogCommentCard :comment="comment" />
-      </div>
-    </template>
+    <div class="__comments">
+      <template v-if="state.comments[0] === null">
+        <Empty label="No comments yet. Be the first." />
+      </template>
+      <template v-if="state.comments[0] !== null">
+        <div v-for="(comment, index) of state.comments" :key="index">
+          <BlogCommentCard :comment="comment" />
+        </div>
+      </template>
 
-    <BlogCommentForm @submitComment="handleSubmitComment" />
+      <BlogCommentForm @submitComment="handleSubmitComment" />
+    </div>
   </template>
 </template>
 
@@ -96,5 +98,9 @@
         @apply py-5;
       }
     }
+  }
+
+  .__comments {
+    @apply flex flex-col space-y-2;
   }
 </style>
