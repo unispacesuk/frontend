@@ -26,17 +26,17 @@
 
   setTimeout(() => {
     if (user.value.id) {
-      // $bus?.emit('add-toast', 'Websocket connected.', 'success');
+      $bus?.emit('add-toast', 'Websocket connected.', 'success');
       // $bus?.emit('add-toast', 'Something went wrong when connecting to the Websocket.', 'error');
-      connectWebsocket();
+      // connectWebsocket();
     }
   }, 5000);
 
   setInterval(() => {
-    if (websocket.value!.readyState === websocket.value!.CLOSED) {
-      console.log('Websocket is disconnected... attempting to reconnect...');
-      return connectWebsocket();
-    }
+    // if (websocket.value!.readyState === websocket.value!.CLOSED) {
+    //   console.log('Websocket is disconnected... attempting to reconnect...');
+    //   return connectWebsocket();
+    // }
   }, 10000);
 
   onMounted(() => {

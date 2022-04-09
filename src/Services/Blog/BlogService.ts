@@ -18,4 +18,29 @@ async function getBlogArticle(articleId: string | string[]) {
   return Promise.resolve(response);
 }
 
-export { getAllBlogs, createNewBlog, getBlogArticle };
+async function updateBlogArticle(articleId: number | string[], data: any) {
+  const response = await Patch(`blogs/article/${articleId}`, data, authHeaders());
+
+  return Promise.resolve(response);
+}
+
+async function deleteBlogArticle(articleId: number) {
+  const response = await Delete(`blogs/article/${articleId}`, authHeaders());
+
+  return Promise.resolve(response);
+}
+
+async function voteBlogArticle(articleId: number, data: any) {
+  const response = await Post(`blogs/article/vote/${articleId}`, data, authHeaders());
+
+  return Promise.resolve(response);
+}
+
+export {
+  getAllBlogs,
+  createNewBlog,
+  getBlogArticle,
+  updateBlogArticle,
+  deleteBlogArticle,
+  voteBlogArticle,
+};

@@ -5,15 +5,24 @@
   >
     <div
       class="relative overflow-y-scroll bg-white p-5 rounded-md shadow-sm z-[100] smooth"
-      :class="{ 'min-h-[10px] max-h-[600px] w-2/4': !isLarge, 'w-full h-full': allowFull && isLarge }"
+      :class="{
+        'min-h-[10px] max-h-[600px] w-2/4': !isLarge,
+        'w-full h-full': allowFull && isLarge,
+      }"
     >
-      <div class="flex justify-end">
-        <button @click="handleModalSize" v-if="allowFull" class="button-accent p-1 outline-none">
-          <ArrowsExpandIcon class="w-5" />
-        </button>
-        <button @click="closeModal" class="button-accent p-1 outline-none">
-          <XIcon class="w-5" />
-        </button>
+      <div class="flex justify-between items-center border-b border-gray-200 pb-3">
+        <div class="text-xl">
+          {{ title }}
+        </div>
+
+        <div>
+          <button @click="handleModalSize" v-if="allowFull" class="button-accent p-1 outline-none">
+            <ArrowsExpandIcon class="w-5" />
+          </button>
+          <button @click="closeModal" class="button-accent p-1 outline-none">
+            <XIcon class="w-5" />
+          </button>
+        </div>
       </div>
       <slot></slot>
     </div>
@@ -26,6 +35,7 @@
 
   const props = defineProps<{
     allowFull?: boolean;
+    title?: string;
   }>();
 
   const emit = defineEmits<{

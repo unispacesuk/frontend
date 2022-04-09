@@ -39,9 +39,9 @@
     },
     methods: {
       emitValue() {
-        if (this.value.trim() !== '') {
-          this.$emit('input-change', this.value.trim());
-        }
+        // if (this.value.trim() !== '') {
+        this.$emit('input-change', this.value.trim());
+        // }
       },
       reset() {
         this.value = '';

@@ -18,6 +18,6 @@
 
 <style scoped>
   .button_action_primary {
-    @apply bg-$action hover:bg-$action-hover active:bg-$action text-white px-3 py-2 rounded-md uppercase text-sm font-bold;
+    @apply bg-$action hover:bg-$action-hover active:bg-$action text-white px-3 py-2 rounded-md uppercase text-sm font-bold outline-none;
   }
 </style>

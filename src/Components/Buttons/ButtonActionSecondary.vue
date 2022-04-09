@@ -22,6 +22,6 @@
 
 <style scoped>
   .button_action_secondary {
-    @apply bg-gray-100 hover:bg-gray-200 active:bg-gray-100 text-$accent px-3 py-2 rounded-md uppercase text-sm font-bold;
+    @apply bg-gray-100 hover:bg-gray-200 active:bg-gray-100 text-$accent px-3 py-2 rounded-md uppercase text-sm font-bold outline-none;
   }
 </style>
