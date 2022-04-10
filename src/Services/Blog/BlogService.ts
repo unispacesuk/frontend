@@ -1,10 +1,14 @@
 import { authHeaders, Delete, Get, Patch, Post } from '../../Util/Request';
 
-async function getAllBlogs() {
+async function getAllBlogs(take: any, page?: any) {
   let response;
 
+  let endpoint = 'blogs';
+  if (take) endpoint += `?take=${take}`;
+  if (page) endpoint += `&page=${page}`;
+
   try {
-    response = await Get('blogs');
+    response = await Get(endpoint);
   } catch (error) {
     return Promise.reject(error);
   }

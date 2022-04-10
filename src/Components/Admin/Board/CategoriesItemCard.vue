@@ -13,15 +13,12 @@
           {{ category.description }}
         </div>
       </div>
-      <div class="p-5">
-        <div>Boards: {{ category.boards.length }}</div>
-        <!--        <div>Threads: 15</div>-->
+      <div class="flex space-x-4 p-5 text-sm">
+        <div>Boards: {{ category.boardCount }}</div>
+        <div>Threads: {{ category.threadCount }}</div>
+        <div>Replies: {{ category.replyCount }}</div>
       </div>
       <div class="flex space-x-2 justify-end">
-        <!--        <Button type="success" @button-click="emit('add-board')">Add Board</Button>-->
-        <!--        <Button type="plain" @button-click="doDuplicateCategory">Duplicate</Button>-->
-        <!--        <Button type="error" @button-click="showDeleteDialog = true">Delete</Button>-->
-        <!--        <Button type="primary" @button-click="editingCategory = true">Edit</Button>-->
         <ButtonActionCancel
           label="Delete"
           @button-click="showDeleteDialog = true"
@@ -35,7 +32,6 @@
           @button-click="emit('add-board')"
         ></ButtonActionPrimary>
       </div>
-      <!--          <div>{{ category.description }}</div>-->
     </div>
   </div>
 

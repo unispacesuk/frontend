@@ -5,4 +5,7 @@ export interface ICategory {
   title: string;
   description: string;
   boards: IBoard[];
+  boardCount?: number;
+  threadCount?: number;
+  replyCount?: number;
 }

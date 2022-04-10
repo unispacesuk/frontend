@@ -1,7 +1,6 @@
 <template>
   <Transition name="modal">
-    <Modal v-if="showDeleteDialog" @close-modal="emit('close-modal', false)">
-      <div class="text-xl">Delete Category?</div>
+    <Modal title="Delete Category?" v-if="showDeleteDialog" @close-modal="emit('close-modal', false)">
       <div class="flex space-x-3 py-5">
         <Button type="error" @button-click="emit('close-modal', false)">Cancel</Button>
         <Button type="success" @button-click="emit('delete-confirm')">Confirm</Button>

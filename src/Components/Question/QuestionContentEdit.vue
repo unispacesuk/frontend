@@ -1,6 +1,5 @@
 <template>
   <div class="flex flex-col space-y-4">
-    <div class="text-2xl px-3">Editing a Question</div>
     <div class="flex flex-col">
       <Label label="Title" />
       <Input :input-value="question.title" @input-change="(v) => (newTile = v)" />

@@ -12,4 +12,6 @@ export interface IBlog {
     lastName: string;
   };
   votes: any[];
+  comments: any[];
+  count: number;
 }

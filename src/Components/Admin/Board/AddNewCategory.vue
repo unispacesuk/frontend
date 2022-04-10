@@ -1,11 +1,10 @@
 <template>
   <Transition name="modal">
-    <Modal v-if="action" @close-modal="emit('close-modal')">
-      <div>
-        <div class="text-xl border-b border-gray-200 px-4 pt-1 pb-3">
-          {{ action === 'adding' ? 'Adding new category.' : `Editing: ${title}` }}
-        </div>
-      </div>
+    <Modal
+      :title="action === 'adding' ? 'Adding new category.' : `Editing: ${title}`"
+      v-if="action"
+      @close-modal="emit('close-modal')"
+    >
       <div class="flex flex-col space-y-5 py-3">
         <div class="flex flex-col space-y-2">
           <Label label="Title" />

@@ -5,7 +5,7 @@
         :src="avatarBase + currentUser.avatar"
         :class="avatarSize"
         alt="avatar"
-        class="rounded-full"
+        class="rounded-full object-cover"
       />
     </template>
 
@@ -14,7 +14,7 @@
         :src="avatarApi + currentUser.username + '.svg'"
         :class="avatarSize"
         alt="avatar"
-        class="rounded-full"
+        class="rounded-full object-cover"
       />
     </template>
   </div>
@@ -37,15 +37,15 @@
 
   const avatarSize = computed(() => {
     return props.size === 'xs'
-      ? 'w-[35px]'
+      ? 'w-[35px] h-[35px]'
       : props.size === 'sm'
-      ? 'w-[50px]'
+      ? 'w-[50px] h-[50px]'
       : props.size === 'md'
-      ? 'w-[75px]'
+      ? 'w-[75px] h-[75px]'
       : props.size === 'lg'
-      ? 'w-[100px]'
+      ? 'w-[100px] h-[100px]'
       : props.size === 'xl'
-      ? 'w-[130px]'
+      ? 'w-[130px] h-[130px]'
       : 'w-[10px]';
   });
 </script>

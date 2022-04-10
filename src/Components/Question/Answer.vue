@@ -4,7 +4,7 @@
       class="w-full h-full bg-gray-200 smooth rounded-md absolute group-hover:rotate-[0.4deg] z-0"
     ></div>
     <div
-      :class="{ 'bg-green-100': answer.best }"
+      :class="{ 'bg-$action bg-opacity-[40%]': answer.best }"
       class="p-3 w-full bg-white border border-slate-200 rounded-md z-10"
     >
       <div class="flex items-center border-b border-gray-200 pb-3 justify-between px-3">
@@ -30,7 +30,7 @@
         </div>
       </div>
       <div class="py-3 pl-3" v-html="answer.content"></div>
-      <div class="text-xs text-gray-500">{{ new Date(answer.createdAt).toDateString() }}</div>
+      <div class="text-xs text-gray-500">{{ moment().endOf('minute').to(answer.createdAt) }}</div>
     </div>
   </div>
 </template>
@@ -43,6 +43,7 @@
   import { IBus } from '../../Interfaces/IBus';
   import ButtonActionSecondary from '../Buttons/ButtonActionSecondary.vue';
   import Spinner from '../../Icons/Util/Spinner.vue';
+  import moment from 'moment';
 
   const avatarBase = inject('avatarBase');
   const avatarApi = inject('avatarApi');

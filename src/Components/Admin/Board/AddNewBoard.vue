@@ -1,9 +1,6 @@
 <template>
   <Transition name="modal">
-    <Modal v-if="addingBoard" @close-modal="emit('close-modal', false)">
-      <div>
-        <div class="text-xl border-b border-gray-200 px-4 pt-1 pb-3">Add a new board</div>
-      </div>
+    <Modal title="Add a new board" v-if="addingBoard" @close-modal="emit('close-modal', false)">
       <div class="flex flex-col space-y-2 py-5">
         <label for="title" class="pl-3">Title</label>
         <Input id="title" @input-change="(v) => (title = v)" />

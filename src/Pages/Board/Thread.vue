@@ -50,29 +50,30 @@
   </div>
 
   <!-- TODO: Send these modals to individual SFC -->
-  <Modal v-if="showConfirmDelete" @close-modal="showConfirmDelete = false">
-    <div>
-      Do you really want to delete this thread?<br />
-      <div class="flex space-x-2 py-3">
-        <ButtonActionCancel
-          label="Cancel"
-          v-if="!deleteLoading"
-          @button-click="showConfirmDelete = false"
-        ></ButtonActionCancel>
-        <ButtonActionPrimary
-          class="flex space-x-2"
-          @button-click="doDeleteThread"
-          :disabled="deleteLoading"
-        >
-          <div>Confirm</div>
-          <Spinner class="w-5" v-if="deleteLoading" />
-        </ButtonActionPrimary>
-      </div>
+  <Modal title="Do you really want to delete this thread?" v-if="showConfirmDelete" @close-modal="showConfirmDelete = false">
+    <div class="flex space-x-2 py-3">
+      <ButtonActionCancel
+        label="Cancel"
+        v-if="!deleteLoading"
+        @button-click="showConfirmDelete = false"
+      ></ButtonActionCancel>
+      <ButtonActionPrimary
+        class="flex space-x-2"
+        @button-click="doDeleteThread"
+        :disabled="deleteLoading"
+      >
+        <div>Confirm</div>
+        <Spinner class="w-5" v-if="deleteLoading" />
+      </ButtonActionPrimary>
     </div>
   </Modal>
 
-  <Modal v-if="isEditing" @close-modal="isEditing = false" :allow-full="true">
-    <div class="text-lg px-3 pb-3 border-b border-gray-200">Editing Thread</div>
+  <Modal
+    title="Editing Thread"
+    v-if="isEditing"
+    @close-modal="isEditing = false"
+    :allow-full="true"
+  >
     <div class="flex flex-col space-y-2 pt-3">
       <Input :input-value="thread.title" @input-change="(v) => (newThreadTitle = v)" />
 
@@ -92,8 +93,12 @@
   </Modal>
 
   <!-- Add reply modal -->
-  <Modal v-if="isReplying" @close-modal="isReplying = false" :allow-full="true">
-    <div class="text-xl border-b border-gray-200 px-3 pb-3">Replying to: {{ thread.title }}</div>
+  <Modal
+    :title="`Replying to: ${thread.title}`"
+    v-if="isReplying"
+    @close-modal="isReplying = false"
+    :allow-full="true"
+  >
     <TextEditor @update-content="handleReplyThreadContent" />
 
     <div class="flex justify-end space-x-2 mt-3">

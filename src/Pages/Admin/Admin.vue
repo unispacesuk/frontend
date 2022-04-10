@@ -2,18 +2,18 @@
   <div>
     <div class="text-2xl flex items-center px-5 py-3 space-x-3 border-b border-gray-200">
       <div>
-        <template v-if="user.avatar">
-          <img class="w-12 rounded-full" :src="avatarBase + user.avatar" :alt="user.username" />
+        <template v-if="currentUser.avatar">
+          <img class="w-12 rounded-full" :src="avatarBase + currentUser.avatar" :alt="currentUser.username" />
         </template>
         <template v-else>
           <img
             class="w-12 rounded-full"
-            :src="avatarApi + user.username + '.svg'"
-            :alt="user.username"
+            :src="avatarApi + currentUser.username + '.svg'"
+            :alt="currentUser.username"
           />
         </template>
       </div>
-      <div>Welcome to the Administration Panel, {{ user.username }}!</div>
+      <div>Welcome to the Administration Panel, {{ currentUser.username }}!</div>
     </div>
 
     <BoardCategories />
@@ -30,5 +30,5 @@
 
   const avatarBase = inject('avatarBase');
   const avatarApi = inject('avatarApi');
-  const { user } = storeToRefs(useUser());
+  const { currentUser } = storeToRefs(useUser());
 </script>

@@ -30,14 +30,8 @@ async function duplicateCategory(id: number) {
   return Promise.resolve(response);
 }
 
-/**
- * This method will run inside the Category component
- * It will fetch cat by cat until all is done and we will not have a join when fetching all cats
- *
- * @Deprecated?
- */
 async function getAllBoards(categoryId: number) {
-  const response = await Get(`board/get/all/${categoryId}`);
+  const response = await Get(`board/c/${categoryId}`);
 
   return Promise.resolve(response);
 }

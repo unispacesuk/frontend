@@ -16,10 +16,7 @@
     <div v-if="!loading">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 px-5">
         <div v-for="(category, index) of cats" :key="index">
-          <BoardCategoriesItemCard
-            :category="category"
-            @add-board="handleAddNewBoard(category.id)"
-          />
+          <CategoriesItemCard :category="category" @add-board="handleAddNewBoard(category.id)" />
         </div>
         <div v-if="cats.length === 0">No categories added yet.</div>
       </div>
@@ -46,12 +43,11 @@
   import { inject, onBeforeMount, ref, watch } from 'vue';
   import { storeToRefs } from 'pinia';
   import { useCategories } from '../../../Stores/CategoriesStore';
-  import { fetchAllCategories } from '../Helpers';
-  import { getAllCategories } from '../../../Services/Board/BoardsService';
+  import { getCategoryStats } from '../../../Services/Statistics/StatisticsService';
   import { ICategory } from '../../../Interfaces/Board/ICategory';
   import { IBus } from '../../../Interfaces/IBus';
   import AddNewCategory from './AddNewCategory.vue';
-  import BoardCategoriesItemCard from './CategoriesItemCard.vue';
+  import CategoriesItemCard from './CategoriesItemCard.vue';
   import Pagination from '../../Pagination/Pagination.vue';
   import Spinner from '../../../Icons/Util/Spinner.vue';
   import AddNewBoard from './AddNewBoard.vue';
@@ -85,18 +81,17 @@
   });
 
   async function handleAllCategories() {
-    getAllCategories()
+    getCategoryStats()
       .then((d) => {
-        categoriesStore.setCategories(d.categories);
+        categoriesStore.setCategories(d.response);
       })
       .catch((e) => {
         if (e.response) {
           const error = e.response.data.error;
-          console.log(error);
-          $bus?.emit('add-toast', error, 'error');
+          // console.log(error);
+          $bus?.emit('add-toast', 'Something went wrong.', 'error');
         }
       });
-    // await fetchAllCategories(categoriesStore, $bus);
   }
 
   function handleCloseModal(value: boolean) {

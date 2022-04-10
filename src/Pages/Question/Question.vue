@@ -23,13 +23,13 @@
       </div>
       <div class="w-full flex justify-between space-x-5 items-center px-3">
         <div class="text-xs text-gray-400">{{ new Date(question.createdAt).toDateString() }}</div>
-        <div v-if="user.username" class="flex items-center space-x-5 text-slate-400">
+        <div v-if="currentUser.username" class="flex items-center space-x-5 text-slate-400">
           <div class="text-sm flex items-center space-x-2">
             <button
               class="flex cursor-pointer hover:text-slate-700 smooth outline-none"
               :class="{ 'text-red-500': vote && vote.type === 'up' }"
               @click="doUpvote"
-              :disabled="user.id === question.userId || vote"
+              :disabled="currentUser.id === question.userId || vote"
             >
               <PlusIcon class="w-2" />
               <PlusIcon class="w-2" />
@@ -43,7 +43,7 @@
               class="flex cursor-pointer hover:text-slate-700 smooth outline-none"
               :class="{ 'text-red-500': vote && vote.type === 'down' }"
               @click="doDownvote"
-              :disabled="user.id === question.userId || vote"
+              :disabled="currentUser.id === question.userId || vote"
             >
               <MinusIcon class="w-2" />
               <MinusIcon class="w-2" />
@@ -74,12 +74,16 @@
   </div>
 
   <Transition name="modal">
-    <Modal v-if="showReplyForm" @close-modal="showReplyForm = false" :allow-full="true">
+    <Modal
+      :title="`Replying to: ${question.title}`"
+      v-if="showReplyForm"
+      @close-modal="showReplyForm = false"
+      :allow-full="true"
+    >
       <form @submit.prevent>
-        <div class="pl-3 text-xl pb-3">Replying to: {{ question.title }}</div>
         <TextEditor @update-content="(value: String) => (replyContent = value)"></TextEditor>
         <div class="flex justify-end pt-3">
-          <ButtonActionPrimary @button-click="doSubmitAnswer">
+          <ButtonActionPrimary @button-click="doSubmitAnswer" class="flex space-x-2">
             <div>Send</div>
             <Spinner v-if="submittingAnswer" class="w-5 ml-2" />
           </ButtonActionPrimary>
@@ -100,16 +104,16 @@
   import { IAnswer } from '../../Interfaces/Question/IQuestion';
   import { useRoute } from 'vue-router';
   import { getAnswers, submitAnswer } from '../../Services/Question/AnswerService';
-  import Modal from '../../Components/Modal/Modal.vue';
-  import Button from '../../Components/Buttons/Button.vue';
-  import Spinner from '../../Icons/Util/Spinner.vue';
   import { useUser } from '../../Stores/UserStore';
   import { useQuestion } from '../../Stores/QuestionStore';
   import { storeToRefs } from 'pinia';
   import { PlusIcon, MinusIcon } from '@heroicons/vue/solid';
+  import { IBus } from '../../Interfaces/IBus';
   import Answer from '../../Components/Question/Answer.vue';
   import QuestionContent from '../../Components/Question/QuestionContent.vue';
-  import { IBus } from '../../Interfaces/IBus';
+  import Modal from '../../Components/Modal/Modal.vue';
+  import Button from '../../Components/Buttons/Button.vue';
+  import Spinner from '../../Icons/Util/Spinner.vue';
   import ButtonActionPrimary from '../../Components/Buttons/ButtonActionPrimary.vue';
   import TextEditor from '../../Components/Form/TextEditor.vue';
 
@@ -126,7 +130,7 @@
   const bestAnswer = ref<any>();
 
   const userStore = useUser();
-  const { user } = storeToRefs(userStore);
+  const { currentUser } = storeToRefs(userStore);
   const questionStore = useQuestion();
   const { question, votes, vote, op } = storeToRefs(questionStore);
 
@@ -147,7 +151,7 @@
       question.value = d.question;
       votes.value = d.question.votes;
       loadingQuestion.value = false;
-      if (user.value.username) {
+      if (currentUser.value.username) {
         await doGetMyVote();
       }
       await doGetOPData();

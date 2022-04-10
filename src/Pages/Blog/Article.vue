@@ -25,7 +25,7 @@
     <div class="__comments">
       <BlogCommentForm @submitComment="handleSubmitComment" />
 
-      <template v-if="state.comments[0] === null">
+      <template v-if="!state.comments.length">
         <Empty label="No comments yet. Be the first." />
       </template>
       <template v-if="state.comments[0] !== null">
@@ -39,7 +39,7 @@
 
 <script setup lang="ts">
   import { useRoute } from 'vue-router';
-  import { inject, onBeforeMount, reactive, ref } from 'vue';
+  import { inject, onBeforeMount, reactive } from 'vue';
   import { getBlogArticle } from '../../Services/Blog/BlogService';
   import { IBus } from '../../Interfaces/IBus';
   import BlogCardUserInfo from '../../Components/Blog/BlogCardUserInfo.vue';
@@ -69,6 +69,7 @@
     isLoading: true,
     comments: <any>[],
     blog: <any>{},
+    commentsPage: 1,
   });
 
   function handleSubmitComment(value: any) {
@@ -77,6 +78,7 @@
   }
 
   function sortComments(comments: any[]) {
+    if (comments[0].comment === null) return [];
     return comments.sort((a, b) => b.comment._id - a.comment._id);
   }
 </script>

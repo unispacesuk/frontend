@@ -30,7 +30,12 @@
     <div class="p-3 whitespace-pre-line" v-html="question.description"></div>
   </div>
 
-  <Modal v-if="editing" @close-modal="editing = false" :allow-full="true">
+  <Modal
+    title="Editing a Question"
+    v-if="editing"
+    @close-modal="editing = false"
+    :allow-full="true"
+  >
     <QuestionContentEdit :question="question" />
   </Modal>
 </template>

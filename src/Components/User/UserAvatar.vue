@@ -1,7 +1,12 @@
 <template>
   <div>
     <template v-if="user.avatar">
-      <img :src="avatarBase + user.avatar" :class="avatarSize" :alt="user.username" class="rounded-full" />
+      <img
+        :src="avatarBase + user.avatar"
+        :class="avatarSize"
+        :alt="user.username"
+        class="rounded-full object-cover"
+      />
     </template>
 
     <template v-else>
@@ -9,7 +14,7 @@
         :src="avatarApi + user.username + '.svg'"
         :class="avatarSize"
         :alt="user.username"
-        class="rounded-full"
+        class="rounded-full object-cover"
       />
     </template>
   </div>
@@ -31,15 +36,15 @@
   // TODO: maybe export this?
   const avatarSize = computed(() => {
     return props.size === 'xs'
-      ? 'w-[35px]'
+      ? 'w-[35px] h-[35px]'
       : props.size === 'sm'
-      ? 'w-[50px]'
+      ? 'w-[50px] h-[50px]'
       : props.size === 'md'
-      ? 'w-[75px]'
+      ? 'w-[75px] h-[75px]'
       : props.size === 'lg'
-      ? 'w-[100px]'
+      ? 'w-[100px] h-[100px]'
       : props.size === 'xl'
-      ? 'w-[130px]'
+      ? 'w-[130px] h-[130px]'
       : 'w-[10px]';
   });
 </script>

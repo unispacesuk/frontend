@@ -5,11 +5,18 @@
     <div class="container">
       <div class="container__top">
         <div class="container__top_title">Recent Blog Articles</div>
-        <ButtonActionPrimary
-          v-if="currentUser.username"
-          label="Add Entry"
-          @button-click="handleIsAdding"
-        ></ButtonActionPrimary>
+        <div class="container__top_extra">
+          <Select @selection-change="handleTakeChange" :selected="+state.take">
+            <option selected="selected">5</option>
+            <option>10</option>
+            <option>20</option>
+          </Select>
+          <ButtonActionPrimary
+            v-if="currentUser.username"
+            label="Add Entry"
+            @button-click="handleIsAdding"
+          ></ButtonActionPrimary>
+        </div>
       </div>
 
       <template v-if="!state.blogs.length">
@@ -23,6 +30,15 @@
         </div>
       </template>
     </div>
+
+    <Pagination
+      :pages="state.totalPages"
+      :show-numbers="true"
+      :current-page="+state.currentPage"
+      @next-page="handleNextPage"
+      @prev-page="handlePrevPage"
+      @go-to="handleGoTo"
+    />
   </template>
 
   <Modal
@@ -59,12 +75,13 @@
 </template>
 
 <script setup lang="ts">
-  import { useRouter } from 'vue-router';
-  import { inject, onBeforeMount, reactive, ref } from 'vue';
+  import { useRouter, useRoute } from 'vue-router';
+  import { computed, inject, onBeforeMount, reactive, ref, watch } from 'vue';
   import { useUser } from '../../Stores/UserStore';
   import { storeToRefs } from 'pinia';
   import { getAllBlogs, createNewBlog, deleteBlogArticle } from '../../Services/Blog/BlogService';
   import { IBus } from '../../Interfaces/IBus';
+  import { IBlog } from '../../Interfaces/Blog/IBlog';
   import Button from '../../Components/Buttons/Button.vue';
   import BlogCard from '../../Components/Blog/BlogCard.vue';
   import Modal from '../../Components/Modal/Modal.vue';
@@ -74,11 +91,13 @@
   import Spinner from '../../Icons/Util/Spinner.vue';
   import ButtonActionPrimary from '../../Components/Buttons/ButtonActionPrimary.vue';
   import ButtonActionCancel from '../../Components/Buttons/ButtonActionCancel.vue';
-  import { IBlog } from '../../Interfaces/Blog/IBlog';
+  import Pagination from '../../Components/Pagination/Pagination.vue';
+  import Select from '../../Components/Form/Select.vue';
 
   const { currentUser } = storeToRefs(useUser());
 
   const router = useRouter();
+  const route = useRoute();
   const $bus = inject<IBus>('$bus');
 
   const state = reactive({
@@ -88,18 +107,21 @@
     isAdding: false,
     isSending: false,
     isLoading: true,
+    currentPage: route.query.page ?? 1,
+    totalPages: 1,
+    take: localStorage.getItem('takeSize') ?? 5,
   });
 
   onBeforeMount(() => {
-    getAllBlogs()
-      .then((d) => {
-        state.blogs = d.response;
-        state.isLoading = false;
-      })
-      .catch((error) => {
-        $bus?.emit('add-toast', 'Something went wrong.', 'error');
-        state.isLoading = false;
-      });
+    localStorage.setItem('takeSize', state.take.toString());
+    getBlogsHelper();
+  });
+
+  const take = computed(() => state.take);
+
+  watch(take, () => {
+    localStorage.setItem('takeSize', state.take.toString());
+    getBlogsHelper();
   });
 
   function handleIsAdding() {
@@ -148,6 +170,44 @@
         $bus?.emit('add-toast', 'Something went wrong.', 'error');
       });
   }
+
+  function getBlogsHelper() {
+    getAllBlogs(state.take, state.currentPage)
+      .then((d) => {
+        state.blogs = d.response;
+        state.isLoading = false;
+        state.totalPages = Math.ceil(state.blogs[0].count / +state.take);
+      })
+      .catch((error) => {
+        $bus?.emit('add-toast', 'Something went wrong.', 'error');
+        state.isLoading = false;
+      });
+  }
+
+  function handleTakeChange(value: any) {
+    state.take = value;
+  }
+
+  function handleNextPage() {
+    if (state.currentPage < state.totalPages) {
+      state.currentPage = +state.currentPage + 1;
+      router.push(`blogs?page=${state.currentPage}`);
+    }
+  }
+
+  function handlePrevPage() {
+    if (state.currentPage > 1) {
+      state.currentPage = +state.currentPage - 1;
+      router.push(`blogs?page=${state.currentPage}`);
+    }
+  }
+
+  function handleGoTo(page: number) {
+    if (state.currentPage !== page) {
+      state.currentPage = page;
+      router.push(`blogs?page=${state.currentPage}`);
+    }
+  }
 </script>
 
 <style scoped lang="scss">
@@ -159,6 +219,10 @@
 
       &_title {
         @apply text-xl;
+      }
+
+      &_extra {
+        @apply flex space-x-2;
       }
     }
 

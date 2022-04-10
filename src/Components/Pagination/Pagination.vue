@@ -1,9 +1,9 @@
 <template>
-  <div class="flex justify-center py-5">
+  <div class="flex justify-center py-5 space-x-2">
     <button @click="emit('prev-page')" class="outline-none">
       <ArrowNarrowLeftIcon class="button smooth px-2" />
     </button>
-    <div v-if="showNumbers" v-for="(page, index) of pages">
+    <div v-if="showNumbers" v-for="(page, index) of pages" :key="index">
       <button
         class="button smooth outline-none"
         :class="{ 'bg-gray-800 text-white hover:text-black': page === currentPage }"
