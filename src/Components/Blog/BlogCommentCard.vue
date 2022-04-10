@@ -2,13 +2,14 @@
   <div class="comment_card">
     <div class="comment_card__left">
       <div>
-        <UserAvatar :user="{username: 'ricdotnet'}" size="sm" />
+        <UserAvatar :user="user" size="sm" />
       </div>
     </div>
     <div class="comment_card__right">
-      <div class="__content">{{ comment.content }}</div>
+      <div class="__content">{{ comment.comment.content }}</div>
       <div class="__bottom">
-        <div class="__date">{{ moment().endOf('minute').to(comment.created_at) }}</div>
+        <div>{{ comment.username }}</div>
+        <div class="__date">{{ moment().endOf('minute').to(comment.comment.created_at) }}</div>
       </div>
     </div>
   </div>
@@ -19,14 +20,21 @@
   import UserAvatar from '../User/UserAvatar.vue';
 
   type Comment = {
-    user_id: number;
-    content: string;
-    created_at: Date;
+    avatar: string;
+    username: string;
+    comment: {
+      [key: string]: any;
+    };
   };
 
   const props = defineProps<{
     comment: Comment;
   }>();
+
+  const user = {
+    username: props.comment.username,
+    avatar: props.comment.avatar,
+  };
 </script>
 
 <style scoped lang="scss">
@@ -38,12 +46,14 @@
     }
 
     &__right {
+      @apply flex flex-col space-y-2;
+
       .__content {
         @apply flex;
       }
 
       .__bottom {
-        @apply flex justify-between;
+        @apply flex justify-between items-baseline space-x-3;
 
         .__date {
           @apply text-gray-500 text-sm;

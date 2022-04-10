@@ -4,19 +4,27 @@
   <template v-else>
     <div class="article_container">
       <div class="article_container__top">
-        <div class="article_container__top_title">{{ blog.title }}</div>
-        <div class="article_container__top_date">{{ new Date(blog.createdAt).toDateString() }}</div>
+        <div class="article_container__top_title">{{ state.blog.title }}</div>
+        <div class="article_container__top_date">
+          {{ new Date(state.blog.createdAt).toDateString() }}
+        </div>
       </div>
 
       <div class="article_container__middle">
         <div class="article_container__middle_user_info">
-          <BlogCardUserInfo :article-id="blog.id" :user="blog.user" :votes="blog.votes" />
+          <BlogCardUserInfo
+            :article-id="state.blog.id"
+            :user="state.blog.user"
+            :votes="state.blog.votes"
+          />
         </div>
-        <div class="article_container__middle_content" v-html="blog.content"></div>
+        <div class="article_container__middle_content" v-html="state.blog.content"></div>
       </div>
     </div>
 
     <div class="__comments">
+      <BlogCommentForm @submitComment="handleSubmitComment" />
+
       <template v-if="state.comments[0] === null">
         <Empty label="No comments yet. Be the first." />
       </template>
@@ -25,8 +33,6 @@
           <BlogCommentCard :comment="comment" />
         </div>
       </template>
-
-      <BlogCommentForm @submitComment="handleSubmitComment" />
     </div>
   </template>
 </template>
@@ -45,13 +51,12 @@
   const articleId = route.params.articleId;
 
   const $bus = inject<IBus>('$bus');
-  const blog = ref<any>({});
 
   onBeforeMount(() => {
     getBlogArticle(articleId)
       .then((d) => {
-        blog.value = d.response;
-        state.comments = blog.value.comments;
+        state.blog = d.response;
+        state.comments = sortComments(state.blog.comments);
         state.isLoading = false;
       })
       .catch((error) => {
@@ -63,11 +68,16 @@
   const state = reactive({
     isLoading: true,
     comments: <any>[],
+    blog: <any>{},
   });
 
   function handleSubmitComment(value: any) {
     if (state.comments[0] === null) state.comments.pop();
-    state.comments.push(value);
+    state.comments.unshift(value);
+  }
+
+  function sortComments(comments: any[]) {
+    return comments.sort((a, b) => b.comment._id - a.comment._id);
   }
 </script>
 

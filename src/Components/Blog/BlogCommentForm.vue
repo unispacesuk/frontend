@@ -57,7 +57,11 @@
     try {
       const { response } = await submitNewComment(+articleId, { content: state.newComment });
       state.isSubmitting = false;
-      emits('submit-comment', response);
+      emits('submit-comment', {
+        username: currentUser.value.username,
+        avatar: currentUser.value.avatar,
+        comment: response,
+      });
       $bus?.emit('input-reset');
       $bus?.emit('add-toast', 'New comment added.', 'success');
     } catch (error) {
