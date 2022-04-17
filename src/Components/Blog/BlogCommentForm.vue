@@ -1,6 +1,6 @@
 <template>
   <div class="form">
-    <CurrentAvatar size="xs" />
+    <CurrentAvatar size="xs" class="flex-shrink-0" />
     <Input
       class="w-full"
       placeholder="Comment..."

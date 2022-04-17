@@ -6,11 +6,11 @@
       </div>
     </div>
     <div class="comment_card__right">
-      <div class="__content">{{ comment.comment.content }}</div>
-      <div class="__bottom">
+      <div class="__info">
         <div>{{ comment.username }}</div>
         <div class="__date">{{ moment().endOf('minute').to(comment.comment.created_at) }}</div>
       </div>
+      <div class="__content">{{ comment.comment.content }}</div>
     </div>
   </div>
 </template>
@@ -52,8 +52,8 @@
         @apply flex;
       }
 
-      .__bottom {
-        @apply flex justify-between items-baseline space-x-3;
+      .__info {
+        @apply flex justify-between items-baseline space-x-3 border-b border-gray-200;
 
         .__date {
           @apply text-gray-500 text-sm;
