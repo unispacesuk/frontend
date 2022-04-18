@@ -24,10 +24,12 @@
     setup(props: any) {
       const placeholder: string = ref(props.placeholder);
       const inputValue: string = ref(props.inputValue);
+      // const disabled: boolean = ref(props.isEditingEmail);
 
       return {
         placeholder,
         inputValue,
+        // disabled,
       };
     },
     emits: ['input-change', 'input-focused'],
@@ -49,3 +51,9 @@
     },
   });
 </script>
+
+<style scoped lang="scss">
+  input:disabled {
+    @apply text-gray-500;
+  }
+</style>

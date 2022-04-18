@@ -12,7 +12,7 @@
           class="pl-9"
           @input-focused="state.isSearchFocused = !state.isSearchFocused"
           @input-change="(v) => (state.searchQuery = v)"
-          :value="state.searchQuery"
+          :input-value="state.searchQuery"
         />
       </form>
       <div v-if="state.isSearching" class="px-3">
