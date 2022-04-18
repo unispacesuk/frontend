@@ -1,17 +1,46 @@
 <template>
-  <div>
-    <div class="item">Account Details</div>
-    <div class="item">Notifications</div>
-    <div class="item">Threads</div>
-    <div class="item">Blogs</div>
-    <div class="item">Questions</div>
+  <div class="pr-3">
+    <div
+      :class="{ active: props.currentTab === 'account' }"
+      class="item"
+      @click="emits('change-tab', 'account')"
+    >
+      <UserIcon class="w-5" />
+      <div>Account Details</div>
+    </div>
+    <div
+      :class="{ active: props.currentTab === 'notifications' }"
+      class="item"
+      @click="emits('change-tab', 'notifications')"
+    >
+      <BellIcon class="w-5" />
+      <div>Notifications</div>
+    </div>
   </div>
 </template>
 
-<script></script>
+<script setup lang="ts">
+  import { UserIcon, BellIcon } from '@heroicons/vue/solid';
+
+  const props = defineProps<{
+    currentTab: string;
+  }>();
+
+  const emits = defineEmits<{
+    (event: 'change-tab', tab: string): void;
+  }>();
+</script>
 
 <style scoped lang="scss">
   .item {
-    @apply py-3;
+    @apply flex items-center space-x-1 py-3 border-b border-gray-200 ease-in-out duration-100;
+
+    &:hover {
+      @apply cursor-pointer text-$action-hover;
+    }
+
+    &.active {
+      @apply text-$action-active;
+    }
   }
 </style>

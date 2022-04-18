@@ -1,72 +1,78 @@
 <template>
-  <div class="title mb-5">My Account</div>
+  <div class="top_content">
+    <div class="title mb-5">My Account</div>
 
-  <CurrentAvatar size="lg" />
+    <CurrentAvatar size="lg" />
 
-  <div class="title mt-5">User Profile</div>
-  <form class="form">
-    <div class="form__input">
-      <Label class="label" label="Username" />
-      <Input
-        placeholder="username"
-        :input-value="state.user.username"
-        @input-change="handleUsernameChange"
-      />
-    </div>
-    <div class="form__input">
-      <Label class="label" label="First Name" />
-      <Input
-        placeholder="username"
-        :input-value="state.user.firstName"
-        @input-change="handleFirstNameChange"
-      />
-    </div>
-    <div class="form__input">
-      <Label class="label" label="Last Name" />
-      <Input
-        placeholder="username"
-        :input-value="state.user.lastName"
-        @input-change="handleLastNameChange"
-      />
-    </div>
-  </form>
-
-  <div class="title mt-5">Email</div>
-  <form class="form">
-    <div class="form__input">
-      <div>
-        <Label class="label" label="Email Address" />
-      </div>
-      <div class="flex space-x-2">
+    <div class="title mt-5">User Profile</div>
+    <form class="form">
+      <div class="form__input">
+        <Label class="label" label="Username" />
         <Input
           placeholder="username"
-          :input-value="state.user.email"
-          @input-change="handleEmailChange"
-          :disabled="!state.isEditingEmail"
+          :input-value="state.user.username"
+          @input-change="handleUsernameChange"
         />
-        <ButtonActionSecondary label="Change" @button-click="handleEmailEdit" />
       </div>
+      <div class="form__input">
+        <Label class="label" label="First Name" />
+        <Input
+          placeholder="username"
+          :input-value="state.user.firstName"
+          @input-change="handleFirstNameChange"
+        />
+      </div>
+      <div class="form__input">
+        <Label class="label" label="Last Name" />
+        <Input
+          placeholder="username"
+          :input-value="state.user.lastName"
+          @input-change="handleLastNameChange"
+        />
+      </div>
+    </form>
+
+    <div class="title mt-5">Email</div>
+    <form class="form">
+      <div class="form__input">
+        <div>
+          <Label class="label" label="Email Address" />
+        </div>
+        <div class="flex space-x-2">
+          <Input
+            placeholder="username"
+            :input-value="state.user.email"
+            @input-change="handleEmailChange"
+            :disabled="!state.isEditingEmail"
+          />
+          <ButtonActionSecondary label="Change" @button-click="handleEmailEdit" />
+        </div>
+      </div>
+    </form>
+
+    <div class="title mt-5">Password</div>
+    <div class="sub-title">
+      Change your password if you feel your current one is not secure enough.
     </div>
-  </form>
-
-  <div class="title mt-5">Password</div>
-  <div class="sub-title">
-    Change your password if you feel your current one is not secure enough.
-  </div>
-  <div class="flex">
-    <ButtonActionSecondary class="py-10" @button-click="handleUpdatePassword">
-      Update Password
-    </ButtonActionSecondary>
+    <div class="flex">
+      <ButtonActionSecondary class="py-10" @button-click="handleUpdatePassword">
+        Update Password
+      </ButtonActionSecondary>
+    </div>
   </div>
 
-  <ButtonActionPrimary
-    class="flex space-x-2 mt-2"
-    :disabled="state.isSubmittingProfile || !state.hasChanged"
-    @button-click="$bus.emit('update-user-profile')"
-  >
-    <div>Save Changes</div>
-    <Spinner v-if="state.isSubmittingProfile" class="w-5" />
-  </ButtonActionPrimary>
+  <div class="bottom_content">
+    <div>
+      <ButtonActionPrimary
+        class="flex space-x-2 mt-2"
+        :disabled="state.isSubmittingProfile || !state.hasChanged"
+        @button-click="$bus.emit('update-user-profile')"
+      >
+        <div>Save Changes</div>
+        <Spinner v-if="state.isSubmittingProfile" class="w-5" />
+      </ButtonActionPrimary>
+    </div>
+  </div>
 
   <DashboardChangePasswordModal
     :is-updating-password="state.isUpdatingPassword"
@@ -170,43 +176,31 @@
 </script>
 
 <style scoped lang="scss">
-  .container {
-    @apply flex flex-col;
+  .top_content {
+    @apply flex flex-col border-b border-gray-200 pb-4;
 
-    &__top {
-      @apply flex;
+    .form {
+      @apply flex space-x-3;
 
-      &__left {
-        @apply w-[150px] flex-shrink-0 border-r mr-2;
-      }
-
-      &__right {
-        @apply flex-grow px-5 pb-5;
-
-        .title {
-          @apply text-xl font-bold;
-        }
-
-        .sub-title {
-          @apply text-sm text-gray-600 py-2 px-3;
-        }
-
-        .form {
-          @apply flex justify-between space-x-2 mt-2;
-
-          &__input {
-            @apply flex flex-col flex-grow mb-3;
-
-            .label {
-              @apply text-sm text-gray-500;
-            }
-          }
-        }
+      .form__input {
+        @apply flex flex-col flex-grow;
       }
     }
 
-    &__bottom {
-      @apply flex justify-end mt-3;
+    .title {
+      @apply text-xl font-bold;
     }
+
+    .sub-title {
+      @apply text-sm text-gray-500 py-2 px-3;
+    }
+
+    .label {
+      @apply text-sm text-gray-500;
+    }
+  }
+
+  .bottom_content {
+    @apply flex justify-end;
   }
 </style>
