@@ -17,6 +17,10 @@
 </script>
 
 <style scoped>
+  button:disabled {
+    opacity: 0.5;
+  }
+
   .button_action_primary {
     @apply bg-$action hover:bg-$action-hover active:bg-$action text-white px-3 py-2 rounded-md uppercase text-sm font-bold outline-none;
   }
