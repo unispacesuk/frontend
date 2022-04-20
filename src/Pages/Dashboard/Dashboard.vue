@@ -13,7 +13,8 @@
 </template>
 
 <script setup lang="ts">
-  import { inject, reactive } from 'vue';
+  import { computed, inject, reactive } from 'vue';
+  import { DashboardTab } from '../../Util/Types';
   import { IBus } from '../../Interfaces/IBus';
   import DashboardAccountDetails from '../../Components/Dashboard/DashboardAccountDetails.vue';
   import DashboardLeftMenu from '../../Components/Dashboard/DashboardLeftMenu.vue';
@@ -21,13 +22,26 @@
 
   const $bus = inject<IBus>('$bus');
 
+  const tabNames: DashboardTab[] = ['account', 'notifications'];
+  const currentTab = computed(() => {
+    if (localStorage.getItem('dashboard-tab')) {
+      if (tabNames.includes(<'account' | 'notifications'>localStorage.getItem('dashboard-tab'))) {
+        return localStorage.getItem('dashboard-tab');
+      }
+    }
+
+    localStorage.setItem('dashboard-tab', 'account');
+    return 'account';
+  });
+
   const state = reactive({
     isSubmittingProfile: false,
-    currentTab: 'account',
+    currentTab: currentTab.value,
   });
 
   function handleTabChange(tab: string) {
-    state.currentTab = tab;
+    state.currentTab = <DashboardTab>tab;
+    localStorage.setItem('dashboard-tab', tab);
   }
 
   defineExpose({ state, handleTabChange });

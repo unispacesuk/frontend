@@ -44,4 +44,39 @@ async function updateUserPassword(data: any) {
   return Promise.resolve(response);
 }
 
-export { uploadAvatar, getUserStarredThreads, updateUserProfile, updateUserPassword };
+async function getUserNotificationSettings() {
+  let response;
+  try {
+    response = await Get('user/notification-settings', authHeaders());
+  } catch (error) {
+    return Promise.reject(error);
+  }
+
+  return Promise.resolve(response);
+}
+
+interface ISetting {
+  type: string;
+  setting: string;
+  value: boolean;
+}
+
+async function updateUserNotificationSetting(data: ISetting) {
+  let response;
+  try {
+    response = await Patch('user/notification-settings', data, authHeaders());
+  } catch (error) {
+    return Promise.reject(error);
+  }
+
+  return Promise.resolve(response);
+}
+
+export {
+  uploadAvatar,
+  getUserStarredThreads,
+  updateUserProfile,
+  updateUserPassword,
+  getUserNotificationSettings,
+  updateUserNotificationSetting,
+};

@@ -176,9 +176,10 @@
       .then((d) => {
         state.blogs = d.response;
         state.isLoading = false;
-        state.totalPages = Math.ceil(state.blogs[0].count / +state.take);
+        state.totalPages = state.blogs.length ? Math.ceil(state.blogs[0].count / +state.take) : 1;
       })
       .catch((error) => {
+        console.error(error);
         $bus?.emit('add-toast', 'Something went wrong.', 'error');
         state.isLoading = false;
       });

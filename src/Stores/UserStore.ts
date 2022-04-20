@@ -15,8 +15,8 @@ async function doAuthenticate() {
       }
     );
   } catch (e: any) {
-    console.log(e.response);
-    return Promise.reject();
+    // console.error(e.response);
+    return Promise.reject(e);
   }
 
   return Promise.resolve(response);

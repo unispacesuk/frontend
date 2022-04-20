@@ -33,6 +33,11 @@
       <ButtonActionCancel label="Action Cancel"></ButtonActionCancel>
     </div>
   </div>
+
+  <br />
+  <br />
+
+  <Toggle :checked="true" />
 </template>
 
 <script setup lang="ts">
@@ -44,6 +49,7 @@
   import ButtonActionPrimary from '../Components/Buttons/ButtonActionPrimary.vue';
   import ButtonActionSecondary from '../Components/Buttons/ButtonActionSecondary.vue';
   import ButtonActionCancel from '../Components/Buttons/ButtonActionCancel.vue';
+  import Toggle from '../Components/Buttons/Toggle.vue';
 
   const { websocket } = storeToRefs(useUser());
   const $bus = inject<IBus>('$bus');

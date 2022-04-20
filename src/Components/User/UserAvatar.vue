@@ -22,15 +22,14 @@
 
 <script setup lang="ts">
   import { computed, inject } from 'vue';
+  import { AvatarSize } from '../../Util/Types';
 
   const avatarBase = inject('avatarBase');
   const avatarApi = inject('avatarApi');
 
-  type Size = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-
   const props = defineProps<{
     user: any;
-    size: Size;
+    size: AvatarSize;
   }>();
 
   // TODO: maybe export this?

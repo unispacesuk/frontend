@@ -3,16 +3,7 @@
     <div class="container__top">
       <div class="container__user">
         <div>
-          <template v-if="reply.avatar">
-            <img class="w-[70px] rounded-full" :src="avatarBase + reply.avatar" alt="avatar" />
-          </template>
-          <template v-else>
-            <img
-              class="w-[70px] rounded-full"
-              :src="avatarApi + reply.username + '.svg'"
-              alt="avatar"
-            />
-          </template>
+          <UserAvatar :user="{ username: reply.username, avatar: reply.avatar }" size="md" />
         </div>
         <div>
           {{ reply.username }}
@@ -30,6 +21,7 @@
 
 <script setup lang="ts">
   import { inject } from 'vue';
+  import UserAvatar from '../User/UserAvatar.vue';
 
   const avatarBase = inject('avatarBase');
   const avatarApi = inject('avatarApi');
@@ -43,7 +35,7 @@
     @apply border border-gray-200 mt-3 rounded-md p-3 hover:shadow-md;
 
     &__top {
-      @apply flex mb-3
+      @apply flex mb-3;
     }
 
     &__user {

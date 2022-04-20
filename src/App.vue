@@ -28,7 +28,7 @@
     if (user.value.id) {
       $bus?.emit('add-toast', 'Websocket connected.', 'success');
       // $bus?.emit('add-toast', 'Something went wrong when connecting to the Websocket.', 'error');
-      // connectWebsocket();
+      connectWebsocket();
     }
   }, 5000);
 
@@ -43,8 +43,9 @@
     pageStore.setPageLoading(false);
   });
 
+  // TODO: Extract this
   function connectWebsocket() {
-    websocket.value = new WebSocket('wss://ws.unispaces.test2');
+    websocket.value = new WebSocket('ws://localhost:3002');
     websocket.value!.onopen = () => {
       websocket.value!.send(JSON.stringify({ type: 'connect', user: user.value.id }));
     };

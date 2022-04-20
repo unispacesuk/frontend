@@ -81,7 +81,7 @@
 </template>
 
 <script setup lang="ts">
-  import { reactive, inject } from 'vue';
+  import { reactive, inject, onBeforeUnmount } from 'vue';
   import { useUser } from '../../Stores/UserStore';
   import { updateUserProfile } from '../../Services/User/UserService';
   import { IBus } from '../../Interfaces/IBus';
@@ -92,6 +92,10 @@
   import ButtonActionPrimary from '../../Components/Buttons/ButtonActionPrimary.vue';
   import ButtonActionSecondary from '../../Components/Buttons/ButtonActionSecondary.vue';
   import DashboardChangePasswordModal from './DashboardChangePasswordModal.vue';
+
+  onBeforeUnmount(() => {
+    $bus?.forget('update-user-profile');
+  });
 
   const $bus = inject<IBus>('$bus');
   $bus?.listen('update-user-profile', handleProfileUpdate);

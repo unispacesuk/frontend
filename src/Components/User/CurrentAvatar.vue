@@ -24,15 +24,14 @@
   import { computed, inject } from 'vue';
   import { storeToRefs } from 'pinia';
   import { useUser } from '../../Stores/UserStore';
+  import { AvatarSize } from '../../Util/Types';
 
   const { currentUser } = storeToRefs(useUser());
   const avatarBase = inject('avatarBase');
   const avatarApi = inject('avatarApi');
 
-  type Size = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-
   const props = defineProps<{
-    size: Size;
+    size: AvatarSize;
   }>();
 
   const avatarSize = computed(() => {

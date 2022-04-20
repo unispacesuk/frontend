@@ -38,82 +38,87 @@
             @input-change="(v) => (lastName = v)"
           />
         </div>
-        <Button @click="handleDoRegister" class="flex items-center" type="primary"
-          >Register <Spinner class="w-5 ml-2" v-if="registerLoading"
-        /></Button>
+        <ButtonActionPrimary
+          class="flex space-x-2"
+          @button-click="handleDoRegister"
+          :disabled="registerLoading"
+        >
+          <div>Register</div>
+          <Spinner class="w-5" v-if="registerLoading" />
+        </ButtonActionPrimary>
       </form>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, inject } from 'vue';
-import Button from '../../Components/Buttons/Button.vue';
-import Spinner from '../../Icons/Util/Spinner.vue';
-import Input from '../../Components/Form/Input.vue';
-import { IBus } from '../../Interfaces/IBus';
-import { doRegister } from '../../Services/User/AuthService';
+  import { ref, inject } from 'vue';
+  import { IBus } from '../../Interfaces/IBus';
+  import { doRegister } from '../../Services/User/AuthService';
+  import Spinner from '../../Icons/Util/Spinner.vue';
+  import Input from '../../Components/Form/Input.vue';
+  import ButtonActionPrimary from '../../Components/Buttons/ButtonActionPrimary.vue';
 
-const $bus: IBus | undefined = inject('$bus');
-const email = ref<string>('');
-const username = ref<string>('');
-const password = ref<string>('');
-const passwordVerify = ref<string>('');
-const firstName = ref<string>('');
-const lastName = ref<string>('');
-const passwordsMatch = ref<boolean>(true);
-const registerLoading = ref<boolean>(false);
+  const $bus: IBus | undefined = inject('$bus');
+  const email = ref<string>('');
+  const username = ref<string>('');
+  const password = ref<string>('');
+  const passwordVerify = ref<string>('');
+  const firstName = ref<string>('');
+  const lastName = ref<string>('');
+  const passwordsMatch = ref<boolean>(true);
+  const registerLoading = ref<boolean>(false);
 
-function handleDoRegister() {
-  registerLoading.value = true;
-  if (password.value !== passwordVerify.value) {
-    registerLoading.value = false;
-    return $bus?.emit('add-toast', 'The passwords do not match.', 'error');
-  }
-  if (
-    !email.value ||
-    !username.value ||
-    !password.value ||
-    !passwordVerify.value ||
-    !firstName.value ||
-    !lastName.value
-  ) {
-    registerLoading.value = false;
-    return $bus?.emit('add-toast', 'Enter all details.', 'error');
-  }
-
-  const data = {
-    email: email.value,
-    username: username.value,
-    not_username: password.value,
-    first_name: firstName.value,
-    last_name: lastName.value,
-  };
-
-  doRegister(data)
-    .then((d) => {
+  function handleDoRegister() {
+    registerLoading.value = true;
+    if (password.value !== passwordVerify.value) {
       registerLoading.value = false;
-      $bus?.emit('add-toast', d.message, 'success');
-    })
-    .catch((e) => {
-      if (e.response) {
-        // handle error with response
-        console.log(e.response);
-        $bus?.emit('add-toast', 'Some error occurred.', 'error');
-      }
-    });
-}
+      return $bus?.emit('add-toast', 'The passwords do not match.', 'error');
+    }
+    if (
+      !email.value ||
+      !username.value ||
+      !password.value ||
+      !passwordVerify.value ||
+      !firstName.value ||
+      !lastName.value
+    ) {
+      registerLoading.value = false;
+      return $bus?.emit('add-toast', 'Enter all details.', 'error');
+    }
 
-function handlePasswordVerifyInput(value: string) {
-  passwordVerify.value = value;
-  comparePasswords();
-}
+    const data = {
+      email: email.value,
+      username: username.value,
+      not_username: password.value,
+      first_name: firstName.value,
+      last_name: lastName.value,
+    };
 
-function comparePasswords() {
-  if (password.value !== passwordVerify.value) {
-    return (passwordsMatch.value = false);
+    doRegister(data)
+      .then((d) => {
+        registerLoading.value = false;
+        $bus?.emit('add-toast', d.message, 'success');
+      })
+      .catch((e) => {
+        if (e.response) {
+          // handle error with response
+          console.log(e.response);
+          $bus?.emit('add-toast', 'Some error occurred.', 'error');
+        }
+      });
   }
 
-  passwordsMatch.value = true;
-}
+  function handlePasswordVerifyInput(value: string) {
+    passwordVerify.value = value;
+    comparePasswords();
+  }
+
+  function comparePasswords() {
+    if (password.value !== passwordVerify.value) {
+      return (passwordsMatch.value = false);
+    }
+
+    passwordsMatch.value = true;
+  }
 </script>
