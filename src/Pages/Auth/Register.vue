@@ -54,7 +54,7 @@
 <script setup lang="ts">
   import { ref, inject } from 'vue';
   import { IBus } from '../../Interfaces/IBus';
-  import { doRegister } from '../../Services/User/AuthService';
+  import { doRegister } from '../../Services/Auth/AuthService';
   import Spinner from '../../Icons/Util/Spinner.vue';
   import Input from '../../Components/Form/Input.vue';
   import ButtonActionPrimary from '../../Components/Buttons/ButtonActionPrimary.vue';
@@ -75,6 +75,12 @@
       registerLoading.value = false;
       return $bus?.emit('add-toast', 'The passwords do not match.', 'error');
     }
+
+    if (username.value.length < 5) {
+      registerLoading.value = false;
+      return $bus?.emit('add-toast', 'The username must be at least 5 characters long.', 'error');
+    }
+
     if (
       !email.value ||
       !username.value ||
@@ -103,8 +109,9 @@
       .catch((e) => {
         if (e.response) {
           // handle error with response
-          console.log(e.response);
+          // console.log(e.response);
           $bus?.emit('add-toast', 'Some error occurred.', 'error');
+          registerLoading.value = false;
         }
       });
   }

@@ -15,29 +15,43 @@
           placeholder="password"
           @input-change="(v) => (password = v)"
         />
-        <ButtonActionPrimary
-          class="flex space-x-2"
-          @button-click="handleDoLogin"
-          :disabled="loginLoading"
-        >
-          <div>Login</div>
-          <Spinner class="w-5" v-if="loginLoading" />
-        </ButtonActionPrimary>
+        <div class="flex items-center space-x-4">
+          <ButtonActionPrimary
+            class="flex space-x-2"
+            @button-click="handleDoLogin"
+            :disabled="loginLoading"
+          >
+            <div>Login</div>
+            <Spinner class="w-5" v-if="loginLoading" />
+          </ButtonActionPrimary>
+          <div
+            class="text-$accent hover:cursor-pointer hover:text-gray-500 smooth-fast"
+            @click="onClickChangePasswordOpen"
+          >
+            Forgot Password?
+          </div>
+        </div>
       </form>
     </div>
   </div>
+
+  <ChangePasswordDialog
+    v-if="state.isChangePasswordDialogOpen"
+    @close-modal="onChangePasswordClose"
+  />
 </template>
 
 <script setup lang="ts">
-  import { ref, inject } from 'vue';
+  import { ref, inject, reactive } from 'vue';
   import { IBus } from '../../Interfaces/IBus';
-  import { doLogin } from '../../Services/User/AuthService';
+  import { doLogin } from '../../Services/Auth/AuthService';
   import { useUser } from '../../Stores/UserStore';
   import { storeToRefs } from 'pinia';
   import Spinner from '../../Icons/Util/Spinner.vue';
   import Input from '../../Components/Form/Input.vue';
   import ButtonActionPrimary from '../../Components/Buttons/ButtonActionPrimary.vue';
   import { router } from '../../Router';
+  import ChangePasswordDialog from '../../Components/Auth/ChangePasswordDialog.vue';
 
   const userStore = useUser();
   const { user } = storeToRefs(userStore);
@@ -47,6 +61,10 @@
   const password = ref<string>('');
 
   const loginLoading = ref<boolean>(false);
+
+  const state = reactive({
+    isChangePasswordDialogOpen: false,
+  });
 
   function handleDoLogin() {
     loginLoading.value = true;
@@ -78,5 +96,13 @@
         }
         $bus?.emit('add-toast', 'Something went wrong.\nPlease try again.', 'error');
       });
+  }
+
+  function onClickChangePasswordOpen() {
+    state.isChangePasswordDialogOpen = true;
+  }
+
+  function onChangePasswordClose() {
+    state.isChangePasswordDialogOpen = false;
   }
 </script>

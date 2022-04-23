@@ -52,6 +52,7 @@
   import Spinner from '../../../Icons/Util/Spinner.vue';
   import AddNewBoard from './AddNewBoard.vue';
   import ButtonActionPrimary from '../../Buttons/ButtonActionPrimary.vue';
+  import { getAllCategories } from '../../../Services/Board/BoardsService';
 
   const categoriesStore = useCategories();
   const { categories, getCategories } = storeToRefs(useCategories());
@@ -80,10 +81,11 @@
     loading.value = false;
   });
 
+  // TODO: stats route is broken because it only works if we have boards....
   async function handleAllCategories() {
-    getCategoryStats()
+    getAllCategories()
       .then((d) => {
-        categoriesStore.setCategories(d.response);
+        categoriesStore.setCategories(d.categories);
       })
       .catch((e) => {
         if (e.response) {

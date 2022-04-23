@@ -14,13 +14,11 @@ import Register from './Pages/Auth/Register.vue';
 import Logout from './Pages/Auth/Logout.vue';
 import Rooms from './Pages/Rooms/Rooms.vue';
 import Room from './Pages/Rooms/Room.vue';
-
-// guards
-import { AdminGuard } from './Guards/AdminGuard';
+import ChangePassword from './Pages/Auth/ChangePassword.vue';
 import AskQuestion from './Pages/Question/AskQuestion.vue';
 import Question from './Pages/Question/Question.vue';
+
 import { useUser } from './Stores/UserStore';
-import { usePage } from './Stores/PageStore';
 
 // other routes
 const routes = [
@@ -61,6 +59,14 @@ const routes = [
     component: Dashboard,
     meta: {
       requiresAuth: true,
+    },
+  },
+  {
+    path: '/change-password',
+    name: 'changePassword',
+    component: ChangePassword,
+    meta: {
+      nonLoggedIn: true,
     },
   },
   { path: '/logout', name: 'logout', component: Logout },

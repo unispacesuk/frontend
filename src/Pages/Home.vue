@@ -1,5 +1,5 @@
 <template>
-  hey there from home <br />
+  hey there from home hello <br />
 
   <div class="flex flex-col space-y-2">
     <div>
