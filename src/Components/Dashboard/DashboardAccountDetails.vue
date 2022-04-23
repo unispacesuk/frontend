@@ -47,14 +47,17 @@
         <div>
           <Label class="label" label="Email Address" />
         </div>
-        <div class="flex space-x-2">
+        <div class="flex space-x-2 items-center">
           <Input
             placeholder="username"
             :input-value="state.user.email"
             @input-change="handleEmailChange"
             :disabled="!state.isEditingEmail"
           />
-          <ButtonActionSecondary label="Change" @button-click="handleEmailEdit" />
+          <ButtonActionSecondary
+            :label="state.isEditingEmail ? 'Done' : 'Change'"
+            @button-click="handleEmailEdit"
+          />
         </div>
       </div>
     </form>
