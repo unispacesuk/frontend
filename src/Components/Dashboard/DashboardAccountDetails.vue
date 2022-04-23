@@ -2,7 +2,16 @@
   <div class="top_content">
     <div class="title mb-5">My Account</div>
 
-    <CurrentAvatar size="lg" />
+    <div class="flex items-center space-x-2">
+      <CurrentAvatar size="lg" />
+      <form>
+        <label for="avatar">
+          <div class="change-avatar-button smooth">Change Avatar</div>
+        </label>
+
+        <input type="file" class="hidden" id="avatar" @change="fileSelect($event.target.files)" />
+      </form>
+    </div>
 
     <div class="title mt-5">User Profile</div>
     <form class="form">
@@ -81,9 +90,9 @@
 </template>
 
 <script setup lang="ts">
-  import { reactive, inject, onBeforeUnmount } from 'vue';
+  import { inject, onBeforeUnmount, reactive, ref } from 'vue';
   import { useUser } from '../../Stores/UserStore';
-  import { updateUserProfile } from '../../Services/User/UserService';
+  import { updateUserProfile, uploadAvatar } from '../../Services/User/UserService';
   import { IBus } from '../../Interfaces/IBus';
   import CurrentAvatar from '../../Components/User/CurrentAvatar.vue';
   import Input from '../../Components/Form/Input.vue';
@@ -166,6 +175,39 @@
     state.isUpdatingPassword = true;
   }
 
+  const selectedFile = ref();
+  const userStore = useUser();
+
+  function upload() {
+    const formData = new FormData();
+    formData.append('avatar', selectedFile.value);
+
+    uploadAvatar(formData)
+      .then((d) => {
+        userStore.user.avatar = d.avatar.avatar;
+      })
+      .catch((e) => {
+        if (e.response) {
+          console.log(e.response);
+        }
+      });
+  }
+
+  // const dataUrl = ref();
+  function fileSelect(files: any) {
+    selectedFile.value = files[0];
+    // const reader = new FileReader();
+    // reader.onload = (e) => {
+    //   dataUrl.value = e.target!.result;
+    //   cropping.value = true;
+    // };
+    // reader.readAsDataURL(selectedFile.value);
+    //
+    // cropping.value = true;
+
+    upload();
+  }
+
   defineExpose({
     state,
     emits,
@@ -182,6 +224,10 @@
 <style scoped lang="scss">
   .top_content {
     @apply flex flex-col border-b border-gray-200 pb-4;
+
+    .change-avatar-button {
+      @apply px-4 py-2 uppercase font-bold bg-gray-100 text-sm rounded-md text-$accent cursor-pointer hover:bg-gray-200;
+    }
 
     .form {
       @apply flex space-x-3;
