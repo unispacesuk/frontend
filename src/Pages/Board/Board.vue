@@ -84,7 +84,7 @@
     const id: string | string[] = route.params['boardId'];
     getBoard(id)
       .then((d) => {
-        state.threads = d.threads[0].threads;
+        state.threads = d.threads[0].threads ?? [];
         state.boardData = {
           title: d.threads[0].board_title,
           catTitle: d.threads[0].cat_title,
