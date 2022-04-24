@@ -6,7 +6,7 @@
     <div
       class="relative overflow-y-scroll bg-white p-5 rounded-md shadow-sm z-[100] smooth"
       :class="{
-        'min-h-[10px] max-h-[600px] w-2/4': !isLarge,
+        'min-h-[10px] max-h-[600px] w-full md:w-3/4 lg:w-2/4': !isLarge,
         'w-full h-full': allowFull && isLarge,
       }"
     >

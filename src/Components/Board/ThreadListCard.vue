@@ -1,11 +1,16 @@
 <template>
   <div class="flex p-2 mb-3 border-b border-gray-300 rounded-md table-hover space-x-5 items-center">
     <div>
-      <UserAvatar :user="{ username: thread.username, avatar: thread.avatar }" size="sm" />
+      <UserAvatar
+        :user="{ username: thread.user.username, avatar: thread.user.avatar }"
+        size="sm"
+      />
     </div>
     <div>
-      <div class="text-lg">{{ thread.title }}</div>
-      <div class="text-xs text-gray-400">{{ new Date(thread.createdAt).toLocaleString() }}</div>
+      <div class="text-lg">{{ thread.thread.title }}</div>
+      <div class="text-xs text-gray-400">
+        {{ new Date(thread.thread.created_at).toLocaleString() }}
+      </div>
     </div>
   </div>
 </template>
@@ -19,6 +24,6 @@
   const avatarApi = inject<string>('avatarApi');
 
   const props = defineProps<{
-    thread: IThread;
+    thread: {};
   }>();
 </script>

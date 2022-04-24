@@ -1,7 +1,7 @@
 <template>
   <div class="px-5 py-2" v-if="boards.length === 0">There are no boards here.</div>
   <ul>
-    <li v-for="board in boards">
+    <li v-for="board in state.boards">
       <div class="board-card table-hover">
         <div class="pr-5 w-3/5">
           <router-link :to="{ name: 'board', params: { boardId: board.id } }">
@@ -16,31 +16,33 @@
           <div>Threads: {{ board.threads }}</div>
           <div>Replies: {{ board.replies }}</div>
         </div>
-        <!--        <div class="w-1/5 flex text-center items-center border-l border-slate-200">-->
-        <!--          <div class="w-1/2 flex flex-shrink-0">{{ board.threads }}</div>-->
-        <!--          <div class="w-1/2 flex flex-shrink-0">{{ board.replies }}</div>-->
-        <!--        </div>-->
       </div>
     </li>
   </ul>
 </template>
 
-<script lang="ts">
-  import { defineComponent } from 'vue';
+<script setup lang="ts">
+  import { computed, reactive } from 'vue';
+  import { useUser } from '../../Stores/UserStore';
   import { IBoard } from '../../Interfaces/Board/IBoard';
   import BoardLastActivity from './BoardLastActivity.vue';
 
-  export default defineComponent({
-    name: 'Board',
-    components: { BoardLastActivity },
-    props: ['boards'],
-    setup(props: any) {
-      const boards: IBoard[] = props.boards;
+  const props = defineProps<{
+    boards: IBoard[];
+  }>();
 
-      return {
-        boards,
-      };
-    },
+  const { currentUser } = useUser();
+
+  const state = reactive({
+    boards: computed(() => {
+      // this will filter through and return an array of what boards the current user is allowed to view
+      // if the user is not an admin filter out the admin boards
+      if (currentUser.roleId !== 1) {
+        return props.boards.filter((board) => board.access === 'all');
+      }
+
+      return props.boards;
+    }),
   });
 </script>
 

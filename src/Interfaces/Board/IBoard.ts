@@ -4,4 +4,5 @@ export interface IBoard {
   description: string;
   threads: number;
   replies: number;
+  access: string;
 }

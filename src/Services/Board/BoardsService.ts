@@ -120,6 +120,14 @@ async function getRecentActivity(id: number) {
   return Promise.resolve(response);
 }
 
+async function updateAccess(access: object) {
+  try {
+    await Patch(`board/access`, access, authHeaders());
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
 export {
   addCategory,
   editCategory,
@@ -140,4 +148,5 @@ export {
   starThread,
   getStarredState,
   getRecentActivity,
+  updateAccess,
 };

@@ -21,39 +21,50 @@
           />
         </div>
       </div>
-      <div class="flex space-x-2 justify-end pt-3">
-        <div v-if="!editBoardAskConfirm">
-          <div v-if="!deleteBoardAskConfirm">
-            <ButtonActionCancel
-              label="Delete"
-              @button-click="handleDeleteBoard"
-            ></ButtonActionCancel>
-          </div>
-          <div v-if="deleteBoardAskConfirm" class="flex space-x-2">
-            <ButtonActionCancel
-              label="Cancel"
-              @button-click="deleteBoardAskConfirm = false"
-            ></ButtonActionCancel>
-            <ButtonActionPrimary @button-click="handleDeleteBoardConfirm">
-              <div>Confirm</div>
-              <Spinner class="w-5" v-if="deleteLoading" />
-            </ButtonActionPrimary>
-          </div>
+      <div class="flex justify-between pt-3">
+        <div class="text-sm flex space-x-2 items-center">
+          <div class="flex">All&nbsp;<span class="hidden md:block">Users</span></div>
+          <Toggle :checked="state.isAdminOnly" @toggle-change="onToggleChange" />
+          <div class="flex">Admins&nbsp;<span class="hidden md:block">Only</span></div>
         </div>
-        <div v-if="!deleteBoardAskConfirm">
+
+        <div class="flex space-x-2">
           <div v-if="!editBoardAskConfirm">
-            <ButtonActionPrimary label="Edit" @button-click="handleEditBoard"></ButtonActionPrimary>
+            <div v-if="!deleteBoardAskConfirm">
+              <ButtonActionCancel
+                label="Delete"
+                @button-click="handleDeleteBoard"
+              ></ButtonActionCancel>
+            </div>
+            <div v-if="deleteBoardAskConfirm" class="flex space-x-2">
+              <ButtonActionCancel
+                label="Cancel"
+                @button-click="deleteBoardAskConfirm = false"
+              ></ButtonActionCancel>
+              <ButtonActionPrimary @button-click="handleDeleteBoardConfirm">
+                <div>Confirm</div>
+                <Spinner class="w-5" v-if="deleteLoading" />
+              </ButtonActionPrimary>
+            </div>
           </div>
-          <div v-if="editBoardAskConfirm" class="flex space-x-2">
-            <ButtonActionCancel
-              label="Cancel"
-              v-if="!editLoading"
-              @button-click="editBoardAskConfirm = false"
-            ></ButtonActionCancel>
-            <ButtonActionPrimary class="flex space-x-2" @button-click="handleEditBoardConfirm">
-              <div>Confirm</div>
-              <Spinner v-if="editLoading" class="w-5" />
-            </ButtonActionPrimary>
+          <div v-if="!deleteBoardAskConfirm">
+            <div v-if="!editBoardAskConfirm">
+              <ButtonActionPrimary
+                label="Edit"
+                @button-click="handleEditBoard"
+              ></ButtonActionPrimary>
+            </div>
+            <div v-if="editBoardAskConfirm" class="flex space-x-2">
+              <ButtonActionCancel
+                label="Cancel"
+                v-if="!editLoading"
+                @button-click="editBoardAskConfirm = false"
+              ></ButtonActionCancel>
+              <ButtonActionPrimary class="flex space-x-2" @button-click="handleEditBoardConfirm">
+                <div>Confirm</div>
+                <Spinner v-if="editLoading" class="w-5" />
+              </ButtonActionPrimary>
+            </div>
           </div>
         </div>
       </div>
@@ -62,15 +73,15 @@
 </template>
 
 <script setup lang="ts">
-  import { inject, ref } from 'vue';
-  import { deleteBoard, editBoard } from '../../../Services/Board/BoardsService';
+  import { inject, reactive, ref, computed } from 'vue';
+  import { deleteBoard, editBoard, updateAccess } from '../../../Services/Board/BoardsService';
   import { IBoard } from '../../../Interfaces/Board/IBoard';
   import { IBus } from '../../../Interfaces/IBus';
-  import Button from '../../Buttons/Button.vue';
   import Spinner from '../../../Icons/Util/Spinner.vue';
   import Input from '../../Form/Input.vue';
   import ButtonActionPrimary from '../../Buttons/ButtonActionPrimary.vue';
   import ButtonActionCancel from '../../Buttons/ButtonActionCancel.vue';
+  import Toggle from '../../Buttons/Toggle.vue';
 
   const props = defineProps<{
     board: IBoard;
@@ -90,6 +101,10 @@
 
   const newTitle = ref<string>(props.board.title);
   const newDescription = ref<string>(props.board.description);
+
+  const state = reactive({
+    isAdminOnly: computed(() => props.board.access === 'admin'),
+  });
 
   function handleDeleteBoardConfirm() {
     deleteLoading.value = true;
@@ -118,7 +133,6 @@
 
     if (!newTitle.value && !newDescription.value) {
       editLoading.value = false;
-      // editBoardAskConfirm.value = false;
       return $bus?.emit('add-toast', 'Nothing changed.', 'error');
     }
 
@@ -152,16 +166,17 @@
         newTitle.value = '';
         $bus?.emit('add-toast', 'Something went wrong.', 'error');
       });
-
-    // setTimeout(() => {
-    //   editBoardAskConfirm.value = false;
-    //   editLoading.value = false;
-    //   newDescription.value = '';
-    //   newTitle.value = '';
-    // }, 1000);
   }
 
   function handleEditBoard() {
     editBoardAskConfirm.value = true;
+  }
+
+  async function onToggleChange(value: boolean) {
+    const data = {
+      access: value ? 'admin' : 'all',
+    };
+
+    await updateAccess(data);
   }
 </script>
