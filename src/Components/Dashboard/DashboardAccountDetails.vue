@@ -1,6 +1,6 @@
 <template>
   <div class="top_content">
-    <div class="title mb-5">My Account</div>
+    <div class="title mb-5">Account Details</div>
 
     <div class="flex items-center space-x-2">
       <CurrentAvatar size="lg" />
@@ -14,7 +14,7 @@
     </div>
 
     <div class="title mt-5">User Profile</div>
-    <form class="form">
+    <form class="user-details-form">
       <div class="form__input">
         <Label class="label" label="Username" />
         <Input
@@ -90,10 +90,22 @@
     :is-updating-password="state.isUpdatingPassword"
     @close-updating-password="state.isUpdatingPassword = false"
   />
+
+  <Modal title="View Avatar" v-if="state.isViewingAvatar" @close-modal="onCloseAvatarViewer">
+    <AvatarCrop :avatar="state.dataUrl" />
+    <ButtonActionPrimary
+      class="flex space-x-2"
+      @button-click="onClickUploadAvatar"
+      :disabled="state.isUploadingAvatar"
+    >
+      <div>Upload</div>
+      <Spinner class="w-5" v-if="state.isUploadingAvatar" />
+    </ButtonActionPrimary>
+  </Modal>
 </template>
 
 <script setup lang="ts">
-  import { inject, onBeforeUnmount, reactive, ref } from 'vue';
+  import { inject, onBeforeUnmount, reactive } from 'vue';
   import { useUser } from '../../Stores/UserStore';
   import { updateUserProfile, uploadAvatar } from '../../Services/User/UserService';
   import { IBus } from '../../Interfaces/IBus';
@@ -104,6 +116,8 @@
   import ButtonActionPrimary from '../../Components/Buttons/ButtonActionPrimary.vue';
   import ButtonActionSecondary from '../../Components/Buttons/ButtonActionSecondary.vue';
   import DashboardChangePasswordModal from './DashboardChangePasswordModal.vue';
+  import Modal from '../Modal/Modal.vue';
+  import AvatarCrop from '../User/AvatarCrop.vue';
 
   onBeforeUnmount(() => {
     $bus?.forget('update-user-profile');
@@ -124,6 +138,10 @@
     isSubmittingProfile: false,
     hasChanged: false,
     user: currentUser,
+    selectedFile: <Blob>{},
+    dataUrl: <string | ArrayBuffer | null>null,
+    isViewingAvatar: false,
+    isUploadingAvatar: false,
   });
 
   function handleEmailEdit() {
@@ -178,37 +196,49 @@
     state.isUpdatingPassword = true;
   }
 
-  const selectedFile = ref();
   const userStore = useUser();
 
   function upload() {
+    state.isUploadingAvatar = true;
+
     const formData = new FormData();
-    formData.append('avatar', selectedFile.value);
+    formData.append('avatar', state.selectedFile);
 
     uploadAvatar(formData)
       .then((d) => {
         userStore.user.avatar = d.avatar.avatar;
+        $bus?.emit('add-toast', 'Avatar updated successfully.', 'success');
+        state.isUploadingAvatar = false;
+        state.isViewingAvatar = false;
+        state.dataUrl = null;
+        state.selectedFile = <Blob>{};
       })
-      .catch((e) => {
-        if (e.response) {
-          console.log(e.response);
-        }
+      .catch(() => {
+        $bus?.emit('add-toast', 'Something went wrong.', 'error');
       });
   }
 
   // const dataUrl = ref();
   function fileSelect(files: any) {
-    selectedFile.value = files[0];
-    // const reader = new FileReader();
-    // reader.onload = (e) => {
-    //   dataUrl.value = e.target!.result;
-    //   cropping.value = true;
-    // };
-    // reader.readAsDataURL(selectedFile.value);
-    //
-    // cropping.value = true;
+    state.selectedFile = files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      state.dataUrl = e.target!.result;
+      state.isViewingAvatar = true;
+    };
+    reader.readAsDataURL(state.selectedFile);
 
+    state.isViewingAvatar = true;
+  }
+
+  function onClickUploadAvatar() {
     upload();
+  }
+
+  function onCloseAvatarViewer() {
+    state.isViewingAvatar = false;
+    state.dataUrl = null;
+    state.selectedFile = <Blob>{};
   }
 
   defineExpose({
@@ -221,6 +251,8 @@
     handleEmailEdit,
     handleUpdatePassword,
     handleProfileUpdate,
+    onClickUploadAvatar,
+    onCloseAvatarViewer,
   });
 </script>
 
@@ -232,8 +264,8 @@
       @apply px-4 py-2 uppercase font-bold bg-gray-100 text-sm rounded-md text-$accent cursor-pointer hover:bg-gray-200;
     }
 
-    .form {
-      @apply flex space-x-3;
+    .user-details-form {
+      @apply flex flex-col md:flex-row md:space-x-3;
 
       .form__input {
         @apply flex flex-col flex-grow;

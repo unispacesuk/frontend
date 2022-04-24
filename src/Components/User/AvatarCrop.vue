@@ -1,16 +1,23 @@
 <template>
-  <div class="w-[600px] h-auto relative">
-    <img :src="avatar" alt="avatar to crop" />
-    <div class="w-[600px] h-auto bg-black absolute top-0 z-10">
-      <div class="w-10 h-10 bg-red-200 absolute top-0"></div>
-    </div>
-  </div>
+  <img class="avatar-sample" :src="avatar" alt="avatar to crop" />
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue';
+  import { reactive } from 'vue';
 
-const props = defineProps({
-  avatar: String,
-});
+  const props = defineProps({
+    avatar: <any>null,
+  });
+
+  const state = reactive({
+    avatar: props.avatar,
+  });
+
+  defineExpose({ state });
 </script>
+
+<style scoped lang="scss">
+  .avatar-sample {
+    @apply w-[250px] h-auto my-4 mx-auto;
+  }
+</style>

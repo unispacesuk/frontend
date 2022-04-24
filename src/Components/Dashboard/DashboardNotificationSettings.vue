@@ -5,7 +5,7 @@
 
   <template v-else>
     <div class="content">
-      <div class="title">Notification Settings</div>
+      <div class="title">Notifications</div>
 
       <div class="title mt-5">Email</div>
       <div class="sub-title">Set what emails you would like to receive.</div>

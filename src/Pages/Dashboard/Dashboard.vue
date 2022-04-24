@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="container__top">
-      <div class="container__top__left">
+      <div class="container__top__left smooth-fast">
         <DashboardLeftMenu :current-tab="state.currentTab" @change-tab="handleTabChange" />
       </div>
       <div class="container__top__right">
@@ -55,7 +55,7 @@
       @apply flex;
 
       &__left {
-        @apply w-[170px] flex-shrink-0 border-r mr-2;
+        @apply dashboard:w-[170px] flex-shrink border-r mr-2;
       }
 
       &__right {

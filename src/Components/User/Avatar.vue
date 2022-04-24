@@ -22,12 +22,16 @@
       class="absolute right-0 bottom-0 rounded-full cursor-pointer focus:outline-none bg-gray-800 p-1 text-gray-500 hover:text-white smooth"
     >
       <form>
-        <label for="avatar" class="cursor-pointer">
+        <label for="avatar-nav" class="cursor-pointer">
           <CameraIcon class="w-5" />
         </label>
 
-        <input type="file" class="hidden" id="avatar" @change="fileSelect($event.target.files)" />
-        <!--                   @change="avatarService.assignAvatar($event)">-->
+        <input
+          type="file"
+          class="hidden"
+          id="avatar-nav"
+          @change="fileSelect($event.target.files)"
+        />
       </form>
     </div>
     <!--    <Modal v-if="cropping" @close-modal="cropping = false">-->

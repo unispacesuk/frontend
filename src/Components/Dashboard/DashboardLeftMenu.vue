@@ -1,12 +1,12 @@
 <template>
-  <div class="pr-3">
+  <div class="pr-3 w-auto">
     <div
       :class="{ active: props.currentTab === 'account' }"
       class="item"
       @click="emits('change-tab', 'account')"
     >
       <UserIcon class="w-5" />
-      <div>Account Details</div>
+      <div class="hidden dashboard:block">Account Details</div>
     </div>
     <div
       :class="{ active: props.currentTab === 'notifications' }"
@@ -14,7 +14,7 @@
       @click="emits('change-tab', 'notifications')"
     >
       <BellIcon class="w-5" />
-      <div>Notifications</div>
+      <div class="hidden dashboard:block">Notifications</div>
     </div>
   </div>
 </template>
