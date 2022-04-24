@@ -17,6 +17,7 @@ import Room from './Pages/Rooms/Room.vue';
 import ChangePassword from './Pages/Auth/ChangePassword.vue';
 import AskQuestion from './Pages/Question/AskQuestion.vue';
 import Question from './Pages/Question/Question.vue';
+import UserProfile from './Pages/User/UserProfile.vue';
 
 import { useUser } from './Stores/UserStore';
 
@@ -70,6 +71,7 @@ const routes = [
     },
   },
   { path: '/logout', name: 'logout', component: Logout },
+  { path: '/user/:username', name: 'userProfile', component: UserProfile },
 
   // board related routes
   { path: '/boards', name: 'boards', component: Boards },

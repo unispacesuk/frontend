@@ -108,6 +108,18 @@ async function getStarredState(id: number) {
   return Promise.resolve(response);
 }
 
+async function getRecentActivity(id: number) {
+  let response;
+
+  try {
+    response = await Get(`board/recent/${id}`);
+  } catch (error) {
+    return Promise.reject(error);
+  }
+
+  return Promise.resolve(response);
+}
+
 export {
   addCategory,
   editCategory,
@@ -127,4 +139,5 @@ export {
   getAllThreadReplies,
   starThread,
   getStarredState,
+  getRecentActivity,
 };

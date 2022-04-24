@@ -89,7 +89,6 @@
   }
   function doAddNewThread(data: INewBoard) {
     newThreadLoading.value = true;
-    console.log('hi');
     if (!data.title) {
       newThreadLoading.value = false;
       return $bus?.emit('add-toast', 'You must enter a title.', 'error');
@@ -102,14 +101,12 @@
 
     addThread(data)
       .then((d) => {
-        console.log(d);
         newThreadLoading.value = false;
         router.push(`/thread/${d.thread.id}`);
         // return $bus?.emit('submit-success');
         // return $bus?.emit('add-toast', 'Something went wrong. Please try again.', 'error');
       })
       .catch((e) => {
-        console.log(e.response);
         newThreadLoading.value = false;
         return $bus?.emit('add-toast', 'Something went wrong.', 'error');
       });

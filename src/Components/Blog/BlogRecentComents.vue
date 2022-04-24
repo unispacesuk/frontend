@@ -12,7 +12,9 @@
         <div>Recent activity:</div>
         <div class="recent_comments_container__right">
           <div v-for="(user, index) of state.recentComments" :key="index">
-            <UserAvatar :user="user" size="xs" class="__item" />
+            <RouterLink :to="{ name: 'userProfile', params: { username: user.username } }">
+              <UserAvatar :user="user" size="xs" class="__item" />
+            </RouterLink>
           </div>
         </div>
       </div>

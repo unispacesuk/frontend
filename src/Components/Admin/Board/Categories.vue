@@ -9,16 +9,16 @@
         ></ButtonActionPrimary>
       </div>
     </div>
-    <div v-if="loading" class="flex justify-center">
+    <div v-if="state.isLoadingCats" class="flex justify-center">
       <Spinner class="w-5" />
     </div>
 
-    <div v-if="!loading">
+    <div v-else>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 px-5">
         <div v-for="(category, index) of cats" :key="index">
           <CategoriesItemCard :category="category" @add-board="handleAddNewBoard(category.id)" />
         </div>
-        <div v-if="cats.length === 0">No categories added yet.</div>
+        <div v-if="!cats.length">No categories added yet.</div>
       </div>
       <Pagination
         :pages="pages"
@@ -40,10 +40,9 @@
 </template>
 
 <script setup lang="ts">
-  import { inject, onBeforeMount, ref, watch } from 'vue';
+  import { inject, onBeforeMount, reactive, ref, watch } from 'vue';
   import { storeToRefs } from 'pinia';
   import { useCategories } from '../../../Stores/CategoriesStore';
-  import { getCategoryStats } from '../../../Services/Statistics/StatisticsService';
   import { ICategory } from '../../../Interfaces/Board/ICategory';
   import { IBus } from '../../../Interfaces/IBus';
   import AddNewCategory from './AddNewCategory.vue';
@@ -55,10 +54,9 @@
   import { getAllCategories } from '../../../Services/Board/BoardsService';
 
   const categoriesStore = useCategories();
-  const { categories, getCategories } = storeToRefs(useCategories());
+  const { getCategories } = storeToRefs(useCategories());
 
   const $bus = inject<IBus>('$bus');
-  // const addingCategory = ref<boolean>(false);
   const action = ref<string>('');
   const addingBoard = ref<boolean>(false);
   const addingBoardCatId = ref<number>(0);
@@ -67,7 +65,9 @@
   const currentPage = ref<number>(0);
   const pages = ref<number>(0);
 
-  const loading = ref<boolean>(true);
+  const state = reactive({
+    isLoadingCats: false,
+  });
 
   onBeforeMount(async () => {
     await handleAllCategories();
@@ -78,7 +78,7 @@
   watch(getCategories, () => {
     cats.value = getCategories.value.slice(0, 6);
     pages.value = Math.ceil(getCategories.value.length / 6);
-    loading.value = false;
+    state.isLoadingCats = false;
   });
 
   // TODO: stats route is broken because it only works if we have boards....

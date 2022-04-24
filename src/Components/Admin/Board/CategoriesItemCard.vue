@@ -6,26 +6,30 @@
     <div class="w-full bg-white border border-gray-200 rounded-md shadow p-3 z-10">
       <div
         class="text-md border-b border-gray-200 px-2 pb-3 font-bold cursor-pointer hover:bg-gray-50"
-        @click="handleViewBoards"
+        @click="onClickOpenBoardsDialog"
       >
         {{ category.title }}<br />
         <div class="font-light text-sm whitespace-nowrap overflow-x-hidden truncate">
           {{ category.description }}
         </div>
       </div>
-      <div class="flex space-x-4 p-5 text-sm">
-        <div>Boards: {{ category.boardCount }}</div>
-        <div>Threads: {{ category.threadCount }}</div>
-        <div>Replies: {{ category.replyCount }}</div>
+      <div>
+        <div v-if="state.isLoadingStats">Loading Stats...</div>
+
+        <div v-else class="flex space-x-4 p-5 text-sm">
+          <div>Boards: {{ state.stats.board_count }}</div>
+          <div>Threads: {{ state.stats.thread_count }}</div>
+          <div>Replies: {{ state.stats.reply_count }}</div>
+        </div>
       </div>
       <div class="flex space-x-2 justify-end">
         <ButtonActionCancel
           label="Delete"
-          @button-click="showDeleteDialog = true"
+          @button-click="onClickOpenDeleteCategoryDialog"
         ></ButtonActionCancel>
         <ButtonActionSecondary
           label="Edit"
-          @button-click="action = 'editing'"
+          @button-click="state.action = 'editing'"
         ></ButtonActionSecondary>
         <ButtonActionPrimary
           label="Add Board"
@@ -36,8 +40,8 @@
   </div>
 
   <AddNewCategory
-    @close-modal="action = ''"
-    :action="action"
+    @close-modal="state.action = ''"
+    :action="state.action"
     :id="category.id"
     :title="category.title"
     :description="category.description"
@@ -45,22 +49,23 @@
 
   <BoardCategoryDeleteConfirmModal
     :id="category.id"
-    :show-delete-dialog="showDeleteDialog"
-    @close-modal="showDeleteDialog = false"
+    :show-delete-dialog="state.isDeleteDialogOpen"
+    @close-modal="onCloseDeleteCategoryDialog"
     @delete-confirm="doDeleteCategory"
   />
 
   <BoardList
-    v-if="viewBoards"
-    :view-boards="viewBoards"
+    v-if="state.isBoardsDialogOpen"
+    :view-boards="state.isBoardsDialogOpen"
     :category-id="category.id"
-    @close-modal="handleCloseViewBoards"
+    @close-modal="onCloseBoardsDialog"
   />
 </template>
 
 <script setup lang="ts">
-  import { ref, inject } from 'vue';
+  import { inject, reactive } from 'vue';
   import { deleteCategory, duplicateCategory } from '../../../Services/Board/BoardsService';
+  import { getCategoryStats } from '../../../Services/Statistics/StatisticsService';
   import { ICategory } from '../../../Interfaces/Board/ICategory';
   import { IBus } from '../../../Interfaces/IBus';
   import AddNewCategory from './AddNewCategory.vue';
@@ -69,6 +74,8 @@
   import ButtonActionCancel from '../../Buttons/ButtonActionCancel.vue';
   import ButtonActionSecondary from '../../Buttons/ButtonActionSecondary.vue';
   import ButtonActionPrimary from '../../Buttons/ButtonActionPrimary.vue';
+
+  const $bus = inject<IBus>('$bus');
 
   const props = defineProps<{
     category: ICategory;
@@ -79,48 +86,70 @@
     (event: 'view-boards', value: boolean): void;
   }>();
 
-  const $bus = inject<IBus>('$bus');
-  // const editingCategory = ref<boolean>(false);
-  const action = ref<string>('');
-  const showDeleteDialog = ref<boolean>(false);
-  const viewBoards = ref<boolean>(false);
+  // temp interface
+  interface ICatStats {
+    board_count: number;
+    thread_count: number;
+    reply_count: number;
+  }
+
+  const state = reactive({
+    action: '',
+    isDeleteDialogOpen: false,
+    isBoardsDialogOpen: false,
+    isLoadingStats: true,
+    stats: <ICatStats>{},
+  });
+
+  getCategoryStats(props.category.id).then((data) => {
+    state.stats = data.response[0];
+    state.isLoadingStats = false;
+  });
 
   function doDeleteCategory() {
     deleteCategory(props.category.id)
-      .then((d) => {
+      .then(() => {
         $bus?.emit('add-toast', 'Category Deleted.', 'success');
-        showDeleteDialog.value = false;
         $bus?.emit('refresh-categories');
+        onCloseDeleteCategoryDialog();
       })
-      .catch((e) => {
-        if (e.response) {
-          const error = e.response.data.error;
-          console.log(error);
-          $bus?.emit('add-toast', error, 'error');
-        }
+      .catch(() => {
+        $bus?.emit('add-toast', 'Something went wrong.', 'error');
       });
   }
 
   function doDuplicateCategory() {
     duplicateCategory(props.category.id)
-      .then((d) => {
+      .then(() => {
         $bus?.emit('add-toast', 'Category Duplicated.', 'success');
         $bus?.emit('refresh-categories');
       })
-      .catch((e) => {
-        if (e.response) {
-          const error = e.response.data.error;
-          console.log(error);
-          $bus?.emit('add-toast', error, 'error');
-        }
+      .catch(() => {
+        $bus?.emit('add-toast', 'Something went wrong.', 'error');
       });
   }
 
-  function handleViewBoards() {
-    viewBoards.value = true;
+  function onClickOpenBoardsDialog() {
+    state.isBoardsDialogOpen = true;
   }
 
-  function handleCloseViewBoards() {
-    viewBoards.value = false;
+  function onCloseBoardsDialog() {
+    state.isBoardsDialogOpen = false;
   }
+
+  function onClickOpenDeleteCategoryDialog() {
+    state.isDeleteDialogOpen = true;
+  }
+
+  function onCloseDeleteCategoryDialog() {
+    state.isDeleteDialogOpen = false;
+  }
+
+  defineExpose({
+    state,
+    onClickOpenBoardsDialog,
+    onCloseBoardsDialog,
+    onClickOpenDeleteCategoryDialog,
+    onCloseDeleteCategoryDialog,
+  });
 </script>
