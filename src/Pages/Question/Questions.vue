@@ -21,6 +21,7 @@
         </ButtonActionSecondary>
       </div>
       <!-- Dropdown / filters / tags sorted by most used -->
+      <QuestionSearchHistory v-if="state.isSearchFocused" />
     </div>
     <div v-if="user.username">
       <ButtonActionPrimary
@@ -71,6 +72,7 @@
   import ButtonActionSecondary from '../../Components/Buttons/ButtonActionSecondary.vue';
   import Pagination from '../../Components/Pagination/Pagination.vue';
   import Empty from '../../Components/Util/Empty.vue';
+  import QuestionSearchHistory from '../../Components/Question/QuestionSearchHistory.vue';
 
   const router = useRouter();
   const route = useRoute();
@@ -140,6 +142,7 @@
           console.log(e);
         });
     });
+    $bus?.emit('new-search', state.searchQuery);
   }
 
   function handleResetSearch() {

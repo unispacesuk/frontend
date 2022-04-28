@@ -5,15 +5,7 @@
       <div class="flex space-x-2">
         <div class="w-1/4 p-3 border-r border-gray-200 text-center flex flex-col space-y-4">
           <div class="justify-center flex">
-            <img
-              :src="
-                op.avatar
-                  ? avatarBase + op.avatar
-                  : `https://avatars.dicebear.com/api/male/${op.username}.svg`
-              "
-              class="w-28 h-28 rounded-full object-cover object-center"
-              alt="avatar"
-            />
+            <UserAvatar :user="op" size="lg" />
           </div>
           <div>{{ op.username }}</div>
         </div>
@@ -94,7 +86,7 @@
 </template>
 
 <script setup lang="ts">
-  import { inject, onBeforeMount, ref, watch } from 'vue';
+  import { inject, onBeforeMount, reactive, ref, watch } from 'vue';
   import {
     getMyVote,
     getOPData,
@@ -116,6 +108,7 @@
   import Spinner from '../../Icons/Util/Spinner.vue';
   import ButtonActionPrimary from '../../Components/Buttons/ButtonActionPrimary.vue';
   import TextEditor from '../../Components/Form/TextEditor.vue';
+  import UserAvatar from '../../Components/User/UserAvatar.vue';
 
   const $bus: IBus | undefined = inject('$bus');
   const route = useRoute();
@@ -134,8 +127,9 @@
   const questionStore = useQuestion();
   const { question, votes, vote, op } = storeToRefs(questionStore);
 
-  const avatarBase = inject('avatarBase');
-  const opAvatar = ref<string>('');
+  const state = reactive({
+    canVote: false,
+  });
 
   onBeforeMount(async () => {
     getQuestionData();
@@ -200,6 +194,7 @@
         setTimeout(() => {
           changing.value = false;
         }, 500);
+        state.canVote = false;
         // questionStore.setVoted(true);
         // questionStore.setType('up');
       })
@@ -218,6 +213,7 @@
         setTimeout(() => {
           changing.value = false;
         }, 500);
+        state.canVote = false;
         // questionStore.setVoted(true);
         // questionStore.setType('down');
       })

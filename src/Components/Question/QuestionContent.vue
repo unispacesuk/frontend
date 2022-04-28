@@ -11,7 +11,10 @@
         </button>
         <div class="relative">
           <div id="moreMenu" v-if="moreMenu" class="more-menu smooth flex flex-col">
-            <button v-if="user.id === question.userId || user.roleId === 1" @click="editing = true">
+            <button
+              v-if="user.id === question.userId || user.roleId === 1"
+              @click.stop="editing = true"
+            >
               Edit
             </button>
             <button @click="copyToClipboard">Share</button>

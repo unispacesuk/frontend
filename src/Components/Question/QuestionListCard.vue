@@ -35,7 +35,7 @@
     </div>
 
     <!-- More Icon -->
-    <div class="relative">
+    <div class="relative" @focusout.capture="onMoreMenuFocusOut">
       <button
         class="text-gray-300 hover:text-gray-700 smooth outline-none"
         @click="moreMenu = !moreMenu"
@@ -43,110 +43,113 @@
         <DotsVerticalIcon class="w-5" v-if="!moreMenu" />
         <XCircleIcon class="w-5" v-if="moreMenu" />
       </button>
-      <div id="moreMenu" v-if="moreMenu" class="more-menu smooth flex flex-col">
-        <!--        <div>Edit</div>-->
-        <button @click="copyToClipboard(question.id)">Share</button>
-        <button
-          v-if="user.id === question.userId || user.roleId === 1"
-          @click="doDelete(question.id)"
-        >
-          Delete
-        </button>
-      </div>
+      <Transition name="modal">
+        <div id="moreMenu" v-if="moreMenu" class="more-menu smooth flex flex-col">
+          <!--        <div>Edit</div>-->
+          <button @click="copyToClipboard(question.id)">Share</button>
+          <button
+            v-if="user.id === question.userId || user.roleId === 1"
+            @click="doDelete(question.id)"
+          >
+            Delete
+          </button>
+        </div>
+      </Transition>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, inject, PropType, ref } from 'vue';
-import { IQuestion } from '../../Interfaces/Question/IQuestion';
-import { DotsVerticalIcon, XCircleIcon } from '@heroicons/vue/solid';
-import { deleteQuestion } from '../../Services/Question/QuestionService';
-import { storeToRefs } from 'pinia';
-import { useUser } from '../../Stores/UserStore';
-import { IBus } from '../../Interfaces/IBus';
-import QuestionUserInfo from './QuestionListCardUserInfo.vue';
-import Tag from '../Tag/Tag.vue';
+  import { defineComponent, inject, PropType, ref } from 'vue';
+  import { IQuestion } from '../../Interfaces/Question/IQuestion';
+  import { DotsVerticalIcon, XCircleIcon } from '@heroicons/vue/solid';
+  import { deleteQuestion } from '../../Services/Question/QuestionService';
+  import { storeToRefs } from 'pinia';
+  import { useUser } from '../../Stores/UserStore';
+  import { IBus } from '../../Interfaces/IBus';
+  import QuestionUserInfo from './QuestionListCardUserInfo.vue';
+  import Tag from '../Tag/Tag.vue';
 
-interface QuestionProp {
-  question: IQuestion;
-  moreMenu: boolean;
-}
+  interface QuestionProp {
+    question: IQuestion;
+    moreMenu: boolean;
+  }
 
-export default defineComponent({
-  name: 'QuestionListItem',
-  components: { QuestionUserInfo, Tag, DotsVerticalIcon, XCircleIcon },
-  props: {
-    question: {
-      type: Object as PropType<IQuestion>,
-      required: true,
+  export default defineComponent({
+    name: 'QuestionListItem',
+    components: { QuestionUserInfo, Tag, DotsVerticalIcon, XCircleIcon },
+    props: {
+      question: {
+        type: Object as PropType<IQuestion>,
+        required: true,
+      },
+      moreMenu: {
+        type: Boolean,
+        default: false,
+      },
     },
-    moreMenu: {
-      type: Boolean,
-      default: false,
+    setup(props: QuestionProp) {
+      const question = ref<IQuestion>(props.question);
+      const moreMenu = ref(props.moreMenu);
+      const $bus: any = inject('$bus');
+      const Bus: IBus = $bus;
+      const userStore = useUser();
+      const { user } = storeToRefs(userStore);
+
+      addEventListener('keyup', (e) => {
+        if (e.key === 'Escape') {
+          return (moreMenu.value = false);
+        }
+      });
+
+      const emitDeleteRequest = () => {
+        $bus.emit('question-delete-request');
+      };
+      const emitDeleteSuccess = () => {
+        $bus.emit('question-delete-success');
+      };
+      const copyToClipboardToast = () => {
+        $bus.emit('add-toast', 'Link copied to clipboard.');
+      };
+
+      return {
+        question,
+        moreMenu,
+        emitDeleteRequest,
+        emitDeleteSuccess,
+        copyToClipboardToast,
+        user,
+        Bus,
+      };
     },
-  },
-  setup(props: QuestionProp) {
-    const question = ref<IQuestion>(props.question);
-    const moreMenu = ref(props.moreMenu);
-    const $bus: any = inject('$bus');
-    const Bus: IBus = $bus;
-    const userStore = useUser();
-    const { user } = storeToRefs(userStore);
-
-    addEventListener('keyup', (e) => {
-      if (e.key === 'Escape') {
-        return (moreMenu.value = false);
-      }
-    });
-    // addEventListener('click', (e) => {
-    //   console.log(e.target);
-    // });
-    const emitDeleteRequest = () => {
-      $bus.emit('question-delete-request');
-    };
-    const emitDeleteSuccess = () => {
-      $bus.emit('question-delete-success');
-    };
-    const copyToClipboardToast = () => {
-      $bus.emit('add-toast', 'Link copied to clipboard.');
-    };
-
-    return {
-      question,
-      moreMenu,
-      emitDeleteRequest,
-      emitDeleteSuccess,
-      copyToClipboardToast,
-      user,
-      Bus,
-    };
-  },
-  methods: {
-    async doDelete(questionId: number) {
-      this.emitDeleteRequest();
-      deleteQuestion(questionId)
-        .then((r) => {
-          if (r.response) {
-            this.Bus.emit('add-toast', 'Question deleted.', 'success');
+    methods: {
+      async doDelete(questionId: number) {
+        this.emitDeleteRequest();
+        deleteQuestion(questionId)
+          .then((r) => {
+            if (r.response) {
+              this.Bus.emit('add-toast', 'Question deleted.', 'success');
+              this.emitDeleteSuccess();
+            }
+          })
+          .catch((e) => {
+            // console.log(e);
+            this.Bus.emit('add-toast', e.response.data.error, 'error');
             this.emitDeleteSuccess();
-          }
-        })
-        .catch((e) => {
-          // console.log(e);
-          this.Bus.emit('add-toast', e.response.data.error, 'error');
-          this.emitDeleteSuccess();
-        });
+          });
+      },
+      copyToClipboard(questionId: number) {
+        navigator.clipboard
+          .writeText(`http://app.unispaces.test/questions/${questionId}`)
+          .then(() => {
+            this.copyToClipboardToast();
+          })
+          .catch((e) => console.log(e));
+        this.moreMenu = false;
+      },
+      onMoreMenuFocusOut() {
+        this.moreMenu = false;
+      },
     },
-    copyToClipboard(questionId: number) {
-      navigator.clipboard
-        .writeText(`http://app.unispaces.test/questions/${questionId}`)
-        .then(() => {
-          this.copyToClipboardToast();
-        })
-        .catch((e) => console.log(e));
-      this.moreMenu = false;
-    },
-  },
-});
+  });
 </script>
