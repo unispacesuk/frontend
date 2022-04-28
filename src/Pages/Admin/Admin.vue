@@ -9,7 +9,7 @@
 
     <BoardCategories />
 
-    <div class="p-5">Last 10 questions....</div>
+    <QuestionsTable />
   </div>
 </template>
 
@@ -18,6 +18,7 @@
   import { useUser } from '../../Stores/UserStore';
   import BoardCategories from '../../Components/Admin/Board/Categories.vue';
   import CurrentAvatar from '../../Components/User/CurrentAvatar.vue';
+  import QuestionsTable from '../../Components/Admin/Questions/QuestionsTable.vue';
 
   const { currentUser } = storeToRefs(useUser());
 </script>

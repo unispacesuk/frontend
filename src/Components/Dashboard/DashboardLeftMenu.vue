@@ -8,6 +8,14 @@
       <UserIcon class="w-5" />
       <div class="hidden dashboard:block">Account Details</div>
     </div>
+    <!--    <div-->
+    <!--      :class="{ active: props.currentTab === 'settings' }"-->
+    <!--      class="item"-->
+    <!--      @click="emits('change-tab', 'settings')"-->
+    <!--    >-->
+    <!--      <CogIcon class="w-5" />-->
+    <!--      <div class="hidden dashboard:block">Settings</div>-->
+    <!--    </div>-->
     <div
       :class="{ active: props.currentTab === 'notifications' }"
       class="item"
@@ -20,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-  import { UserIcon, BellIcon } from '@heroicons/vue/solid';
+  import { UserIcon, BellIcon, CogIcon } from '@heroicons/vue/solid';
 
   const props = defineProps<{
     currentTab: string;

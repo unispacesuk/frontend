@@ -53,6 +53,7 @@
 
 <script setup lang="ts">
   import { ref, inject } from 'vue';
+  import { useRouter } from 'vue-router';
   import { IBus } from '../../Interfaces/IBus';
   import { doRegister } from '../../Services/Auth/AuthService';
   import Spinner from '../../Icons/Util/Spinner.vue';
@@ -68,6 +69,8 @@
   const lastName = ref<string>('');
   const passwordsMatch = ref<boolean>(true);
   const registerLoading = ref<boolean>(false);
+
+  const router = useRouter();
 
   function handleDoRegister() {
     registerLoading.value = true;
@@ -105,6 +108,7 @@
       .then((d) => {
         registerLoading.value = false;
         $bus?.emit('add-toast', d.message, 'success');
+        router.push('login');
       })
       .catch((e) => {
         if (e.response) {

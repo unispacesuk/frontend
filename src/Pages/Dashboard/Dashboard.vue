@@ -6,6 +6,7 @@
       </div>
       <div class="container__top__right">
         <DashboardAccountDetails v-if="state.currentTab === 'account'" />
+        <DashboardSettings v-if="state.currentTab === 'settings'" />
         <DashboardNotificationSettings v-if="state.currentTab === 'notifications'" />
       </div>
     </div>
@@ -19,13 +20,14 @@
   import DashboardAccountDetails from '../../Components/Dashboard/DashboardAccountDetails.vue';
   import DashboardLeftMenu from '../../Components/Dashboard/DashboardLeftMenu.vue';
   import DashboardNotificationSettings from '../../Components/Dashboard/DashboardNotificationSettings.vue';
+  import DashboardSettings from '../../Components/Dashboard/DashboardSettings.vue';
 
   const $bus = inject<IBus>('$bus');
 
-  const tabNames: DashboardTab[] = ['account', 'notifications'];
+  const tabNames: DashboardTab[] = ['account', 'notifications', 'settings'];
   const currentTab = computed(() => {
     if (localStorage.getItem('dashboard-tab')) {
-      if (tabNames.includes(<'account' | 'notifications'>localStorage.getItem('dashboard-tab'))) {
+      if (tabNames.includes(<DashboardTab>localStorage.getItem('dashboard-tab'))) {
         return localStorage.getItem('dashboard-tab');
       }
     }

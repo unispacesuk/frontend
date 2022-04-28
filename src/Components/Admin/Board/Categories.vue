@@ -1,5 +1,5 @@
 <template>
-  <div class="border-b border-gray-200">
+  <div>
     <div class="flex items-center justify-between px-5 py-3">
       <div class="text-lg">Board Categories</div>
       <div>

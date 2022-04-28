@@ -72,6 +72,33 @@ async function updateUserNotificationSetting(data: ISetting) {
   return Promise.resolve(response);
 }
 
+interface IPrivacy {
+  type: string;
+  value: boolean;
+}
+
+async function updateUserPrivacySetting(data: IPrivacy) {
+  let response;
+  try {
+    response = await Patch('user/privacy', data, authHeaders());
+  } catch (error) {
+    return Promise.reject(error);
+  }
+
+  return Promise.resolve(response);
+}
+
+async function getUserPublicProfile(username: string) {
+  let response;
+  try {
+    response = await Get(`user/data/${username}`);
+  } catch (error) {
+    return Promise.reject(error);
+  }
+
+  return Promise.resolve(response);
+}
+
 export {
   uploadAvatar,
   getUserStarredThreads,
@@ -79,4 +106,6 @@ export {
   updateUserPassword,
   getUserNotificationSettings,
   updateUserNotificationSetting,
+  updateUserPrivacySetting,
+  getUserPublicProfile,
 };

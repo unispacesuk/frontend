@@ -6,6 +6,9 @@ export interface IUser {
   avatar: string;
   roleId: number;
   email: string;
+  privacy: {
+    [index: string | 'profile' | 'blog']: boolean;
+  };
 }
 
 export interface INotificationSettings {

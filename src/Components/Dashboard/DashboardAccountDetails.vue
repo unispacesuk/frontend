@@ -71,6 +71,29 @@
         Update Password
       </ButtonActionSecondary>
     </div>
+
+    <div class="title mt-5">Privacy</div>
+    <div class="sub-title">
+      Here you can enable or disable your profile and blog visibility. <br />
+      Disabling your profile or blog will prevent from other users to view your profile or blog
+      articles.
+    </div>
+    <div class="flex flex-col space-y-2">
+      <div class="flex justify-between w-[150px]">
+        <div>Profile</div>
+        <Toggle
+          :checked="state.user.privacy.profile"
+          @toggle-change="(v) => onPrivacyToggle('profile', v)"
+        />
+      </div>
+      <div class="flex justify-between w-[150px]">
+        <div>Blog</div>
+        <Toggle
+          :checked="state.user.privacy.blog"
+          @toggle-change="(v) => onPrivacyToggle('blog', v)"
+        />
+      </div>
+    </div>
   </div>
 
   <div class="bottom_content">
@@ -105,10 +128,15 @@
 </template>
 
 <script setup lang="ts">
-  import { inject, onBeforeUnmount, reactive } from 'vue';
+  import { capitalize, inject, onBeforeUnmount, reactive } from 'vue';
   import { useUser } from '../../Stores/UserStore';
-  import { updateUserProfile, uploadAvatar } from '../../Services/User/UserService';
+  import {
+    updateUserPrivacySetting,
+    updateUserProfile,
+    uploadAvatar,
+  } from '../../Services/User/UserService';
   import { IBus } from '../../Interfaces/IBus';
+  import { IUser } from '../../Interfaces/User/IUser';
   import CurrentAvatar from '../../Components/User/CurrentAvatar.vue';
   import Input from '../../Components/Form/Input.vue';
   import Label from '../../Components/Form/Label.vue';
@@ -118,6 +146,7 @@
   import DashboardChangePasswordModal from './DashboardChangePasswordModal.vue';
   import Modal from '../Modal/Modal.vue';
   import AvatarCrop from '../User/AvatarCrop.vue';
+  import Toggle from '../Buttons/Toggle.vue';
 
   onBeforeUnmount(() => {
     $bus?.forget('update-user-profile');
@@ -137,7 +166,7 @@
     isUpdatingPassword: false,
     isSubmittingProfile: false,
     hasChanged: false,
-    user: currentUser,
+    user: <IUser>currentUser,
     selectedFile: <Blob>{},
     dataUrl: <string | ArrayBuffer | null>null,
     isViewingAvatar: false,
@@ -218,7 +247,6 @@
       });
   }
 
-  // const dataUrl = ref();
   function fileSelect(files: any) {
     state.selectedFile = files[0];
     const reader = new FileReader();
@@ -239,6 +267,21 @@
     state.isViewingAvatar = false;
     state.dataUrl = null;
     state.selectedFile = <Blob>{};
+  }
+
+  function onPrivacyToggle(type: string, value: boolean) {
+    const data = {
+      type,
+      value,
+    };
+    updateUserPrivacySetting(data)
+      .then(() => {
+        userStore.user.privacy[type] = value;
+        $bus?.emit('add-toast', `Made your ${capitalize(type)} ${value ? 'private' : 'public'}.`);
+      })
+      .catch(() => {
+        $bus?.emit('add-toast', 'Something went wrong.', 'error');
+      });
   }
 
   defineExpose({
