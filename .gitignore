@@ -8,3 +8,4 @@ dist-ssr
 .env.production
 .idea
 .vscode
+package-lock.json
