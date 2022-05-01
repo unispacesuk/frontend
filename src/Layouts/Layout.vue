@@ -6,9 +6,7 @@
     >
       <LeftNav :user="user" />
     </div>
-    <div
-      class="w-full lg:ml-[220px] px-10 pb-10 pt-3 space-y-3 smooth flex flex-col justify-between"
-    >
+    <div class="w-full lg:ml-[220px] px-10 pt-3 space-y-3 smooth flex flex-col justify-between">
       <div>
         <div :class="{ '-ml-5': mobileNav }">
           <button

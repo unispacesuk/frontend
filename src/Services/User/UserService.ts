@@ -1,4 +1,5 @@
 import { Post, authHeaders, Get, Patch } from '../../Util/Request';
+import { debounce } from '../Util';
 
 function uploadAvatar(data: any) {
   return Post('user/avatar', data, authHeaders());
@@ -43,6 +44,11 @@ function getUserPublicProfile(username: string) {
   return Get(`user/data/${username}`);
 }
 
+function searchUser(username: string) {
+  if (!username) return;
+  return Get(`user/search/${username.toLowerCase()}`);
+}
+
 export {
   uploadAvatar,
   getUserStarredThreads,
@@ -52,4 +58,5 @@ export {
   updateUserNotificationSetting,
   updateUserPrivacySetting,
   getUserPublicProfile,
+  searchUser,
 };

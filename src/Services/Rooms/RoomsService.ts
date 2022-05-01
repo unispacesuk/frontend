@@ -21,8 +21,12 @@ function updateRoom(roomId: string, data: object) {
   return Patch(`chat/room/${roomId}`, data, authHeaders());
 }
 
-function inviteUser(roomId: string) {
-  return Post(`chat/room/invite/${roomId}`, {}, authHeaders(), { invitee: 3 });
+function inviteUser(roomId: string, userId: number) {
+  return Post(`chat/room/invite/${roomId}`, {}, authHeaders(), { invitee: userId });
 }
 
-export { getAllRooms, getRoomData, createRoom, deleteRoom, updateRoom, inviteUser };
+function getRoomUsers(roomId: string) {
+  return Get(`chat/room/users/${roomId}`, authHeaders());
+}
+
+export { getAllRooms, getRoomData, createRoom, deleteRoom, updateRoom, inviteUser, getRoomUsers };

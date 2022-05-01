@@ -27,9 +27,35 @@
       <div class="room-info" v-if="state.room.userId === currentUser.id">
         You own this room. You can moderate, invite and remove people.
       </div>
+
+      <div class="chat-container">
+        <div class="chat-container__users" v-if="state.users.length">
+          <div class="title">User List</div>
+          <div v-if="state.usersLoading">Loading Users...</div>
+          <div v-else>
+            <div class="item" v-for="(user, index) of state.users" :key="index">
+              <div class="relative shrink-0">
+                <UserAvatar :user="user" size="xs" />
+                <div class="status" :class="user.is_online ? 'online' : 'offline'"></div>
+              </div>
+              <div class="overflow-hidden overflow-ellipsis">
+                {{ user.username }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="chat-container__chat">
+          <RoomMessagesContainer />
+
+          <div class="flex space-x-2 items-center">
+            <Input class="w-full" />
+            <ButtonActionSecondary>Send</ButtonActionSecondary>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <ButtonActionSecondary @button-click="onClickInvite">Invite</ButtonActionSecondary>
+    <!--    <ButtonActionSecondary @button-click="onClickInvite">Invite</ButtonActionSecondary>-->
   </template>
 
   <RoomEditModal
@@ -38,6 +64,8 @@
     @action:close="onEditClose"
     @action:delete="onDeleteAction"
   />
+
+  <RoomInviteUser v-if="state.isInviting" @action:close="onInviteClose" />
 </template>
 
 <script setup lang="ts">
@@ -45,10 +73,14 @@
   import { useRoute, useRouter } from 'vue-router';
   import { useUser } from '../../Stores/UserStore';
   import { IBus } from '../../Interfaces/IBus';
-  import { deleteRoom, getRoomData, inviteUser } from '../../Services/Rooms/RoomsService';
+  import { deleteRoom, getRoomData, getRoomUsers } from '../../Services/Rooms/RoomsService';
   import Empty from '../../Components/Util/Empty.vue';
   import ButtonActionSecondary from '../../Components/Buttons/ButtonActionSecondary.vue';
   import RoomEditModal from '../../Components/Rooms/RoomEditModal.vue';
+  import RoomInviteUser from '../../Components/Rooms/RoomInviteUser.vue';
+  import UserAvatar from '../../Components/User/UserAvatar.vue';
+  import RoomMessagesContainer from '../../Components/Rooms/RoomMessagesContainer.vue';
+  import Input from '../../Components/Form/Input.vue';
 
   const router = useRouter();
   const { roomId } = useRoute().params;
@@ -58,13 +90,16 @@
 
   const state: any = reactive({
     loading: true,
+    usersLoading: true,
     room: <any>{},
+    users: <any>[],
     error: {
       type: '',
       message: '',
     },
     canEdit: computed(() => state.room.userId === currentUser.id || currentUser.roleId === 1),
     isEditing: false,
+    isInviting: false,
   });
 
   onBeforeMount(() => {
@@ -81,6 +116,13 @@
         }
         $bus?.emit('add-toast', 'Something went wrong.', 'error');
       });
+
+    getRoomUsers(<string>roomId)
+      .then((data) => {
+        state.users = data.response;
+        state.usersLoading = false;
+      })
+      .catch(() => {});
   });
 
   function subTitle() {
@@ -115,20 +157,28 @@
   }
 
   function onClickInvite() {
-    inviteUser(<string>roomId)
-      .then((data) => {
-        if (data.error) {
-          $bus?.emit('add-toast', 'This user is already invited.', 'error');
-        }
-      })
-      .catch(() => {});
+    return (state.isInviting = true);
   }
 
-  defineExpose({ state, subTitle, onEditClick, onEditClose, onDeleteAction, onClickInvite });
+  function onInviteClose() {
+    return (state.isInviting = false);
+  }
+
+  defineExpose({
+    state,
+    subTitle,
+    onEditClick,
+    onEditClose,
+    onDeleteAction,
+    onClickInvite,
+    onInviteClose,
+  });
 </script>
 
 <style scoped lang="scss">
   .room-page {
+    @apply flex flex-col;
+
     &__top {
       @apply flex items-center justify-between;
     }
@@ -139,6 +189,36 @@
 
     .sub-title {
       @apply text-sm;
+    }
+
+    .chat-container {
+      @apply flex space-x-2 mt-3 mx-3;
+
+      &__users {
+        @apply hidden md:block w-[180px];
+
+        .title {
+          @apply font-bold text-lg mb-3;
+        }
+
+        .item {
+          @apply flex space-x-2 items-center mb-3;
+        }
+
+        .status {
+          @apply w-3 h-3 rounded-full absolute bottom-0 right-0 border-2 border-white;
+        }
+        .online {
+          @apply bg-green-500;
+        }
+        .offline {
+          @apply bg-red-500;
+        }
+      }
+
+      &__chat {
+        @apply w-full;
+      }
     }
   }
 </style>
