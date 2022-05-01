@@ -15,52 +15,24 @@ interface IRegisterData {
   last_name: string;
 }
 
-async function doLogin(data: ILoginData) {
-  const response = await Post('auth/login', data);
-
-  return Promise.resolve(response);
+function doLogin(data: ILoginData) {
+  return Post('auth/login', data);
 }
 
-async function doRegister(data: IRegisterData) {
-  const response = await Post('auth/register', data);
-
-  return Promise.resolve(response);
+function doRegister(data: IRegisterData) {
+  return Post('auth/register', data);
 }
 
-async function changePassword(data: any) {
-  let response;
-
-  try {
-    response = await Post('auth/change-password', data);
-  } catch (error) {
-    return Promise.reject(error);
-  }
-
-  return Promise.resolve(response);
+function changePassword(data: any) {
+  return Post('auth/change-password', data);
 }
 
-async function verifyChangePasswordToken(token: string) {
-  let response;
-
-  try {
-    response = await Post('auth/verify-password-token', { token });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-
-  return Promise.resolve(response);
+function verifyChangePasswordToken(token: string) {
+  return Post('auth/verify-password-token', { token });
 }
 
 async function submitUpdatePassword(data: any) {
-  let response;
-
-  try {
-    response = await Post('auth/update-password', data);
-  } catch (error) {
-    return Promise.reject(error);
-  }
-
-  return Promise.resolve(response);
+  return Post('auth/update-password', data);
 }
 
 export { doLogin, doRegister, changePassword, verifyChangePasswordToken, submitUpdatePassword };

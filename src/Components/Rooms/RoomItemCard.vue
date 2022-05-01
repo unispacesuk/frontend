@@ -33,15 +33,15 @@
     }
   }
 
-  defineExpose({ state });
+  defineExpose({ state, roomType });
 </script>
 
 <style scoped lang="scss">
   .room-item {
-    @apply w-auto bg-white border border-black rounded-md py-3 pl-5 relative z-20 absolute w-full h-full;
+    @apply w-auto bg-white border border-black rounded-md py-3 px-3 relative z-20 absolute w-full h-full;
 
     .title {
-      @apply overflow-ellipsis text-lg;
+      @apply whitespace-nowrap overflow-hidden overflow-ellipsis text-lg;
     }
 
     .sub-title {

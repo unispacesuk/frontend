@@ -1,131 +1,83 @@
 import { Delete, Get, Patch, Post, authHeaders } from '../../Util/Request';
 
-async function getAllCategories(): Promise<any> {
-  const response = await Get('category');
-
-  return Promise.resolve(response);
+function getAllCategories(): Promise<any> {
+  return Get('category');
 }
 
-async function addCategory(data: any) {
-  const response = await Post('category', data, authHeaders());
-
-  return Promise.resolve(response);
+function addCategory(data: any) {
+  return Post('category', data, authHeaders());
 }
 
-async function editCategory(data: any) {
-  const response = await Patch('category', data, authHeaders());
-
-  return Promise.resolve(response);
+function editCategory(data: any) {
+  return Patch('category', data, authHeaders());
 }
 
-async function deleteCategory(id: number) {
-  const response = await Delete(`category/${id}`, authHeaders());
-
-  return Promise.resolve(response);
+function deleteCategory(id: number) {
+  return Delete(`category/${id}`, authHeaders());
 }
 
-async function duplicateCategory(id: number) {
-  const response = await Get(`category/duplicate/${id}`, authHeaders());
-
-  return Promise.resolve(response);
+function duplicateCategory(id: number) {
+  return Get(`category/duplicate/${id}`, authHeaders());
 }
 
-async function getAllBoards(categoryId: number) {
-  const response = await Get(`board/c/${categoryId}`);
-
-  return Promise.resolve(response);
+function getAllBoards(categoryId: number) {
+  return Get(`board/c/${categoryId}`);
 }
 
-async function addBoard(body: any) {
-  const response = await Post('board', body, authHeaders());
-
-  return Promise.resolve(response);
+function addBoard(body: any) {
+  return Post('board', body, authHeaders());
 }
 
-async function getBoard(id: string | string[]) {
-  const board = await Get(`board/${id}`);
-
-  return Promise.resolve(board);
+function getBoard(id: string | string[]) {
+  return Get(`board/${id}`);
 }
 
-async function deleteBoard(id: number) {
-  const response = await Delete(`board/${id}`, authHeaders());
-
-  return Promise.resolve(response);
+function deleteBoard(id: number) {
+  return Delete(`board/${id}`, authHeaders());
 }
 
-async function editBoard(id: number, body: object) {
-  const response = await Patch(`board/${id}`, body, authHeaders());
-
-  return Promise.resolve(response);
+function editBoard(id: number, body: object) {
+  return Patch(`board/${id}`, body, authHeaders());
 }
 
-async function addThread(body: object) {
-  const response = await Post(`thread/add`, body, authHeaders());
-
-  return Promise.resolve(response);
+function addThread(body: object) {
+  return Post(`thread/add`, body, authHeaders());
 }
 
-async function getThread(id: string | string[]) {
-  const response = await Get(`thread/${id}`);
-
-  return Promise.resolve(response);
+function getThread(id: string | string[]) {
+  return Get(`thread/${id}`);
 }
 
-async function editThread(id: number, body: {}) {
-  const response = await Patch(`thread/${id}`, body, authHeaders());
-
-  return Promise.resolve(response);
+function editThread(id: number, body: {}) {
+  return Patch(`thread/${id}`, body, authHeaders());
 }
 
-async function deleteThread(id: number) {
-  const response = await Delete(`thread/${id}`, authHeaders());
-
-  return Promise.resolve(response);
+function deleteThread(id: number) {
+  return Delete(`thread/${id}`, authHeaders());
 }
 
-async function addThreadReply(id: number, body: {}) {
-  const response = await Post(`thread/${id}/reply`, body, authHeaders());
-
-  return Promise.resolve(response);
+function addThreadReply(id: number, body: {}) {
+  return Post(`thread/${id}/reply`, body, authHeaders());
 }
 
-async function getAllThreadReplies(id: string | string[]) {
-  const response = await Get(`thread/${id}/replies`);
-
-  return Promise.resolve(response);
+function getAllThreadReplies(id: string | string[]) {
+  return Get(`thread/${id}/replies`);
 }
 
-async function starThread(id: number, action: string) {
-  const response = await Post(`thread/star/${id}`, { action }, authHeaders());
-
-  return Promise.resolve(response);
+function starThread(id: number, action: string) {
+  return Post(`thread/star/${id}`, { action }, authHeaders());
 }
 
-async function getStarredState(id: number) {
-  const response = await Get(`thread/star/${id}`, authHeaders());
-
-  return Promise.resolve(response);
+function getStarredState(id: number) {
+  return Get(`thread/star/${id}`, authHeaders());
 }
 
-async function getRecentActivity(id: number) {
-  let response;
-
-  try {
-    response = await Get(`board/recent/${id}`);
-  } catch (error) {
-    return Promise.reject(error);
-  }
-
-  return Promise.resolve(response);
+function getRecentActivity(id: number) {
+  return Get(`board/recent/${id}`);
 }
 
-async function updateAccess(access: object) {
-  try {
-    await Patch(`board/access`, access, authHeaders());
-  } catch (error) {
-    return Promise.reject(error);
-  }
+function updateAccess(access: object) {
+  return Patch(`board/access`, access, authHeaders());
 }
 
 export {

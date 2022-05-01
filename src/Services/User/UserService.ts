@@ -1,58 +1,23 @@
 import { Post, authHeaders, Get, Patch } from '../../Util/Request';
 
-async function uploadAvatar(data: any) {
-  let response;
-  try {
-    response = await Post('user/avatar', data, authHeaders());
-  } catch (error) {
-    return Promise.reject(error);
-  }
-
-  return Promise.resolve(response);
+function uploadAvatar(data: any) {
+  return Post('user/avatar', data, authHeaders());
 }
 
-async function getUserStarredThreads() {
-  let response;
-  try {
-    response = await Get('user/thread/starred', authHeaders());
-  } catch (error) {
-    return Promise.reject(error);
-  }
-
-  return Promise.resolve(response);
+function getUserStarredThreads() {
+  return Get('user/thread/starred', authHeaders());
 }
 
-async function updateUserProfile(data: any) {
-  let response;
-  try {
-    response = await Patch('user/update', data, authHeaders());
-  } catch (error) {
-    return Promise.reject(error);
-  }
-
-  return Promise.resolve(response);
+function updateUserProfile(data: any) {
+  return Patch('user/update', data, authHeaders());
 }
 
-async function updateUserPassword(data: any) {
-  let response;
-  try {
-    response = await Patch('user/update/password', data, authHeaders());
-  } catch (error) {
-    return Promise.reject(error);
-  }
-
-  return Promise.resolve(response);
+function updateUserPassword(data: any) {
+  return Patch('user/update/password', data, authHeaders());
 }
 
-async function getUserNotificationSettings() {
-  let response;
-  try {
-    response = await Get('user/notification-settings', authHeaders());
-  } catch (error) {
-    return Promise.reject(error);
-  }
-
-  return Promise.resolve(response);
+function getUserNotificationSettings() {
+  return Get('user/notification-settings', authHeaders());
 }
 
 interface ISetting {
@@ -61,15 +26,8 @@ interface ISetting {
   value: boolean;
 }
 
-async function updateUserNotificationSetting(data: ISetting) {
-  let response;
-  try {
-    response = await Patch('user/notification-settings', data, authHeaders());
-  } catch (error) {
-    return Promise.reject(error);
-  }
-
-  return Promise.resolve(response);
+function updateUserNotificationSetting(data: ISetting) {
+  return Patch('user/notification-settings', data, authHeaders());
 }
 
 interface IPrivacy {
@@ -77,26 +35,12 @@ interface IPrivacy {
   value: boolean;
 }
 
-async function updateUserPrivacySetting(data: IPrivacy) {
-  let response;
-  try {
-    response = await Patch('user/privacy', data, authHeaders());
-  } catch (error) {
-    return Promise.reject(error);
-  }
-
-  return Promise.resolve(response);
+function updateUserPrivacySetting(data: IPrivacy) {
+  return Patch('user/privacy', data, authHeaders());
 }
 
-async function getUserPublicProfile(username: string) {
-  let response;
-  try {
-    response = await Get(`user/data/${username}`);
-  } catch (error) {
-    return Promise.reject(error);
-  }
-
-  return Promise.resolve(response);
+function getUserPublicProfile(username: string) {
+  return Get(`user/data/${username}`);
 }
 
 export {

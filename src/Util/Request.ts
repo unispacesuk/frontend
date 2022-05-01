@@ -3,7 +3,7 @@ const API = import.meta.env.VITE_API;
 // const API = 'http://api.unispaces.test';
 // const API = 'http://localhost:3000';
 
-async function Get(path: string, headers?: AxiosRequestHeaders, params?: object): Promise<any> {
+function Get(path: string, headers?: AxiosRequestHeaders, params?: object): Promise<any> {
   return new Promise((resolve, reject) => {
     axios
       .get(`${API}/${path}`, {
@@ -18,7 +18,7 @@ async function Get(path: string, headers?: AxiosRequestHeaders, params?: object)
   });
 }
 
-async function Post(
+function Post(
   path: string,
   body: object,
   headers?: AxiosRequestHeaders,
@@ -28,6 +28,7 @@ async function Post(
     axios
       .post(`${API}/${path}`, body, {
         headers: headers,
+        params: params,
       })
       .then((res) => {
         resolve(res.data);
@@ -38,7 +39,7 @@ async function Post(
   });
 }
 
-async function Delete(path: string, headers?: AxiosRequestHeaders, params?: object): Promise<any> {
+function Delete(path: string, headers?: AxiosRequestHeaders, params?: object): Promise<any> {
   return new Promise((resolve, reject) => {
     axios
       .delete(`${API}/${path}`, {
@@ -53,7 +54,7 @@ async function Delete(path: string, headers?: AxiosRequestHeaders, params?: obje
   });
 }
 
-async function Patch(
+function Patch(
   path: string,
   body: object,
   headers?: AxiosRequestHeaders,

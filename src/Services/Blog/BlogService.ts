@@ -1,103 +1,39 @@
 import { authHeaders, Delete, Get, Patch, Post } from '../../Util/Request';
 
-async function getAllBlogs(take: any, page?: any) {
-  let response;
-
+function getAllBlogs(take: any, page?: any) {
   let endpoint = 'blogs';
   if (take) endpoint += `?take=${take}`;
   if (page) endpoint += `&page=${page}`;
 
-  try {
-    response = await Get(endpoint);
-  } catch (error) {
-    return Promise.reject(error);
-  }
-
-  return Promise.resolve(response);
+  return Get(endpoint);
 }
 
-async function createNewBlog(body: object) {
-  let response;
-
-  try {
-    response = await Post('blogs', body, authHeaders());
-  } catch (error) {
-    return Promise.reject(error);
-  }
-
-  return Promise.resolve(response);
+function createNewBlog(body: object) {
+  return Post('blogs', body, authHeaders());
 }
 
-async function getBlogArticle(articleId: string | string[]) {
-  let response;
-
-  try {
-    response = await Get(`blogs/article/${articleId}`);
-  } catch (error) {
-    return Promise.reject(error);
-  }
-
-  return Promise.resolve(response);
+function getBlogArticle(articleId: string | string[]) {
+  return Get(`blogs/article/${articleId}`);
 }
 
-async function updateBlogArticle(articleId: number | string[], data: any) {
-  let response;
-
-  try {
-    response = await Patch(`blogs/article/${articleId}`, data, authHeaders());
-  } catch (error) {
-    return Promise.reject(error);
-  }
-
-  return Promise.resolve(response);
+function updateBlogArticle(articleId: number | string[], data: any) {
+  return Patch(`blogs/article/${articleId}`, data, authHeaders());
 }
 
-async function deleteBlogArticle(articleId: number) {
-  let response;
-
-  try {
-    response = await Delete(`blogs/article/${articleId}`, authHeaders());
-  } catch (error) {
-    return Promise.reject(error);
-  }
-
-  return Promise.resolve(response);
+function deleteBlogArticle(articleId: number) {
+  return Delete(`blogs/article/${articleId}`, authHeaders());
 }
 
-async function voteBlogArticle(articleId: number, data: any) {
-  let response;
-
-  try {
-    response = await Post(`blogs/article/vote/${articleId}`, data, authHeaders());
-  } catch (error) {
-    return Promise.reject(error);
-  }
-
-  return Promise.resolve(response);
+function voteBlogArticle(articleId: number, data: any) {
+  return Post(`blogs/article/vote/${articleId}`, data, authHeaders());
 }
 
-async function submitNewComment(articleId: any, data: any) {
-  let response;
-
-  try {
-    response = await Post(`blogs/article/comment/${articleId}`, data, authHeaders());
-  } catch (error) {
-    return Promise.reject(error);
-  }
-
-  return Promise.resolve(response);
+function submitNewComment(articleId: any, data: any) {
+  return Post(`blogs/article/comment/${articleId}`, data, authHeaders());
 }
 
-async function getRecentActivity(articleId: number) {
-  let response;
-
-  try {
-    response = await Get(`blogs/article/${articleId}/recentactivity`);
-  } catch (error) {
-    return Promise.reject(error);
-  }
-
-  return Promise.resolve(response);
+function getRecentActivity(articleId: number) {
+  return Get(`blogs/article/${articleId}/recentactivity`);
 }
 
 function calculateVotes(votes: any[], type: number, articleId: number) {

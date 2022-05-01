@@ -11,39 +11,19 @@ async function getAllQuestions(query?: string | null) {
   // if (typeof query !== 'undefined') {
   reqUrl = reqUrl + `?${query}`;
 
-  const response = await Get(reqUrl);
-
-  return Promise.resolve(response);
+  return Get(reqUrl);
 }
 
-/**
- *
- * @param question
- */
-async function submitQuestion(question: IQuestion) {
-  const response = await Post('question', question, authHeaders());
-
-  return Promise.resolve(response);
+function submitQuestion(question: IQuestion) {
+  return Post('question', question, authHeaders());
 }
 
-/**
- *
- * @param id
- */
-async function getQuestion(id: string) {
-  const response = await Get(`question/${id}`);
-
-  return Promise.resolve(response);
+function getQuestion(id: string) {
+  return Get(`question/${id}`);
 }
 
-/**
- *
- * @param id
- */
-async function deleteQuestion(id: number) {
-  const response = await Delete(`question/${id}`, authHeaders());
-
-  return Promise.resolve(response);
+function deleteQuestion(id: number) {
+  return Delete(`question/${id}`, authHeaders());
 }
 
 async function submitVote(id: string, type: string) {
@@ -58,20 +38,16 @@ async function getMyVote(id: string) {
   return Promise.resolve(vote);
 }
 
-async function getOPData(id: string) {
-  const response = await Get(`user/data/${id}`);
-
-  return Promise.resolve(response);
+function getOPData(id: string) {
+  return Get(`user/data/${id}`);
 }
 
 interface QuestionUpdateData {
   title: string;
   description: string;
 }
-async function saveQuestion(id: string, data: QuestionUpdateData) {
-  const response = await Patch(`question/${id}`, data, authHeaders());
-
-  return Promise.resolve(response);
+function saveQuestion(id: string, data: QuestionUpdateData) {
+  return Patch(`question/${id}`, data, authHeaders());
 }
 
 export {

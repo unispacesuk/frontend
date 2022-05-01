@@ -15,29 +15,56 @@
 
   <template v-else>
     <div class="room-page">
-      <div class="title">{{ state.room.title }}</div>
-      <div class="sub-title">{{ subTitle() }}</div>
+      <div class="room-page__top">
+        <div>
+          <div class="title">{{ state.room.title }}</div>
+          <div class="sub-title">{{ subTitle() }}</div>
+        </div>
+        <div class="flex space-x-2" v-if="state.canEdit">
+          <ButtonActionSecondary @button-click="onEditClick"> Edit Room </ButtonActionSecondary>
+        </div>
+      </div>
+      <div class="room-info" v-if="state.room.userId === currentUser.id">
+        You own this room. You can moderate, invite and remove people.
+      </div>
     </div>
+
+    <ButtonActionSecondary @button-click="onClickInvite">Invite</ButtonActionSecondary>
   </template>
+
+  <RoomEditModal
+    :room="state.room"
+    v-if="state.isEditing"
+    @action:close="onEditClose"
+    @action:delete="onDeleteAction"
+  />
 </template>
 
 <script setup lang="ts">
-  import { inject, onBeforeMount, reactive } from 'vue';
-  import { useRoute } from 'vue-router';
+  import { computed, inject, nextTick, onBeforeMount, reactive } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
+  import { useUser } from '../../Stores/UserStore';
   import { IBus } from '../../Interfaces/IBus';
-  import { getRoomData } from '../../Services/Rooms/RoomsService';
+  import { deleteRoom, getRoomData, inviteUser } from '../../Services/Rooms/RoomsService';
   import Empty from '../../Components/Util/Empty.vue';
+  import ButtonActionSecondary from '../../Components/Buttons/ButtonActionSecondary.vue';
+  import RoomEditModal from '../../Components/Rooms/RoomEditModal.vue';
 
+  const router = useRouter();
   const { roomId } = useRoute().params;
   const $bus = inject<IBus>('$bus');
 
-  const state = reactive({
+  const { currentUser } = useUser();
+
+  const state: any = reactive({
     loading: true,
     room: <any>{},
     error: {
       type: '',
       message: '',
     },
+    canEdit: computed(() => state.room.userId === currentUser.id || currentUser.roleId === 1),
+    isEditing: false,
   });
 
   onBeforeMount(() => {
@@ -66,11 +93,46 @@
     }
   }
 
-  defineExpose({ state });
+  function onDeleteAction() {
+    deleteRoom(<string>roomId)
+      .then(() => {
+        $bus?.emit('add-toast', 'Room deleted.', 'success');
+        nextTick(() => {
+          router.push('/rooms');
+        });
+      })
+      .catch(() => {
+        $bus?.emit('add-toast', 'Something went wrong.', 'error');
+      });
+  }
+
+  function onEditClick() {
+    return (state.isEditing = true);
+  }
+
+  function onEditClose() {
+    return (state.isEditing = false);
+  }
+
+  function onClickInvite() {
+    inviteUser(<string>roomId)
+      .then((data) => {
+        if (data.error) {
+          $bus?.emit('add-toast', 'This user is already invited.', 'error');
+        }
+      })
+      .catch(() => {});
+  }
+
+  defineExpose({ state, subTitle, onEditClick, onEditClose, onDeleteAction, onClickInvite });
 </script>
 
 <style scoped lang="scss">
   .room-page {
+    &__top {
+      @apply flex items-center justify-between;
+    }
+
     .title {
       @apply text-xl;
     }
