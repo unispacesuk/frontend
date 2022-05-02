@@ -44,6 +44,7 @@ function Delete(path: string, headers?: AxiosRequestHeaders, params?: object): P
     axios
       .delete(`${API}/${path}`, {
         headers: headers,
+        params: params,
       })
       .then((res) => {
         resolve(res.data);

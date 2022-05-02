@@ -29,4 +29,17 @@ function getRoomUsers(roomId: string) {
   return Get(`chat/room/users/${roomId}`, authHeaders());
 }
 
-export { getAllRooms, getRoomData, createRoom, deleteRoom, updateRoom, inviteUser, getRoomUsers };
+function removeUser(roomId: string, userId: number) {
+  return Delete(`chat/room/remove/user/${roomId}`, authHeaders(), { removable: userId });
+}
+
+export {
+  getAllRooms,
+  getRoomData,
+  createRoom,
+  deleteRoom,
+  updateRoom,
+  inviteUser,
+  getRoomUsers,
+  removeUser,
+};

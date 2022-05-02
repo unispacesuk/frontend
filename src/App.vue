@@ -2,27 +2,47 @@
   <div v-if="pageStore.loading" class="flex justify-center items-center h-screen">
     <Spinner class="w-10" />
   </div>
-  <Layout v-if="!pageStore.loading">
-    <router-view :key="$route.fullPath" />
-  </Layout>
+  <template v-if="!pageStore.loading">
+    <template v-if="state.currentLayout === 'layout'">
+      <Layout>
+        <router-view :key="$route.fullPath" />
+      </Layout>
+    </template>
+
+    <template v-else>
+      <ChatLayout>
+        <router-view :key="$route.fullPath" />
+      </ChatLayout>
+    </template>
+  </template>
   <Toasts />
 </template>
 
 <script setup lang="ts">
-  import { onMounted, ref, inject } from 'vue';
+  import { onMounted, inject, reactive, computed, onBeforeMount, nextTick } from 'vue';
+  import { useRoute } from 'vue-router';
   import { usePage } from './Stores/PageStore';
   import { useUser } from './Stores/UserStore';
   import { storeToRefs } from 'pinia';
   import { IBus } from './Interfaces/IBus';
   import Layout from './Layouts/Layout.vue';
+  import ChatLayout from './Layouts/ChatLayout.vue';
   import Spinner from './Icons/Util/Spinner.vue';
   import Toasts from './Components/Toast/Toasts.vue';
 
-  const loading = ref<boolean>(true);
   const { user, websocket } = storeToRefs(useUser());
   const pageStore = usePage();
+  const route = useRoute();
 
   const $bus = inject<IBus>('$bus');
+
+  const state = reactive({
+    currentLayout: computed(() => pageStore.getPageLayout), // be layout by default
+  });
+
+  onMounted(() => {
+    pageStore.setPageLoading(false);
+  });
 
   setTimeout(() => {
     if (user.value.id) {
@@ -38,10 +58,6 @@
     //   return connectWebsocket();
     // }
   }, 10000);
-
-  onMounted(() => {
-    pageStore.setPageLoading(false);
-  });
 
   // TODO: Extract this
   function connectWebsocket() {

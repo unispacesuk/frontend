@@ -33,23 +33,21 @@
           <div class="title">User List</div>
           <div v-if="state.usersLoading">Loading Users...</div>
           <div v-else>
-            <div class="item" v-for="(user, index) of state.users" :key="index">
-              <div class="relative shrink-0">
-                <UserAvatar :user="user" size="xs" />
-                <div class="status" :class="user.is_online ? 'online' : 'offline'"></div>
-              </div>
-              <div class="overflow-hidden overflow-ellipsis">
-                {{ user.username }}
-              </div>
-            </div>
+            <RoomUsersList :users="state.users" @action:remove-user="onRemoveUserAction" />
           </div>
         </div>
-        <div class="chat-container__chat">
-          <RoomMessagesContainer />
-
-          <div class="flex space-x-2 items-center">
-            <Input class="w-full" />
-            <ButtonActionSecondary>Send</ButtonActionSecondary>
+        <div class="chat-container__right">
+          <div class="chat" ref="messagesArea">
+            <RoomMessagesContainer :messages="state.messages" />
+          </div>
+          <div class="message-box">
+            <input
+              :value="state.newMessage"
+              class="flex flex-grow outline-none"
+              placeholder="Message"
+              @keyup="onMessageInputChange"
+            />
+            <ButtonActionSecondary @button-click="onMessageClickSend">Send</ButtonActionSecondary>
           </div>
         </div>
       </div>
@@ -69,18 +67,23 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, inject, nextTick, onBeforeMount, reactive } from 'vue';
+  import { computed, inject, nextTick, onBeforeMount, reactive, ref, toRefs } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { useUser } from '../../Stores/UserStore';
   import { IBus } from '../../Interfaces/IBus';
-  import { deleteRoom, getRoomData, getRoomUsers } from '../../Services/Rooms/RoomsService';
+  import {
+    deleteRoom,
+    getRoomData,
+    getRoomUsers,
+    removeUser,
+  } from '../../Services/Rooms/RoomsService';
   import Empty from '../../Components/Util/Empty.vue';
   import ButtonActionSecondary from '../../Components/Buttons/ButtonActionSecondary.vue';
   import RoomEditModal from '../../Components/Rooms/RoomEditModal.vue';
   import RoomInviteUser from '../../Components/Rooms/RoomInviteUser.vue';
-  import UserAvatar from '../../Components/User/UserAvatar.vue';
   import RoomMessagesContainer from '../../Components/Rooms/RoomMessagesContainer.vue';
   import Input from '../../Components/Form/Input.vue';
+  import RoomUsersList from '../../Components/Rooms/RoomUsersList.vue';
 
   const router = useRouter();
   const { roomId } = useRoute().params;
@@ -93,6 +96,7 @@
     usersLoading: true,
     room: <any>{},
     users: <any>[],
+    messages: <any>[],
     error: {
       type: '',
       message: '',
@@ -100,7 +104,10 @@
     canEdit: computed(() => state.room.userId === currentUser.id || currentUser.roleId === 1),
     isEditing: false,
     isInviting: false,
+    newMessage: '',
   });
+
+  const messagesArea = ref(null);
 
   onBeforeMount(() => {
     getRoomData(<string>roomId)
@@ -164,6 +171,42 @@
     return (state.isInviting = false);
   }
 
+  function onMessageInputChange(e: any) {
+    if (e.key === 'Enter') {
+      return onMessageClickSend();
+    }
+
+    return (state.newMessage = e.target.value);
+  }
+
+  function onMessageClickSend() {
+    if (!state.newMessage.trim()) return;
+
+    const msg = {
+      user_id: currentUser.id,
+      message: state.newMessage.trim(),
+    };
+    state.messages.push(msg);
+    state.newMessage = '';
+
+    setTimeout(() => {
+      // @ts-ignore
+      messagesArea.value.scrollTop = messagesArea.value.scrollHeight;
+    }, 300);
+  }
+
+  function onRemoveUserAction({ _id }: any) {
+    if (!roomId || !_id) return;
+
+    removeUser(<string>roomId, _id)
+      .then(() => {
+        console.log(state.users);
+        state.users = state.users.filter((user: any) => user._id !== _id);
+        console.log(state.users);
+      })
+      .catch(() => $bus?.emit('add-toast', 'Something went wrong.', 'error'));
+  }
+
   defineExpose({
     state,
     subTitle,
@@ -172,52 +215,52 @@
     onDeleteAction,
     onClickInvite,
     onInviteClose,
+    onMessageInputChange,
+    onMessageClickSend,
   });
 </script>
 
 <style scoped lang="scss">
   .room-page {
-    @apply flex flex-col;
+    @apply flex flex-col h-screen;
 
     &__top {
-      @apply flex items-center justify-between;
+      @apply flex items-center justify-between p-5;
+
+      .title {
+        @apply text-xl;
+      }
+
+      .sub-title {
+        @apply text-sm;
+      }
     }
 
-    .title {
-      @apply text-xl;
-    }
-
-    .sub-title {
-      @apply text-sm;
+    .room-info {
+      @apply px-4;
     }
 
     .chat-container {
-      @apply flex space-x-2 mt-3 mx-3;
+      @apply flex flex-grow overflow-hidden mt-3 border-t border-gray-200;
 
       &__users {
-        @apply hidden md:block w-[180px];
+        @apply hidden md:block min-w-[230px] max-w-[230px] border-r border-gray-200 pt-3 px-3;
 
         .title {
           @apply font-bold text-lg mb-3;
         }
-
-        .item {
-          @apply flex space-x-2 items-center mb-3;
-        }
-
-        .status {
-          @apply w-3 h-3 rounded-full absolute bottom-0 right-0 border-2 border-white;
-        }
-        .online {
-          @apply bg-green-500;
-        }
-        .offline {
-          @apply bg-red-500;
-        }
       }
 
-      &__chat {
-        @apply w-full;
+      &__right {
+        @apply flex flex-col flex-grow;
+
+        .chat {
+          @apply flex flex-col flex-grow overflow-y-scroll px-5;
+        }
+
+        .message-box {
+          @apply flex space-x-2 items-center border-t border-gray-200 px-3 py-2;
+        }
       }
     }
   }

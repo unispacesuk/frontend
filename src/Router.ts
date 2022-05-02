@@ -20,6 +20,7 @@ import Question from './Pages/Question/Question.vue';
 import UserProfile from './Pages/User/UserProfile.vue';
 
 import { useUser } from './Stores/UserStore';
+import { usePage } from './Stores/PageStore';
 
 // other routes
 const routes = [
@@ -114,8 +115,18 @@ const router = createRouter({
 });
 
 // Navigation Guards!!!
+// I will also use this to set layouts...
 router.beforeEach(async (to, from) => {
   const userStore = useUser();
+  const pageStore = usePage();
+
+  // TODO: this can of-course be improved to accommodate more layouts 🤔
+  if (to.name === 'room') {
+    pageStore.setPageLayout('chat-layout');
+  } else {
+    pageStore.setPageLayout('layout');
+  }
+
   // const pageStore = usePage();
 
   // if the user refreshes... we need to auth from here.
