@@ -71,8 +71,22 @@ const routes = [
       nonLoggedIn: true,
     },
   },
-  { path: '/logout', name: 'logout', component: Logout },
-  { path: '/user/:username', name: 'userProfile', component: UserProfile },
+  {
+    path: '/logout',
+    name: 'logout',
+    component: Logout,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: '/user/:username',
+    name: 'userProfile',
+    component: UserProfile,
+    meta: {
+      requiresAuth: true,
+    },
+  },
 
   // board related routes
   { path: '/boards', name: 'boards', component: Boards },
@@ -98,8 +112,22 @@ const routes = [
   { path: '/blog/article/:articleId', name: 'blogsArticle', component: Article },
 
   // room routes
-  { path: '/rooms', name: 'rooms', component: Rooms },
-  { path: '/room/:roomId', name: 'room', component: Room },
+  {
+    path: '/rooms',
+    name: 'rooms',
+    component: Rooms,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: '/room/:roomId',
+    name: 'room',
+    component: Room,
+    meta: {
+      requiresAuth: true,
+    },
+  },
 
   // utils
   { path: '/:pathMatch(.*)*', name: 'notfound', component: NotFound },

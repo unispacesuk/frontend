@@ -25,16 +25,23 @@
   import { useUser } from './Stores/UserStore';
   import { storeToRefs } from 'pinia';
   import { IBus } from './Interfaces/IBus';
+  import { WebsocketClient } from './Services/Websockets/WebsocketClient';
   import Layout from './Layouts/Layout.vue';
   import ChatLayout from './Layouts/ChatLayout.vue';
   import Spinner from './Icons/Util/Spinner.vue';
   import Toasts from './Components/Toast/Toasts.vue';
 
-  const { user, websocket } = storeToRefs(useUser());
+  const { user, connections } = storeToRefs(useUser());
   const pageStore = usePage();
   const route = useRoute();
 
   const $bus = inject<IBus>('$bus');
+
+  // notification event listener
+  document.addEventListener('new-notification', (event: any) => {
+    const data = event.detail;
+    $bus?.emit('add-toast', data.metadata.message, 'success');
+  });
 
   const state = reactive({
     currentLayout: computed(() => pageStore.getPageLayout), // be layout by default
@@ -46,9 +53,11 @@
 
   setTimeout(() => {
     if (user.value.id) {
-      $bus?.emit('add-toast', 'Websocket connected.', 'success');
-      // $bus?.emit('add-toast', 'Something went wrong when connecting to the Websocket.', 'error');
-      connectWebsocket();
+      const newSocketConnection = {
+        channel: 'real-time',
+        websocket: new WebsocketClient('real-time', 'ws://localhost:3002/real-time', user.value.id),
+      };
+      connections.value.push(newSocketConnection);
     }
   }, 5000);
 
@@ -58,23 +67,4 @@
     //   return connectWebsocket();
     // }
   }, 10000);
-
-  // TODO: Extract this
-  function connectWebsocket() {
-    websocket.value = new WebSocket('ws://localhost:3002');
-    websocket.value!.onopen = () => {
-      websocket.value!.send(JSON.stringify({ type: 'connect', user: user.value.id }));
-    };
-    websocket.value!.onmessage = (rawData) => {
-      const data = JSON.parse(rawData.data);
-
-      if (data.type === 'ping' && data.user === user.value.id) {
-        websocket.value!.send(JSON.stringify({ type: 'pong', user: user.value.id }));
-      }
-
-      if (data.event === 'notification' && data.user === user.value.id) {
-        $bus?.emit('add-toast', data, 'success');
-      }
-    };
-  }
 </script>

@@ -11,7 +11,7 @@
         </div>
       </div>
       <div
-        v-if="currentUser.id !== user._id"
+        v-if="currentUser.roleId === 1 && currentUser.id !== user._id"
         class="action-delete"
         @click="onRemoveUserClick(user)"
       >

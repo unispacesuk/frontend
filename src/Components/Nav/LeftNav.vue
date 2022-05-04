@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full flex flex-col text-center items-center pt-12 pb-20">
+  <div class="w-full flex flex-col text-center items-center pt-12 pb-20 left-nav">
     <!-- Avatar placeholder -->
     <div v-if="user.username">
       <div class="flex flex-col items-center space-y-2 mb-10">
@@ -46,13 +46,15 @@
         </NavLink>
       </router-link>
 
-      <router-link to="/rooms">
-        <NavLink name="Rooms" route="rooms">
-          <ArchiveIcon class="w-5" />
-        </NavLink>
-      </router-link>
-
       <div v-if="user.username" class="flex flex-col space-y-3">
+        <!-- rooms page -->
+        <router-link to="/rooms">
+          <NavLink name="Rooms" route="rooms" class="relative">
+            <div class="ping-blob" v-if="state.hasNewMessage"></div>
+            <ArchiveIcon class="w-5" />
+          </NavLink>
+        </router-link>
+
         <!-- user dashboard // can change in the future -->
         <router-link to="/dashboard">
           <NavLink name="Dashboard" route="dashboard">
@@ -81,8 +83,9 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, PropType } from 'vue';
-  import NavLink from './NavLink.vue';
+  import { computed, defineComponent, PropType, reactive } from 'vue';
+  import { useAlertStore } from '../../Stores/AlertsStore';
+  import { IUser } from '../../Interfaces/User/IUser';
   import {
     CameraIcon,
     ClipboardIcon,
@@ -96,8 +99,8 @@
     UserCircleIcon,
     ArchiveIcon,
   } from '@heroicons/vue/solid';
+  import NavLink from './NavLink.vue';
   import Spinner from '../../Icons/Util/Spinner.vue';
-  import { IUser } from '../../Interfaces/User/IUser';
   import AvatarSkeleton from '../Skeletons/AvatarSkeleton.vue';
   import Avatar from '../User/Avatar.vue';
 
@@ -132,8 +135,35 @@
       };
     },
     setup() {
-      return {};
+      const { roomAlerts } = useAlertStore();
+
+      // new room message listener
+      document.addEventListener('new-room-message', (event: any) => {
+        const data = event.detail;
+        if (data && data.metadata) {
+          const roomAlert = roomAlerts.find((room) => room.roomId === data.metadata.roomId);
+          if (!roomAlert)
+            return roomAlerts.push({ roomId: data.metadata.roomId, hasNewMessage: true });
+          roomAlert.hasNewMessage = true;
+        }
+      });
+
+      const state = reactive({
+        hasNewMessage: computed(() => {
+          return roomAlerts.find((room) => room.hasNewMessage === true);
+        }),
+      });
+
+      return { state, roomAlerts };
     },
     methods: {},
   });
 </script>
+
+<style scoped lang="scss">
+  .left-nav {
+    .ping-blob {
+      @apply w-2 h-2 bg-red-500 absolute -left-3 top-1/2 transform -translate-y-1/2 rounded-full;
+    }
+  }
+</style>

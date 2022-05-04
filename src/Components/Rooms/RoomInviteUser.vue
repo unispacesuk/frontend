@@ -4,7 +4,7 @@
     title="Invite a new user to your room"
     @close-modal="onCloseModal"
   >
-    <div class="form-row">
+    <div class="form-row mt-3">
       <Label label="Name or Username" />
       <Input @input-change="onInputChange" />
     </div>

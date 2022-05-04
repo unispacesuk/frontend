@@ -3,7 +3,7 @@
 
   <div class="flex flex-col space-y-2">
     <div>
-      <Button @button-click="poke" type="plain">Plain Button</Button>
+      <Button type="plain">Plain Button</Button>
     </div>
     <div>
       <Button type="primary">Primary Button</Button>
@@ -51,16 +51,11 @@
   import ButtonActionCancel from '../Components/Buttons/ButtonActionCancel.vue';
   import Toggle from '../Components/Buttons/Toggle.vue';
 
-  const { websocket } = storeToRefs(useUser());
+  const { connections } = storeToRefs(useUser());
   const $bus = inject<IBus>('$bus');
 
-  const msg = {
-    event: 'notification',
-    type: 'thread_star',
-    user: 1,
-  };
-
-  function poke() {
-    websocket.value!.send(JSON.stringify(msg));
-  }
+  // function sendMessage() {
+  //   const not = connections.value.find((c) => c.channel === 'real-time');
+  //   not!.websocket.sendMessage(JSON.stringify({ type: 'notification', receiver: 1 }));
+  // }
 </script>

@@ -1,9 +1,12 @@
 <template>
   <div class="room-item-shadow smooth-fast">
-    <div class="room-item smooth-fast">
+    <div class="room-item smooth-fast relative">
       <div class="title">{{ state.room.title }}</div>
       <div class="sub-title">{{ roomType() }} room</div>
       <div v-if="state.isOwner" class="owner">you own this room</div>
+      <div class="new-message" v-if="state.hasNewMessage">
+        <div class="ping"></div>
+      </div>
     </div>
   </div>
 </template>
@@ -11,16 +14,21 @@
 <script setup lang="ts">
   import { computed, reactive } from 'vue';
   import { useUser } from '../../Stores/UserStore';
+  import { useAlertStore } from '../../Stores/AlertsStore';
 
   const props = defineProps<{
     room: any;
   }>();
 
   const { currentUser } = useUser();
+  const { roomAlerts } = useAlertStore();
 
-  const state = reactive({
+  const state: any = reactive({
     room: computed(() => props.room),
     isOwner: props.room.userId === currentUser.id,
+    hasNewMessage: computed(
+      () => roomAlerts.find((room) => room.roomId === state.room.id)?.hasNewMessage || false
+    ),
   });
 
   function roomType() {
@@ -50,6 +58,14 @@
 
     .owner {
       @apply text-sm italic text-red-500;
+    }
+
+    .new-message {
+      @apply absolute w-2 h-2 rounded-full bg-red-500 top-1.5 left-1.5;
+
+      .ping {
+        @apply w-2 h-2 rounded-full bg-red-500 animate-ping;
+      }
     }
   }
 

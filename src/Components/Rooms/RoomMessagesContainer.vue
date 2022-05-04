@@ -7,43 +7,49 @@
       :key="index"
     >
       <div v-if="isOwnMessage(message)" class="message-row">
-        <div class="own">{{ message.message }}</div>
+        <div class="own">
+          <div>{{ message.message }}</div>
+          <div class="date">{{ moment().endOf('minute').to(message.created_at) }}</div>
+        </div>
         <CurrentAvatar class="shrink-0" size="xs" />
       </div>
       <div v-else class="message-row">
-        <UserAvatar class="shrink-0" :user="{ username: 'rochedo' }" size="xs" />
-        <div class="other">{{ message.message }}</div>
+        <UserAvatar class="shrink-0" :user="getUser(message.sender)" size="xs" />
+        <div class="other">
+          <div>{{ message.message }}</div>
+          <div class="date">{{ moment().endOf('minute').to(message.created_at) }}</div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { reactive } from 'vue';
+  import { computed, reactive } from 'vue';
   import { useUser } from '../../Stores/UserStore';
   import CurrentAvatar from '../User/CurrentAvatar.vue';
   import UserAvatar from '../User/UserAvatar.vue';
+  import moment from 'moment';
 
   const { currentUser } = useUser();
 
   const props = defineProps<{
     messages: any;
+    users: any;
   }>();
 
   const state = reactive({
     // messages: props.messages,
-    messages: [
-      { user_id: 1, message: 'hello world here....' },
-      {
-        user_id: 2,
-        message:
-          'another message with some different content then... and even more content to test very long messages just in case.',
-      },
-    ],
+    messages: computed(() => props.messages),
+    users: computed(() => props.users),
   });
 
   function isOwnMessage(message: any) {
-    return message.user_id === currentUser.id;
+    return message.sender === currentUser.id;
+  }
+
+  function getUser(userId: number) {
+    return state.users.find((user: any) => user._id === userId);
   }
 
   defineExpose({ state, currentUser });
@@ -57,7 +63,7 @@
       @apply py-3 flex;
 
       .message-row {
-        @apply flex space-x-2 items-center;
+        @apply flex space-x-2 items-center break-words;
 
         .own {
           @apply bg-slate-800 text-white px-3 py-2 rounded-md max-w-lg;
@@ -65,6 +71,10 @@
 
         .other {
           @apply bg-gray-100 px-3 py-2 rounded-md max-w-lg;
+        }
+
+        .date {
+          @apply text-xs mt-2 text-gray-400;
         }
       }
     }

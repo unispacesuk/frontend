@@ -15,6 +15,7 @@
           <BlogCardUserInfo
             :article-id="state.blog.id"
             :user="state.blog.user"
+            :user-id="state.blog.userId"
             :votes="state.blog.votes"
           />
         </div>

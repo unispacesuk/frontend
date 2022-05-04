@@ -16,11 +16,22 @@
   <template v-else>
     <div class="room-page">
       <div class="room-page__top">
-        <div>
-          <div class="title">{{ state.room.title }}</div>
-          <div class="sub-title">{{ subTitle() }}</div>
+        <div class="flex items-center space-x-3">
+          <div
+            class="lg:hidden cursor-pointer"
+            :class="state.mobileNav ? 'ml-[300px]' : 'ml-0'"
+            @click="onHamburgerClick"
+          >
+            <MenuIcon v-if="!state.mobileNav" class="w-7" />
+            <XIcon v-if="state.mobileNav" class="w-7" />
+          </div>
+          <div class="flex-shrink-0 overflow-hidden overflow-ellipsis">
+            <div class="title">{{ state.room.title }}</div>
+            <div class="sub-title">{{ subTitle() }}</div>
+          </div>
         </div>
-        <div class="flex space-x-2" v-if="state.canEdit">
+        <div class="flex space-x-2 flex-shrink-0" v-if="state.canEdit && !state.mobileNav">
+          <ButtonActionSecondary @button-click="onClickInvite">Invite</ButtonActionSecondary>
           <ButtonActionSecondary @button-click="onEditClick"> Edit Room </ButtonActionSecondary>
         </div>
       </div>
@@ -38,22 +49,21 @@
         </div>
         <div class="chat-container__right">
           <div class="chat" ref="messagesArea">
-            <RoomMessagesContainer :messages="state.messages" />
+            <RoomMessagesContainer :messages="state.messages" :users="state.users" />
           </div>
           <div class="message-box">
             <input
               :value="state.newMessage"
-              class="flex flex-grow outline-none"
+              class="flex flex-grow outline-none resize-none"
               placeholder="Message"
               @keyup="onMessageInputChange"
+              rows="2"
             />
             <ButtonActionSecondary @button-click="onMessageClickSend">Send</ButtonActionSecondary>
           </div>
         </div>
       </div>
     </div>
-
-    <!--    <ButtonActionSecondary @button-click="onClickInvite">Invite</ButtonActionSecondary>-->
   </template>
 
   <RoomEditModal
@@ -70,6 +80,7 @@
   import { computed, inject, nextTick, onBeforeMount, reactive, ref, toRefs } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { useUser } from '../../Stores/UserStore';
+  import { useAlertStore } from '../../Stores/AlertsStore';
   import { IBus } from '../../Interfaces/IBus';
   import {
     deleteRoom,
@@ -77,19 +88,20 @@
     getRoomUsers,
     removeUser,
   } from '../../Services/Rooms/RoomsService';
+  import { MenuIcon, XIcon } from '@heroicons/vue/solid';
   import Empty from '../../Components/Util/Empty.vue';
   import ButtonActionSecondary from '../../Components/Buttons/ButtonActionSecondary.vue';
   import RoomEditModal from '../../Components/Rooms/RoomEditModal.vue';
   import RoomInviteUser from '../../Components/Rooms/RoomInviteUser.vue';
   import RoomMessagesContainer from '../../Components/Rooms/RoomMessagesContainer.vue';
-  import Input from '../../Components/Form/Input.vue';
   import RoomUsersList from '../../Components/Rooms/RoomUsersList.vue';
 
   const router = useRouter();
   const { roomId } = useRoute().params;
   const $bus = inject<IBus>('$bus');
 
-  const { currentUser } = useUser();
+  const { currentUser, connections } = useUser();
+  const { roomAlerts } = useAlertStore();
 
   const state: any = reactive({
     loading: true,
@@ -105,6 +117,8 @@
     isEditing: false,
     isInviting: false,
     newMessage: '',
+    roomAlert: roomAlerts.find((room) => room.roomId === roomId) || null,
+    mobileNav: false,
   });
 
   const messagesArea = ref(null);
@@ -114,6 +128,11 @@
       .then((data) => {
         state.room = data.response;
         state.loading = false;
+
+        // after loading everything from the room mark it as read on the nav/roomAlerts
+        if (state.roomAlert) {
+          state.roomAlert.hasNewMessage = false;
+        }
       })
       .catch((error) => {
         state.loading = false;
@@ -130,6 +149,18 @@
         state.usersLoading = false;
       })
       .catch(() => {});
+
+    document.addEventListener('new-room-message', (event: any) => {
+      const data = event.detail;
+
+      if (data.metadata.roomId === roomId) {
+        state.messages.push(data.metadata);
+      }
+      setTimeout(() => {
+        // @ts-ignore
+        messagesArea.value.scrollTop = messagesArea.value.scrollHeight;
+      }, 100);
+    });
   });
 
   function subTitle() {
@@ -182,17 +213,13 @@
   function onMessageClickSend() {
     if (!state.newMessage.trim()) return;
 
-    const msg = {
-      user_id: currentUser.id,
-      message: state.newMessage.trim(),
-    };
-    state.messages.push(msg);
+    sendChatRoomMessage();
     state.newMessage = '';
 
     setTimeout(() => {
       // @ts-ignore
       messagesArea.value.scrollTop = messagesArea.value.scrollHeight;
-    }, 300);
+    }, 100);
   }
 
   function onRemoveUserAction({ _id }: any) {
@@ -207,6 +234,34 @@
       .catch(() => $bus?.emit('add-toast', 'Something went wrong.', 'error'));
   }
 
+  function sendChatRoomMessage() {
+    const realTime = connections.find((c) => c.channel === 'real-time');
+    const metadata = {
+      roomId: roomId,
+      sender: currentUser.id,
+      message: state.newMessage,
+      created_at: new Date(),
+    };
+    const payload = {
+      type: 'room-message',
+      metadata: metadata,
+    };
+    realTime!.websocket.sendMessage(JSON.stringify(payload));
+    state.messages.push(metadata);
+  }
+
+  const hamburgerEvent = new CustomEvent('left-drawer');
+  addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && state.mobileNav) {
+      onHamburgerClick();
+    }
+  });
+
+  function onHamburgerClick() {
+    state.mobileNav = !state.mobileNav;
+    dispatchEvent(hamburgerEvent);
+  }
+
   defineExpose({
     state,
     subTitle,
@@ -217,6 +272,8 @@
     onInviteClose,
     onMessageInputChange,
     onMessageClickSend,
+    sendChatRoomMessage,
+    onHamburgerClick,
   });
 </script>
 
@@ -244,7 +301,7 @@
       @apply flex flex-grow overflow-hidden mt-3 border-t border-gray-200;
 
       &__users {
-        @apply hidden md:block min-w-[230px] max-w-[230px] border-r border-gray-200 pt-3 px-3;
+        @apply hidden md:block min-w-[230px] max-w-[230px] border-r border-gray-200 pt-3 px-3 overflow-auto;
 
         .title {
           @apply font-bold text-lg mb-3;

@@ -14,7 +14,12 @@
     </div>
     <div class="flex py-3">
       <div class="card__left_content">
-        <BlogCardUserInfo :user="state.blog.user" :votes="state.blog.votes" :article-id="blog.id" />
+        <BlogCardUserInfo
+          :user="state.blog.user"
+          :user-id="blog.userId"
+          :votes="state.blog.votes"
+          :article-id="blog.id"
+        />
       </div>
 
       <div class="card__right_content" v-html="state.blog.content"></div>

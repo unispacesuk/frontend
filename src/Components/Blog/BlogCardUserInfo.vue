@@ -44,10 +44,9 @@
   import { calculateVotes, isVoted, voteBlogArticle } from '../../Services/Blog/BlogService';
   import { IBus } from '../../Interfaces/IBus';
   import ReactionButton from '../Buttons/ReactionButton.vue';
-  import CurrentAvatar from '../User/CurrentAvatar.vue';
   import UserAvatar from '../User/UserAvatar.vue';
 
-  const { currentUser } = storeToRefs(useUser());
+  const { currentUser, connections } = storeToRefs(useUser());
 
   const props = defineProps<{
     articleId: number;
@@ -58,6 +57,7 @@
       lastName: string;
     };
     votes: any[];
+    userId: number;
   }>();
 
   const voteTypes: any = {
@@ -86,8 +86,6 @@
     },
   });
 
-  const avatarApi = inject('avatarApi');
-  const avatarBase = inject('avatarBase');
   const $bus = inject<IBus>('$bus');
 
   function handleVote(type: number) {
@@ -97,14 +95,31 @@
     }
 
     voteBlogArticle(props.articleId, { voteType: type })
-      .then((res) => {
+      .then(() => {
         state[voteType].count++;
         state[voteType].isVoted = true;
         $bus?.emit('add-toast', 'Voted with success!', 'success');
+
+        if (currentUser.value.id === props.userId) return;
+        sendLiveNotification();
       })
-      .catch((error) => {
+      .catch(() => {
         $bus?.emit('add-toast', 'Something went wrong.', 'error');
       });
+  }
+
+  function sendLiveNotification() {
+    const realTime = connections.value.find((c) => c.channel === 'real-time');
+    realTime!.websocket.sendMessage(
+      JSON.stringify({
+        type: 'notification',
+        metadata: {
+          type: 'article_reacted',
+          message: 'Someone reacted to one of your blog articles.',
+          receiver: props.userId,
+        },
+      })
+    );
   }
 </script>
 
