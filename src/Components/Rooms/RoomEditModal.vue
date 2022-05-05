@@ -60,6 +60,7 @@
   const emits = defineEmits<{
     (event: 'action:close'): void;
     (event: 'action:delete'): void;
+    (event: 'action:update', data: string): void;
   }>();
 
   const state: any = reactive({
@@ -102,7 +103,7 @@
         state.isSaving = false;
         state.room.title = data.title;
         state.room.status = data.status;
-        onModalClose();
+        return emits('action:update', data.status);
       })
       .catch(() => {
         state.isSaving = false;

@@ -16,7 +16,7 @@
     <template v-else-if="state.rooms.owned.length">
       <div class="list-title">My Rooms</div>
       <div class="room-list">
-        <div v-for="(room, index) of state.rooms.owned" :key="index">
+        <div v-for="(room, index) of state.rooms.owned" :key="index" class="smooth">
           <router-link :to="{ name: 'room', params: { roomId: room.id } }">
             <RoomItemCard :room="room" />
           </router-link>
@@ -60,7 +60,11 @@
     </template>
   </div>
 
-  <RoomCreateModal v-if="state.isCreatingRoom" @action:close="onCreateRoomClose" />
+  <RoomCreateModal
+    v-if="state.isCreatingRoom"
+    @action:close="onCreateRoomClose"
+    @action:create="onRoomCreate"
+  />
 </template>
 
 <script setup lang="ts">
@@ -119,7 +123,12 @@
     state.rooms.owned = [...ownedPrivate, ...ownedPublic];
   }
 
-  defineExpose({ state, onCreateRoomClick, onCreateRoomClose, onFilterMyRooms });
+  function onRoomCreate(data: any) {
+    // @ts-ignore
+    state.rooms[data.status].push(data);
+  }
+
+  defineExpose({ state, onCreateRoomClick, onCreateRoomClose, onFilterMyRooms, onRoomCreate });
 </script>
 
 <style scoped lang="scss">

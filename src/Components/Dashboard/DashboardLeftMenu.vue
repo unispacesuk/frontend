@@ -24,11 +24,33 @@
       <BellIcon class="w-5" />
       <div class="hidden dashboard:block">Notifications</div>
     </div>
+    <div
+      :class="{ active: props.currentTab === 'resources' }"
+      class="item"
+      @click="emits('change-tab', 'resources')"
+    >
+      <DocumentTextIcon class="w-5" />
+      <div class="hidden dashboard:block">Resources</div>
+    </div>
+    <div
+      :class="{ active: props.currentTab === 'read-later' }"
+      class="item"
+      @click="emits('change-tab', 'read-later')"
+    >
+      <BookmarkIcon class="w-5" />
+      <div class="hidden dashboard:block">Read Later</div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { UserIcon, BellIcon, CogIcon } from '@heroicons/vue/solid';
+  import {
+    UserIcon,
+    BellIcon,
+    CogIcon,
+    DocumentTextIcon,
+    BookmarkIcon,
+  } from '@heroicons/vue/solid';
 
   const props = defineProps<{
     currentTab: string;

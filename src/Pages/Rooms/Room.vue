@@ -31,7 +31,12 @@
           </div>
         </div>
         <div class="flex space-x-2 flex-shrink-0" v-if="state.canEdit && !state.mobileNav">
-          <ButtonActionSecondary @button-click="onClickInvite">Invite</ButtonActionSecondary>
+          <ButtonActionSecondary
+            @button-click="onClickInvite"
+            v-if="state.room.status === 'private'"
+          >
+            Invite
+          </ButtonActionSecondary>
           <ButtonActionSecondary @button-click="onEditClick"> Edit Room </ButtonActionSecondary>
         </div>
       </div>
@@ -74,6 +79,7 @@
     v-if="state.isEditing"
     @action:close="onEditClose"
     @action:delete="onDeleteAction"
+    @action:update="onUpdateAction"
   />
 
   <RoomInviteUser v-if="state.isInviting" @action:close="onInviteClose" />
@@ -111,7 +117,7 @@
   const state: any = reactive({
     loading: true,
     usersLoading: true,
-    room: <any>{},
+    room: <any>null,
     users: <any>[],
     messages: <any>[],
     error: {
@@ -139,6 +145,12 @@
         if (state.roomAlert) {
           state.roomAlert.hasNewMessage = false;
         }
+
+        nextTick(() => {
+          if (state.room && state.room.status === 'private') {
+            handleGetRoomUsers();
+          }
+        });
       })
       .catch((error) => {
         state.loading = false;
@@ -149,16 +161,11 @@
         $bus?.emit('add-toast', 'Something went wrong.', 'error');
       });
 
-    getRoomUsers(<string>roomId)
-      .then((data) => {
-        state.users = data.response;
-        state.usersLoading = false;
-      })
-      .catch(() => {});
-
     getRoomMessages(<string>roomId)
       .then((data) => {
-        state.messages = data.response;
+        state.messages = data.response.sort(
+          (a: any, b: any) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+        );
         state.loadingMessages = false;
         scrollToBottom();
       })
@@ -288,6 +295,22 @@
     }, 150);
   }
 
+  function onUpdateAction(data: string) {
+    onEditClose();
+    if (data === 'private') {
+      handleGetRoomUsers();
+    }
+  }
+
+  function handleGetRoomUsers() {
+    getRoomUsers(<string>roomId)
+      .then((data) => {
+        state.users = data.response;
+        state.usersLoading = false;
+      })
+      .catch(() => {});
+  }
+
   defineExpose({
     state,
     subTitle,
@@ -301,6 +324,8 @@
     sendChatRoomMessage,
     onHamburgerClick,
     scrollToBottom,
+    handleGetRoomUsers,
+    onUpdateAction,
   });
 </script>
 

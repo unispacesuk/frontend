@@ -50,6 +50,7 @@
 
   const emits = defineEmits<{
     (event: 'action:close'): void;
+    (event: 'action:create', data: any): void;
   }>();
 
   function onCloseModal() {
@@ -73,8 +74,8 @@
 
     createRoom(data)
       .then((data) => {
-        console.log(data);
         state.isSubmitting = false;
+        emits('action:create', data.response);
         return onCloseModal();
       })
       .catch(() => {

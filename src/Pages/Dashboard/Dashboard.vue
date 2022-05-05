@@ -8,6 +8,8 @@
         <DashboardAccountDetails v-if="state.currentTab === 'account'" />
         <DashboardSettings v-if="state.currentTab === 'settings'" />
         <DashboardNotificationSettings v-if="state.currentTab === 'notifications'" />
+        <DashboardResources v-if="state.currentTab === 'resources'" />
+        <DashboardReadLater v-if="state.currentTab === 'read-later'" />
       </div>
     </div>
   </div>
@@ -21,10 +23,18 @@
   import DashboardLeftMenu from '../../Components/Dashboard/DashboardLeftMenu.vue';
   import DashboardNotificationSettings from '../../Components/Dashboard/DashboardNotificationSettings.vue';
   import DashboardSettings from '../../Components/Dashboard/DashboardSettings.vue';
+  import DashboardReadLater from '../../Components/Dashboard/DashboardReadLater.vue';
+  import DashboardResources from '../../Components/Dashboard/DashboardResources.vue';
 
   const $bus = inject<IBus>('$bus');
 
-  const tabNames: DashboardTab[] = ['account', 'notifications', 'settings'];
+  const tabNames: DashboardTab[] = [
+    'account',
+    'notifications',
+    'settings',
+    'read-later',
+    'resources',
+  ];
   const currentTab = computed(() => {
     if (localStorage.getItem('dashboard-tab')) {
       if (tabNames.includes(<DashboardTab>localStorage.getItem('dashboard-tab'))) {
