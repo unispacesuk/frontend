@@ -4,10 +4,12 @@
     <div class="pb-2 space-y-2 border-b border-gray-200">
       <div class="flex space-x-2">
         <div class="w-1/4 p-3 border-r border-gray-200 text-center flex flex-col space-y-4">
-          <div class="justify-center flex">
-            <UserAvatar :user="op" size="lg" />
-          </div>
-          <div>{{ op.username }}</div>
+          <template v-if="op && op.username">
+            <div class="justify-center flex">
+              <UserAvatar :user="op" size="lg" />
+            </div>
+            <div>{{ op.username }}</div>
+          </template>
         </div>
         <div class="w-full p-3">
           <QuestionContent :question="question" />
@@ -144,11 +146,11 @@
     getQuestion(<string>route.params.id).then(async (d) => {
       question.value = d.question;
       votes.value = d.question.votes;
-      loadingQuestion.value = false;
       if (currentUser.value.username) {
         await doGetMyVote();
       }
       await doGetOPData();
+      loadingQuestion.value = false;
       getAnswers(<string>route.params.id).then((d) => {
         answers.value = d.answers;
         if (answers.value.filter((a) => a.best === true).length > 0) {
@@ -169,7 +171,7 @@
 
   function doGetOPData() {
     return getOPData(question.value.userId!.toString()).then((d) => {
-      questionStore.setOp(d.user);
+      questionStore.setOp(d.response);
     });
   }
 

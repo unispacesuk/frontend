@@ -67,7 +67,7 @@
       @apply flex;
 
       &__left {
-        @apply dashboard:w-[170px] flex-shrink border-r mr-2;
+        @apply dashboard:w-[170px] flex-shrink border-r mr-2 whitespace-nowrap;
       }
 
       &__right {

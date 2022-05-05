@@ -1,4 +1,4 @@
-import { Post, authHeaders, Get, Patch } from '../../Util/Request';
+import { Post, authHeaders, Get, Patch, Delete } from '../../Util/Request';
 import { debounce } from '../Util';
 
 function uploadAvatar(data: any) {
@@ -53,6 +53,22 @@ function getNotifications() {
   return Get('user/notifications', authHeaders());
 }
 
+function addBlogReadLater(articleId: number) {
+  return Post(`user/read-later/${articleId}`, {}, authHeaders());
+}
+
+function isOnReadLaterList(articleId: number) {
+  return Get(`user/read-later/${articleId}`, authHeaders());
+}
+
+function getReadLaterList() {
+  return Get('user/read-later/get/all', authHeaders());
+}
+
+function deleteFromReadLaterList(articleId: number) {
+  return Delete(`user/read-later/${articleId}`, authHeaders());
+}
+
 export {
   uploadAvatar,
   getUserStarredThreads,
@@ -64,4 +80,8 @@ export {
   getUserPublicProfile,
   searchUser,
   getNotifications,
+  addBlogReadLater,
+  isOnReadLaterList,
+  getReadLaterList,
+  deleteFromReadLaterList,
 };

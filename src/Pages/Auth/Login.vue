@@ -52,6 +52,7 @@
   import ButtonActionPrimary from '../../Components/Buttons/ButtonActionPrimary.vue';
   import { router } from '../../Router';
   import ChangePasswordDialog from '../../Components/Auth/ChangePasswordDialog.vue';
+  import { WebsocketClient } from '../../Services/Websockets/WebsocketClient';
 
   const userStore = useUser();
   const { user } = storeToRefs(userStore);
@@ -87,6 +88,7 @@
         });
         localStorage.setItem('access-token', d.token);
         router.push('/');
+        new WebsocketClient();
       })
       .catch((e) => {
         loginLoading.value = false;

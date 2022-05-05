@@ -5,7 +5,7 @@
         <UserAvatar :user="user" size="lg" />
       </div>
       <div>{{ user.username }}</div>
-      <div>BSc Computer Science</div>
+      <!--      <div>BSc Computer Science</div>-->
     </div>
     <div class="card_info__reactions">
       <ReactionButton

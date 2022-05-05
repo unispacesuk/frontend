@@ -8,7 +8,8 @@ export class WebsocketClient {
   }
 
   public connectWebsocket() {
-    useUser().connection.websocket = new WebsocketBuilder('ws://localhost:3002/real-time')
+    useUser().connection.websocket = new WebsocketBuilder('wss://ws.unispaces.uk/real-time')
+      // useUser().connection.websocket = new WebsocketBuilder('ws://localhost:3002/real-time')
       .onOpen((ws, ev) => {
         ws.send(
           JSON.stringify({

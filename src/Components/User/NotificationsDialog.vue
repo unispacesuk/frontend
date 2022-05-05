@@ -26,9 +26,12 @@
   const state = reactive({
     notifications: computed(() => {
       const nots = props.notifications;
-      return nots.sort(
-        (a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      );
+      if (props.notifications.length) {
+        return nots.sort(
+          (a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+      }
+      return [];
     }),
   });
 

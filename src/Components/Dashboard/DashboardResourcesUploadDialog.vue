@@ -58,7 +58,6 @@
   }
 
   function onFileSelect(files: any) {
-    console.log(files);
     state.selectedFile = files[0];
   }
 

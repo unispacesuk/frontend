@@ -1,47 +1,43 @@
 <template>
   <div class="px-10 space-y-2 h-[100px] w-full">
-    <div v-if="loading">
-      <!--      <Spinner class="w-5" />-->
+    <template v-if="state.loading">
       <AvatarSkeleton class="w-[70px] h-[70px]" />
-    </div>
-    <div v-if="!loading">
+    </template>
+    <template v-else>
       <div class="w-[70px] h-[70px] rounded-full overflow-hidden">
-        <img
-          v-if="user.avatar"
-          :src="avatarBase + user.avatar"
-          alt="avatar"
-          class="w-[70px] h-[70px] object-cover object-center"
-        />
-        <img
-          v-if="!user.avatar"
-          :src="`https://avatars.dicebear.com/api/male/${user.username}.svg`"
-          alt="avatar"
-        />
+        <UserAvatar :user="user" size="lg" />
       </div>
       <div class="w-full">{{ user.username }}</div>
-    </div>
+    </template>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, ref, inject } from 'vue';
-import AvatarSkeleton from '../Skeletons/AvatarSkeleton.vue';
-import { Get } from '../../Util/Request';
+  import { nextTick, onBeforeMount, reactive, ref } from 'vue';
+  import { Get } from '../../Util/Request';
+  import AvatarSkeleton from '../Skeletons/AvatarSkeleton.vue';
+  import UserAvatar from '../User/UserAvatar.vue';
 
-const props: any = defineProps({
-  userId: Number, // TODO: Any? no!
-});
+  const props: any = defineProps<{
+    userId: any;
+  }>();
 
-const loading = ref<boolean>(true);
-const user = ref<any>();
-const avatarBase = inject('avatarBase');
-
-onBeforeMount(async () => {
-  Get(`user/data/${props.userId}`).then((d) => {
-    user.value = d.user;
-    loading.value = false;
-  }).catch((e) => {
-    console.log(e);
+  const state = reactive({
+    loading: true,
+    user: null,
   });
-});
+
+  const loading = ref<boolean>(true);
+  const user = ref<any>();
+
+  onBeforeMount(async () => {
+    Get(`user/data/id/${props.userId}`)
+      .then((data) => {
+        user.value = data.response;
+        nextTick(() => {
+          state.loading = false;
+        });
+      })
+      .catch(() => {});
+  });
 </script>

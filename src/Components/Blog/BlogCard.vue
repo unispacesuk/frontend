@@ -29,11 +29,14 @@
         {{ new Date(blog.createdAt).toDateString() }}
       </div>
       <div class="card__bottom_right">
-        <BlogRecentComents :article-id="state.blog.id" />
+        <BlogRecentComments :article-id="state.blog.id" />
         <ButtonActionSecondary
           label="Read More"
           @button-click="handleReadMore"
         ></ButtonActionSecondary>
+        <ButtonActionSecondary @button-click="onClickReadLater" v-if="!state.isOnReadList">
+          <PlusIcon class="w-5" />
+        </ButtonActionSecondary>
       </div>
     </div>
     <BlogEditDialog
@@ -55,18 +58,19 @@
 
 <script setup lang="ts">
   import { useRouter } from 'vue-router';
-  import { inject, reactive } from 'vue';
+  import { inject, reactive, onMounted, computed, onBeforeMount } from 'vue';
   import { storeToRefs } from 'pinia';
   import { useUser } from '../../Stores/UserStore';
   import { updateBlogArticle } from '../../Services/Blog/BlogService';
   import { IBlog } from '../../Interfaces/Blog/IBlog';
   import { IBus } from '../../Interfaces/IBus';
+  import { PlusIcon } from '@heroicons/vue/solid';
+  import { addBlogReadLater, isOnReadLaterList } from '../../Services/User/UserService';
   import BlogCardUserInfo from './BlogCardUserInfo.vue';
   import ButtonActionSecondary from '../Buttons/ButtonActionSecondary.vue';
-  import BlogCardContent from './BlogCardContent.vue';
   import BlogEditDialog from './BlogEditDialog.vue';
   import BlogDeleteDialog from './BlogDeleteDialog.vue';
-  import BlogRecentComents from './BlogRecentComents.vue';
+  import BlogRecentComments from './BlogRecentComments.vue';
 
   const { currentUser } = storeToRefs(useUser());
   const router = useRouter();
@@ -83,9 +87,14 @@
     blog: props.blog,
     isEditing: false,
     isDeleting: false,
+    isOnReadList: false,
   });
 
   const $bus = inject<IBus>('$bus');
+
+  onBeforeMount(() => {
+    isArticleOnReadLaterList();
+  });
 
   function handleReadMore() {
     router.push({
@@ -130,6 +139,36 @@
   function handleDeleteSubmit() {
     emits('blog-delete', props.blog.id);
   }
+
+  function onClickReadLater() {
+    addBlogReadLater(props.blog.id)
+      .then(() => {
+        $bus?.emit('add-toast', 'Added article to read later list.', 'success');
+        state.isOnReadList = true;
+      })
+      .catch(() => {});
+  }
+
+  function isArticleOnReadLaterList() {
+    isOnReadLaterList(props.blog.id)
+      .then((data) => {
+        data.response.length ? (state.isOnReadList = true) : (state.isOnReadList = false);
+      })
+      .catch(() => {});
+  }
+
+  defineExpose({
+    state,
+    handleReadMore,
+    handleEdit,
+    handleEditClose,
+    handleEditSubmit,
+    handleDelete,
+    handleDeleteClose,
+    handleDeleteSubmit,
+    onClickReadLater,
+    isArticleOnReadLaterList,
+  });
 </script>
 
 <style scoped lang="scss">

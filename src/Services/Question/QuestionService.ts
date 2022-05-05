@@ -39,7 +39,7 @@ async function getMyVote(id: string) {
 }
 
 function getOPData(id: string) {
-  return Get(`user/data/${id}`);
+  return Get(`user/data/id/${id}`);
 }
 
 interface QuestionUpdateData {

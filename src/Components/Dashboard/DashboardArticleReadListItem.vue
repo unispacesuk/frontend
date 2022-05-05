@@ -1,11 +1,14 @@
 <template>
   <div class="card">
-    <div class="overflow-hidden">
-      <div class="card__title">{{ state.thread.title }}</div>
-      <div class="card__date">{{ new Date(state.thread.created_at).toDateString() }}</div>
+    <div class="flex space-x-4 items-center">
+      <UserAvatar class="shrink-0" :user="article.user" size="sm" />
+      <div class="overflow-hidden">
+        <div class="card__title">{{ state.article.title }}</div>
+        <div class="card__date">{{ new Date(state.article.created_at).toDateString() }}</div>
+      </div>
     </div>
     <div class="actions">
-      <ButtonActionSecondary @button-click="onClickVisitThread"> Read </ButtonActionSecondary>
+      <ButtonActionSecondary @button-click="onClickVisitArticle"> Read </ButtonActionSecondary>
       <ButtonActionCancel @button-click="onClickRemove">
         <TrashIcon class="w-5" />
       </ButtonActionCancel>
@@ -16,38 +19,39 @@
 <script setup lang="ts">
   import { useRouter } from 'vue-router';
   import { computed, reactive } from 'vue';
-  import { starThread } from '../../Services/Board/BoardsService';
   import { TrashIcon } from '@heroicons/vue/solid';
   import ButtonActionCancel from '../Buttons/ButtonActionCancel.vue';
   import ButtonActionSecondary from '../Buttons/ButtonActionSecondary.vue';
+  import UserAvatar from '../User/UserAvatar.vue';
+  import { deleteFromReadLaterList } from '../../Services/User/UserService';
 
   const router = useRouter();
 
   const props = defineProps<{
-    thread: any;
+    article: any;
   }>();
 
   const state = reactive({
-    thread: computed(() => props.thread),
+    article: computed(() => props.article),
   });
 
   const emits = defineEmits<{
-    (event: 'action:remove-thread', data: number): void;
+    (event: 'action:remove-article', data: number): void;
   }>();
 
-  function onClickVisitThread() {
-    router.push(`/thread/${state.thread._id}`);
+  function onClickVisitArticle() {
+    router.push(`/blog/article/${state.article.blog_post}`);
   }
 
   function onClickRemove() {
-    starThread(state.thread._id, 'unstar')
+    deleteFromReadLaterList(state.article.blog_post)
       .then(() => {
-        emits('action:remove-thread', state.thread._id);
+        emits('action:remove-article', state.article.blog_post);
       })
       .catch(() => {});
   }
 
-  defineExpose({ state, onClickVisitThread, onClickRemove });
+  defineExpose({ state, onClickVisitArticle, onClickRemove });
 </script>
 
 <style scoped lang="scss">
@@ -59,7 +63,7 @@
     }
 
     &__date {
-      @apply text-sm text-gray-500;
+      @apply text-sm text-gray-500 whitespace-nowrap overflow-hidden overflow-ellipsis;
     }
 
     .actions {
