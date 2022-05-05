@@ -9,15 +9,25 @@
       <div v-if="isOwnMessage(message)" class="message-row">
         <div class="own">
           <div>{{ message.message }}</div>
-          <div class="date">{{ moment().endOf('minute').to(message.created_at) }}</div>
+          <div class="date">
+            <b>{{ message.sender.username }}</b>
+            <span class="font-light ml-1.5">
+              {{ moment().endOf('minute').to(message.created_at) }}
+            </span>
+          </div>
         </div>
         <CurrentAvatar class="shrink-0" size="xs" />
       </div>
       <div v-else class="message-row">
-        <UserAvatar class="shrink-0" :user="getUser(message.sender)" size="xs" />
+        <UserAvatar class="shrink-0" :user="message.sender" size="xs" />
         <div class="other">
           <div>{{ message.message }}</div>
-          <div class="date">{{ moment().endOf('minute').to(message.created_at) }}</div>
+          <div class="date">
+            <b>{{ message.sender.username }}</b>
+            <span class="font-light ml-1.5">
+              {{ moment().endOf('minute').to(message.created_at) }}
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -45,11 +55,7 @@
   });
 
   function isOwnMessage(message: any) {
-    return message.sender === currentUser.id;
-  }
-
-  function getUser(userId: number) {
-    return state.users.find((user: any) => user._id === userId);
+    return message.sender._id === currentUser.id;
   }
 
   defineExpose({ state, currentUser });
@@ -70,7 +76,7 @@
         }
 
         .other {
-          @apply bg-gray-100 px-3 py-2 rounded-md max-w-lg;
+          @apply bg-gray-100 px-3 p-2 rounded-md max-w-lg;
         }
 
         .date {

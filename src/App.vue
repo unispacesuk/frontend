@@ -19,19 +19,19 @@
 </template>
 
 <script setup lang="ts">
-  import { onMounted, inject, reactive, computed, onBeforeMount, nextTick } from 'vue';
+  import { onMounted, inject, reactive, computed } from 'vue';
   import { useRoute } from 'vue-router';
   import { usePage } from './Stores/PageStore';
   import { useUser } from './Stores/UserStore';
   import { storeToRefs } from 'pinia';
-  import { IBus } from './Interfaces/IBus';
   import { WebsocketClient } from './Services/Websockets/WebsocketClient';
+  import { IBus } from './Interfaces/IBus';
   import Layout from './Layouts/Layout.vue';
   import ChatLayout from './Layouts/ChatLayout.vue';
   import Spinner from './Icons/Util/Spinner.vue';
   import Toasts from './Components/Toast/Toasts.vue';
 
-  const { user, connections } = storeToRefs(useUser());
+  const { user } = storeToRefs(useUser());
   const pageStore = usePage();
   const route = useRoute();
 
@@ -49,22 +49,15 @@
 
   onMounted(() => {
     pageStore.setPageLoading(false);
+    setTimeout(() => {
+      connectWebsocket();
+    }, 500);
   });
 
-  setTimeout(() => {
+  // TODO: make it so when reconnecting it replaces the old connection
+  function connectWebsocket() {
     if (user.value.id) {
-      const newSocketConnection = {
-        channel: 'real-time',
-        websocket: new WebsocketClient('real-time', 'ws://localhost:3002/real-time', user.value.id),
-      };
-      connections.value.push(newSocketConnection);
+      new WebsocketClient();
     }
-  }, 5000);
-
-  setInterval(() => {
-    // if (websocket.value!.readyState === websocket.value!.CLOSED) {
-    //   console.log('Websocket is disconnected... attempting to reconnect...');
-    //   return connectWebsocket();
-    // }
-  }, 10000);
+  }
 </script>

@@ -1,9 +1,7 @@
 import { defineStore } from 'pinia';
 import { IUser } from '../Interfaces/User/IUser';
 import { Post } from '../Util/Request';
-import { WebsocketClient } from '../Services/Websockets/WebsocketClient';
 
-// TODO: Error Handle this.......
 async function doAuthenticate() {
   let response;
 
@@ -25,17 +23,20 @@ async function doAuthenticate() {
 
 interface ISocketConnection {
   channel: string;
-  websocket: WebsocketClient;
+  websocket: any;
 }
 
 export const useUser = defineStore('userStore', {
   state: () => ({
     user: <IUser>{},
-    connections: <ISocketConnection[]>[],
+    connection: <ISocketConnection>{},
   }),
   getters: {
     currentUser: (state) => {
       return state.user;
+    },
+    realTime: (state) => {
+      return state.connection.websocket;
     },
   },
   actions: {

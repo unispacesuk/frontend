@@ -40,7 +40,7 @@
       </div>
 
       <div class="chat-container">
-        <div class="chat-container__users" v-if="state.users.length">
+        <div class="chat-container__users" v-if="state.room.status === 'private'">
           <div class="title">User List</div>
           <div v-if="state.usersLoading">Loading Users...</div>
           <div v-else>
@@ -49,7 +49,10 @@
         </div>
         <div class="chat-container__right">
           <div class="chat" ref="messagesArea">
-            <RoomMessagesContainer :messages="state.messages" :users="state.users" />
+            <div v-if="state.loadingMessages">Loading messages...</div>
+            <div v-else>
+              <RoomMessagesContainer :messages="state.messages" :users="state.users" />
+            </div>
           </div>
           <div class="message-box">
             <input
@@ -87,6 +90,8 @@
     getRoomData,
     getRoomUsers,
     removeUser,
+    postMessage,
+    getRoomMessages,
   } from '../../Services/Rooms/RoomsService';
   import { MenuIcon, XIcon } from '@heroicons/vue/solid';
   import Empty from '../../Components/Util/Empty.vue';
@@ -100,7 +105,7 @@
   const { roomId } = useRoute().params;
   const $bus = inject<IBus>('$bus');
 
-  const { currentUser, connections } = useUser();
+  const { currentUser, connection } = useUser();
   const { roomAlerts } = useAlertStore();
 
   const state: any = reactive({
@@ -119,9 +124,10 @@
     newMessage: '',
     roomAlert: roomAlerts.find((room) => room.roomId === roomId) || null,
     mobileNav: false,
+    loadingMessages: true,
   });
 
-  const messagesArea = ref(null);
+  const messagesArea = ref<Element>();
 
   onBeforeMount(() => {
     getRoomData(<string>roomId)
@@ -150,16 +156,21 @@
       })
       .catch(() => {});
 
+    getRoomMessages(<string>roomId)
+      .then((data) => {
+        state.messages = data.response;
+        state.loadingMessages = false;
+        scrollToBottom();
+      })
+      .catch(() => {});
+
     document.addEventListener('new-room-message', (event: any) => {
       const data = event.detail;
 
-      if (data.metadata.roomId === roomId) {
+      if (data.metadata.room_id === roomId) {
         state.messages.push(data.metadata);
       }
-      setTimeout(() => {
-        // @ts-ignore
-        messagesArea.value.scrollTop = messagesArea.value.scrollHeight;
-      }, 100);
+      scrollToBottom();
     });
   });
 
@@ -215,11 +226,7 @@
 
     sendChatRoomMessage();
     state.newMessage = '';
-
-    setTimeout(() => {
-      // @ts-ignore
-      messagesArea.value.scrollTop = messagesArea.value.scrollHeight;
-    }, 100);
+    scrollToBottom();
   }
 
   function onRemoveUserAction({ _id }: any) {
@@ -235,10 +242,15 @@
   }
 
   function sendChatRoomMessage() {
-    const realTime = connections.find((c) => c.channel === 'real-time');
+    const realTime = connection.websocket;
     const metadata = {
-      roomId: roomId,
-      sender: currentUser.id,
+      room_id: roomId,
+      sender: {
+        _id: currentUser.id,
+        username: currentUser.username,
+        avatar: currentUser.avatar,
+        is_online: true,
+      },
       message: state.newMessage,
       created_at: new Date(),
     };
@@ -246,8 +258,14 @@
       type: 'room-message',
       metadata: metadata,
     };
-    realTime!.websocket.sendMessage(JSON.stringify(payload));
-    state.messages.push(metadata);
+    realTime!.websocket.send(JSON.stringify(payload));
+    // state.messages.push(metadata);
+
+    postMessage(metadata)
+      .then(() => {})
+      .catch(() => {
+        $bus?.emit('add-toast', 'Something went wrong.', 'error');
+      });
   }
 
   const hamburgerEvent = new CustomEvent('left-drawer');
@@ -262,6 +280,14 @@
     dispatchEvent(hamburgerEvent);
   }
 
+  function scrollToBottom() {
+    setTimeout(() => {
+      if (messagesArea.value) {
+        messagesArea.value!.scrollTop = messagesArea.value!.scrollHeight;
+      }
+    }, 150);
+  }
+
   defineExpose({
     state,
     subTitle,
@@ -274,6 +300,7 @@
     onMessageClickSend,
     sendChatRoomMessage,
     onHamburgerClick,
+    scrollToBottom,
   });
 </script>
 
@@ -312,7 +339,7 @@
         @apply flex flex-col flex-grow;
 
         .chat {
-          @apply flex flex-col flex-grow overflow-y-scroll px-5;
+          @apply flex flex-col flex-grow overflow-y-scroll px-5 scroll-smooth;
         }
 
         .message-box {

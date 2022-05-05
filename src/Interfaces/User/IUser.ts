@@ -9,6 +9,8 @@ export interface IUser {
   privacy: {
     [index: string | 'profile' | 'blog']: boolean;
   };
+  university: string;
+  school: string;
 }
 
 export interface INotificationSettings {

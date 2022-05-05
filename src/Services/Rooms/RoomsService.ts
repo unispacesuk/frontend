@@ -33,6 +33,14 @@ function removeUser(roomId: string, userId: number) {
   return Delete(`chat/room/remove/user/${roomId}`, authHeaders(), { removable: userId });
 }
 
+function postMessage(data: object) {
+  return Post('chat/room/message', data, authHeaders());
+}
+
+function getRoomMessages(roomId: string) {
+  return Get(`chat/room/messages/${roomId}`, authHeaders());
+}
+
 export {
   getAllRooms,
   getRoomData,
@@ -42,4 +50,6 @@ export {
   inviteUser,
   getRoomUsers,
   removeUser,
+  postMessage,
+  getRoomMessages,
 };

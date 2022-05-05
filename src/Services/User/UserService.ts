@@ -49,6 +49,10 @@ function searchUser(username: string) {
   return Get(`user/search/${username.toLowerCase()}`);
 }
 
+function getNotifications() {
+  return Get('user/notifications', authHeaders());
+}
+
 export {
   uploadAvatar,
   getUserStarredThreads,
@@ -59,4 +63,5 @@ export {
   updateUserPrivacySetting,
   getUserPublicProfile,
   searchUser,
+  getNotifications,
 };

@@ -62,6 +62,27 @@
       </div>
     </form>
 
+    <div class="title mt-5">University and School</div>
+    <form class="form">
+      <div class="form__input">
+        <div>
+          <Label class="label" label="Email Address" />
+        </div>
+        <div class="flex space-x-2 items-center">
+          <Input
+            placeholder="university"
+            :input-value="state.user.university"
+            @input-change="handleUniversityChange"
+          />
+          <Input
+            placeholder="school"
+            :input-value="state.user.school"
+            @input-change="handleSchoolChange"
+          />
+        </div>
+      </div>
+    </form>
+
     <div class="title mt-5">Password</div>
     <div class="sub-title">
       Change your password if you feel your current one is not secure enough.
@@ -185,6 +206,8 @@
       email: state.user.email,
       firstName: state.user.firstName,
       lastName: state.user.lastName,
+      university: state.user.university,
+      school: state.user.school,
     };
 
     updateUserProfile(data)
@@ -284,6 +307,16 @@
       });
   }
 
+  function handleUniversityChange(value: string) {
+    state.hasChanged = true;
+    return (state.user.university = value);
+  }
+
+  function handleSchoolChange(value: string) {
+    state.hasChanged = true;
+    return (state.user.school = value);
+  }
+
   defineExpose({
     state,
     emits,
@@ -296,6 +329,8 @@
     handleProfileUpdate,
     onClickUploadAvatar,
     onCloseAvatarViewer,
+    handleUniversityChange,
+    handleSchoolChange,
   });
 </script>
 

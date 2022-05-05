@@ -10,7 +10,7 @@
     </div>
 
     <div class="form-row mt-3">
-      <div class="flex space-x-2 items-center">
+      <div class="flex space-x-2 items-center" v-if="state.room.permission !== 'admin'">
         <div>Private room?</div>
         <Toggle :checked="state.isPrivate" @toggle-change="onToggleChange" />
       </div>

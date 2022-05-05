@@ -6,6 +6,16 @@
         <Avatar />
         <div>{{ user.firstName }} {{ user.lastName }}</div>
         <!--        <div>{{ course }}</div>-->
+        <div class="flex space-x-2">
+          <div class="relative">
+            <ChatAltIcon class="icon smooth-fast" />
+            <!--            <div class="notification"></div>-->
+          </div>
+          <div class="relative">
+            <BellIcon class="icon smooth-fast" @click="onBellClick" />
+            <div v-if="state.hasNotification" class="notification"></div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -51,7 +61,7 @@
         <router-link to="/rooms">
           <NavLink name="Rooms" route="rooms" class="relative">
             <div class="ping-blob" v-if="state.hasNewMessage"></div>
-            <ArchiveIcon class="w-5" />
+            <ChatAlt2Icon class="w-5" />
           </NavLink>
         </router-link>
 
@@ -80,14 +90,20 @@
       </div>
     </div>
   </div>
+
+  <NotificationsDialog
+    v-if="state.isNotificationsOpen"
+    :notifications="state.notifications"
+    @action:close="onNotificationsClose"
+  />
 </template>
 
-<script lang="ts">
-  import { computed, defineComponent, PropType, reactive } from 'vue';
+<script setup lang="ts">
+  import { computed, reactive } from 'vue';
+  import { storeToRefs } from 'pinia';
   import { useAlertStore } from '../../Stores/AlertsStore';
-  import { IUser } from '../../Interfaces/User/IUser';
+  import { getNotifications } from '../../Services/User/UserService';
   import {
-    CameraIcon,
     ClipboardIcon,
     CogIcon,
     HomeIcon,
@@ -97,73 +113,74 @@
     QuestionMarkCircleIcon,
     RssIcon,
     UserCircleIcon,
-    ArchiveIcon,
+    BellIcon,
+    ChatAltIcon,
+    ChatAlt2Icon,
   } from '@heroicons/vue/solid';
   import NavLink from './NavLink.vue';
-  import Spinner from '../../Icons/Util/Spinner.vue';
-  import AvatarSkeleton from '../Skeletons/AvatarSkeleton.vue';
   import Avatar from '../User/Avatar.vue';
+  import NotificationsDialog from '../User/NotificationsDialog.vue';
 
-  export default defineComponent({
-    name: 'LeftNav',
-    components: {
-      Avatar,
-      AvatarSkeleton,
-      Spinner,
-      HomeIcon,
-      ClipboardIcon,
-      QuestionMarkCircleIcon,
-      CogIcon,
-      UserCircleIcon,
-      LogoutIcon,
-      CameraIcon,
-      LockClosedIcon,
-      LockOpenIcon,
-      NavLink,
-      RssIcon,
-      ArchiveIcon,
-    },
-    props: {
-      user: {
-        type: Object as PropType<IUser>,
-      },
-    },
-    data() {
-      return {
-        file: '',
-        loading: false,
-      };
-    },
-    setup() {
-      const { roomAlerts } = useAlertStore();
+  const { roomAlerts } = useAlertStore();
+  const useAlerts = storeToRefs(useAlertStore());
 
-      // new room message listener
-      document.addEventListener('new-room-message', (event: any) => {
-        const data = event.detail;
-        if (data && data.metadata) {
-          const roomAlert = roomAlerts.find((room) => room.roomId === data.metadata.roomId);
-          if (!roomAlert)
-            return roomAlerts.push({ roomId: data.metadata.roomId, hasNewMessage: true });
-          roomAlert.hasNewMessage = true;
-        }
-      });
+  const props = defineProps<{
+    user: any;
+  }>();
 
-      const state = reactive({
-        hasNewMessage: computed(() => {
-          return roomAlerts.find((room) => room.hasNewMessage === true);
-        }),
-      });
-
-      return { state, roomAlerts };
-    },
-    methods: {},
+  // new room message listener
+  document.addEventListener('new-room-message', (event: any) => {
+    const data = event.detail;
+    if (data && data.metadata && data.metadata.sender._id !== data.userId) {
+      const roomAlert = roomAlerts.find((room) => room.roomId === data.metadata.room_id);
+      if (!roomAlert)
+        return roomAlerts.push({ roomId: data.metadata.room_id, hasNewMessage: true });
+      roomAlert.hasNewMessage = true;
+    }
   });
+
+  document.addEventListener('notification-bell', (e) => {
+    useAlerts.bell.value = true;
+  });
+
+  const state = reactive({
+    hasNewMessage: computed(() => {
+      return roomAlerts.find((room) => room.hasNewMessage === true);
+    }),
+    hasNotification: computed(() => useAlerts.notification.value),
+    isNotificationsOpen: false,
+    notifications: [],
+  });
+
+  function onBellClick() {
+    getNotifications()
+      .then((data) => {
+        state.notifications = data.response.notifications;
+      })
+      .catch(() => {});
+    useAlerts.bell.value = false;
+    return (state.isNotificationsOpen = true);
+  }
+
+  function onNotificationsClose() {
+    return (state.isNotificationsOpen = false);
+  }
+
+  defineExpose({ state, roomAlerts, onBellClick, onNotificationsClose });
 </script>
 
 <style scoped lang="scss">
   .left-nav {
     .ping-blob {
       @apply w-2 h-2 bg-red-500 absolute -left-3 top-1/2 transform -translate-y-1/2 rounded-full;
+    }
+
+    .icon {
+      @apply w-5 text-gray-400 hover:text-white cursor-pointer;
+    }
+
+    .notification {
+      @apply absolute w-1.5 h-1.5 bg-red-500 rounded-full top-0 right-0;
     }
   }
 </style>

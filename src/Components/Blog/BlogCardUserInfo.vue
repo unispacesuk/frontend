@@ -46,7 +46,8 @@
   import ReactionButton from '../Buttons/ReactionButton.vue';
   import UserAvatar from '../User/UserAvatar.vue';
 
-  const { currentUser, connections } = storeToRefs(useUser());
+  const { connection } = useUser();
+  const { currentUser } = storeToRefs(useUser());
 
   const props = defineProps<{
     articleId: number;
@@ -109,8 +110,8 @@
   }
 
   function sendLiveNotification() {
-    const realTime = connections.value.find((c) => c.channel === 'real-time');
-    realTime!.websocket.sendMessage(
+    const realTime = connection.websocket;
+    realTime!.websocket.send(
       JSON.stringify({
         type: 'notification',
         metadata: {

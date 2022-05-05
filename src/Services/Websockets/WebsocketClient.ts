@@ -1,69 +1,68 @@
+import { ConstantBackoff, Websocket, WebsocketBuilder } from 'websocket-ts';
+import { useUser } from '../../Stores/UserStore';
+import { useAlertStore } from '../../Stores/AlertsStore';
+
 export class WebsocketClient {
-  private readonly channelName: string;
-  private readonly url: string | undefined;
-  private websocket: WebSocket | undefined;
-  private readonly userId: number;
-
-  private notificationEvent: CustomEvent | undefined = undefined;
-  private roomMessageEvent: CustomEvent | undefined = undefined;
-
-  constructor(channelName: string, url: string, userId: number) {
-    this.channelName = channelName;
-    this.url = url;
-    this.userId = userId;
-
-    // connect to the websocket
-    this.connect();
-    this.onMessage();
-    // start a heartbeat function to test the websocket connection
-    // this.heartBeat();
+  constructor() {
+    this.connectWebsocket();
   }
 
-  private connect() {
-    this.websocket = new WebSocket(this.url!);
-    this.websocket!.onopen = () => {
-      this.websocket!.send(
-        JSON.stringify({
-          type: 'connection',
-          user: this.userId,
-        })
-      );
-    };
+  public connectWebsocket() {
+    useUser().connection.websocket = new WebsocketBuilder('ws://localhost:3002/real-time')
+      .onOpen((ws, ev) => {
+        ws.send(
+          JSON.stringify({
+            type: 'connection',
+            user: useUser().user.id,
+          })
+        );
+      })
+      .onMessage((ws, ev) => {
+        const data = JSON.parse(ev.data);
+        switch (data.type) {
+          case 'ping':
+            this.onPing(ws);
+            break;
+          case 'notification':
+            this.onNotification(data);
+            break;
+          case 'room-message':
+            this.onRoomMessage(data);
+            break;
+          case 'notification-bell':
+            this.onNotificationBell();
+            break;
+        }
+      })
+      .withBackoff(new ConstantBackoff(1000))
+      .onClose((ws, ev) => {
+        console.log('closed?.....');
+      })
+      .onError((ws, ev) => {
+        console.log('some error...');
+      })
+      .build();
   }
 
   private onNotification(data: any) {
-    this.notificationEvent = new CustomEvent('new-notification', { detail: data });
-    document.dispatchEvent(this.notificationEvent);
+    const notificationEvent = new CustomEvent('new-notification', { detail: data });
+    document.dispatchEvent(notificationEvent);
+  }
+
+  private onNotificationBell() {
+    const notificationEvent = new CustomEvent('notification-bell');
+    document.dispatchEvent(notificationEvent);
   }
 
   private onRoomMessage(data: any) {
-    this.roomMessageEvent = new CustomEvent('new-room-message', { detail: data });
-    document.dispatchEvent(this.roomMessageEvent);
+    Object.assign(data, { ...data, userId: useUser().user.id });
+    const roomMessageEvent = new CustomEvent('new-room-message', {
+      detail: data,
+    });
+    document.dispatchEvent(roomMessageEvent);
   }
 
-  private onPing(data: any) {
-    this.sendMessage(JSON.stringify({ type: 'pong', user: this.userId }));
-  }
-
-  private onMessage() {
-    this.websocket!.onmessage = (serverMessage) => {
-      const data = JSON.parse(serverMessage.data);
-
-      switch (data.type) {
-        case 'ping':
-          this.onPing(data);
-          break;
-        case 'notification':
-          this.onNotification(data);
-          break;
-        case 'room-message':
-          this.onRoomMessage(data);
-          break;
-      }
-    };
-  }
-
-  public sendMessage(data: any) {
-    this.websocket!.send(data);
+  private onPing(ws: Websocket) {
+    ws.send(JSON.stringify({ type: 'pong', user: useUser().user.id }));
   }
 }
