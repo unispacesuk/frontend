@@ -63,23 +63,22 @@
     </form>
 
     <div class="title mt-5">University and School</div>
-    <form class="form">
+    <form class="user-details-form">
       <div class="form__input">
-        <div>
-          <Label class="label" label="Email Address" />
-        </div>
-        <div class="flex space-x-2 items-center">
-          <Input
-            placeholder="university"
-            :input-value="state.user.university"
-            @input-change="handleUniversityChange"
-          />
-          <Input
-            placeholder="school"
-            :input-value="state.user.school"
-            @input-change="handleSchoolChange"
-          />
-        </div>
+        <Label class="label" label="University" />
+        <Input
+          placeholder="university"
+          :input-value="state.user.university"
+          @input-change="handleUniversityChange"
+        />
+      </div>
+      <div class="form__input">
+        <Label class="label" label="School" />
+        <Input
+          placeholder="school"
+          :input-value="state.user.school"
+          @input-change="handleSchoolChange"
+        />
       </div>
     </form>
 
