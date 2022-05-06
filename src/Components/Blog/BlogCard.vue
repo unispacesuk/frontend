@@ -34,7 +34,10 @@
           label="Read More"
           @button-click="handleReadMore"
         ></ButtonActionSecondary>
-        <ButtonActionSecondary @button-click="onClickReadLater" v-if="!state.isOnReadList">
+        <ButtonActionSecondary
+          @button-click="onClickReadLater"
+          v-if="!state.isOnReadList && currentUser.username"
+        >
           <PlusIcon class="w-5" />
         </ButtonActionSecondary>
       </div>

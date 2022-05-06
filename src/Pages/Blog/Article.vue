@@ -24,7 +24,7 @@
     </div>
 
     <div class="__comments">
-      <BlogCommentForm @submitComment="handleSubmitComment" />
+      <BlogCommentForm v-if="currentUser.username" @submitComment="handleSubmitComment" />
 
       <template v-if="!state.comments.length">
         <Empty label="No comments yet. Be the first." />
@@ -41,6 +41,7 @@
 <script setup lang="ts">
   import { useRoute } from 'vue-router';
   import { inject, onBeforeMount, reactive } from 'vue';
+  import { useUser } from '../../Stores/UserStore';
   import { getBlogArticle } from '../../Services/Blog/BlogService';
   import { IBus } from '../../Interfaces/IBus';
   import BlogCardUserInfo from '../../Components/Blog/BlogCardUserInfo.vue';
@@ -52,6 +53,7 @@
   const articleId = route.params.articleId;
 
   const $bus = inject<IBus>('$bus');
+  const { currentUser } = useUser();
 
   onBeforeMount(() => {
     getBlogArticle(articleId)

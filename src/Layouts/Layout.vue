@@ -23,7 +23,7 @@
         </div>
       </div>
       <div>
-        <div class="w-full bg-white">this is the footer ok...</div>
+        <div class="w-full text-center py-3 text-sm font-light">Unispaces.uk (c) 2022</div>
       </div>
     </div>
   </div>

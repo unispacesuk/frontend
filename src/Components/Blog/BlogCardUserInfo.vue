@@ -90,6 +90,9 @@
   const $bus = inject<IBus>('$bus');
 
   function handleVote(type: number) {
+    if (!currentUser.value.username)
+      return $bus?.emit('add-toast', 'Register an account to vote.', 'warning');
+
     const voteType: string = voteTypes[type];
     if (state[voteType].isVoted) {
       return;

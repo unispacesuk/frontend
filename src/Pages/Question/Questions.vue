@@ -42,7 +42,7 @@
       <Empty label="No questions found." />
     </div>
     <div v-for="question of state.filteredQuestions" :key="question.id">
-      <QuestionListItem :question="question" />
+      <QuestionListCard :question="question" />
     </div>
   </div>
 
@@ -65,7 +65,7 @@
   import { SearchCircleIcon } from '@heroicons/vue/solid';
   import { IQuestion } from '../../Interfaces/Question/IQuestion';
   import { IBus } from '../../Interfaces/IBus';
-  import QuestionListItem from '../../Components/Question/QuestionListCard.vue';
+  import QuestionListCard from '../../Components/Question/QuestionListCard.vue';
   import Input from '../../Components/Form/Input.vue';
   import QuestionListSkeleton from '../../Components/Skeletons/QuestionListSkeleton.vue';
   import ButtonActionPrimary from '../../Components/Buttons/ButtonActionPrimary.vue';

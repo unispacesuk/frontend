@@ -1,14 +1,12 @@
 <template>
-  <div class="px-10 space-y-2 h-[100px] w-full">
-    <template v-if="state.loading">
-      <AvatarSkeleton class="w-[70px] h-[70px]" />
-    </template>
-    <template v-else>
-      <div class="w-[70px] h-[70px] rounded-full overflow-hidden">
-        <UserAvatar :user="user" size="lg" />
-      </div>
+  <div class="px-10 space-y-2 h-auto w-full">
+    <div v-if="state.loading">
+      <AvatarSkeleton class="w-[100px] h-[100px]" />
+    </div>
+    <div v-else>
+      <UserAvatar :user="user" size="lg" />
       <div class="w-full">{{ user.username }}</div>
-    </template>
+    </div>
   </div>
 </template>
 
