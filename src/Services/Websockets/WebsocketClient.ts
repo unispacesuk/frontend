@@ -1,6 +1,5 @@
 import { ConstantBackoff, Websocket, WebsocketBuilder } from 'websocket-ts';
 import { useUser } from '../../Stores/UserStore';
-import { useAlertStore } from '../../Stores/AlertsStore';
 
 export class WebsocketClient {
   constructor() {

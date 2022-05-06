@@ -1,5 +1,4 @@
 import { Post } from '../Util/Request';
-import { RouteLocationNormalized } from 'vue-router';
 
 export async function AdminGuard() {
   try {

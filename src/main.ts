@@ -1,7 +1,6 @@
 import { createApp } from 'vue';
-// import { W } from 'vite';
-import App from './App.vue';
 import { router } from './Router';
+import App from './App.vue';
 import './Assets/index.scss';
 
 import { createPinia } from 'pinia';
@@ -10,9 +9,6 @@ import { BusService } from './Services/BusService';
 const bus = new BusService();
 
 const app = createApp(App);
-
-// const webSocket = new WebSocket('wss://ws.unispaces.test');
-// app.provide('websocket', webSocket);
 
 // global properties
 app.config.globalProperties.$bus = bus;
